@@ -19,6 +19,10 @@
   }
 
   section {
+    overflow: hidden;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+
     padding: 20px 0;
     &.grid {
       z-index: 9999;
@@ -29,10 +33,6 @@
       gap: 10px 10px;
       grid-template-rows: max-content;
 
-      overflow: hidden;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-
       scrollbar-gutter: stable;
 
       /* margin-right: -32px; */
@@ -40,6 +40,15 @@
 
       &.view-1 {
         grid-template-columns: repeat(1, 1fr);
+
+        &.vertical {
+          min-height: 960px;
+          grid-template-columns: 1fr;
+
+          .preview {
+            scroll-snap-align: start;
+          }
+        }
       }
 
       &.view-2 {

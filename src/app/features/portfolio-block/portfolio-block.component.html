@@ -1,6 +1,9 @@
 @switch (gridView()) {
   @case ('1') {
-    <section class="grid view-1" dir="ltr">
+    <section
+      class="grid view-1"
+      dir="ltr"
+      [class.vertical]="category() === categoryEnum.Vertical">
       @for (portfolio of portfolios(); track portfolio) {
         <div class="preview" (click)="openDialog(portfolio)">
           <video
@@ -10,7 +13,8 @@
             autoplay
             playsinline
             [src]="portfolio.preview"
-            [poster]="portfolio.preview"></video>
+            [poster]="portfolio.preview"
+            width="540"></video>
           <!-- <img
             type="image/webp"
             width="920"

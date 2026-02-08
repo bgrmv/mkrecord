@@ -45,6 +45,7 @@ export type PortfolioResolution =
         align-items: center;
         flex-direction: column;
         overflow: hidden;
+        min-height: 960px;
       }
 
       .mat-mdc-standard-chip {
@@ -106,6 +107,7 @@ export type PortfolioResolution =
 
       .portofolio-container {
         overflow: hidden;
+        min-height: 960px;
       }
 
       @media (max-width: 576px) {
@@ -121,12 +123,14 @@ export type PortfolioResolution =
         <mat-tab [label]="categoryEnum.Horizontal | titlecase">
           <app-portfolio-block
             [gridView]="gridView()"
+            [category]="categoryEnum.Horizontal"
             [portfolios]="portfolios[categoryEnum.Horizontal]" />
         </mat-tab>
 
         <mat-tab [label]="categoryEnum.Vertical | titlecase">
           <app-portfolio-block
-            [gridView]="gridView()"
+            [gridView]="'1'"
+            [category]="categoryEnum.Vertical"
             [portfolios]="portfolios[categoryEnum.Vertical]" />
         </mat-tab>
       </mat-tab-group>

@@ -10,6 +10,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { CategoryEnum } from '../../constants';
 import { VideoDialogComponent } from '../../core/video-dialog.component';
 import { PortfolioCategory } from '../../types';
 
@@ -19,8 +20,8 @@ import { PortfolioCategory } from '../../types';
     MatIconModule,
     NgOptimizedImage,
     MatButtonToggleModule,
-    MatCheckboxModule
-],
+    MatCheckboxModule,
+  ],
   providers: [],
   templateUrl: './portfolio-block.component.html',
   styleUrl: './portfolio-block.component.css',
@@ -30,6 +31,8 @@ export class PortfolioBlockComponent {
 
   public readonly portfolios = input.required<PortfolioCategory[]>();
   public readonly gridView = input.required<string>();
+  public readonly category = input.required<CategoryEnum>();
+  protected readonly categoryEnum = CategoryEnum;
 
   videos = viewChildren<ElementRef<HTMLVideoElement>>('video');
 
