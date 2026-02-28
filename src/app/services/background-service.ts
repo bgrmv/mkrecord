@@ -23,18 +23,7 @@ const getRandomVideoSrc = (localVideoSrc?: string): string => {
     }
 
     return backgroundVideos[randomIdx].preview;
-    // Add video if not in last 3
-    // if (!last3Idx.includes(randomIdx)) {
-    //   last3Idx.push(randomIdx);
-    //   src = horizonalVideos[randomIdx]?.preview;
-    //   if (last3Idx.length > 4) {
-    //     last3Idx.shift();
-    //   }
-    //   break;
-    // }
   }
-
-  // return src;
 };
 
 @Injectable({
@@ -46,7 +35,7 @@ export class BackgroundService {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
-  public readonly isActive: Signal<boolean> = toSignal(
+  public readonly hasBackgroundVideos: Signal<boolean> = toSignal(
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(url => (url instanceof NavigationEnd ? url.url : '')),
@@ -57,7 +46,7 @@ export class BackgroundService {
 
   public readonly videoSrc: Signal<string | undefined> = toSignal(
     interval(5000).pipe(
-      filter(() => this.isActive()),
+      filter(() => this.hasBackgroundVideos()),
       map(() => getRandomVideoSrc(this.videoSrc())),
       startWith(getRandomVideoSrc())
     ),
