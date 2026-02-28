@@ -7,6 +7,7 @@ type PortfolioCategory = {
   preview: string;
   videoId: string;
   category: import('./constants').CategoryEnum;
+  asBackground?: boolean;
 };
 
 type Portfolio = Record<CategoryEnum, PortfolioCategory[]>;

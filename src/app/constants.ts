@@ -25,12 +25,14 @@ const horizontalVideos: PortfolioCategory[] = [
     category: CategoryEnum.Horizontal,
     preview: `${PORTFOLIO_HORIZONTAL_ASSET_SOURCE_PATH}/bar_480x270.webm`,
     videoId: 'rFGxVhX-cIo',
+    asBackground: true,
   },
   {
     title: 'Chef card 2020',
     category: CategoryEnum.Horizontal,
     preview: `${PORTFOLIO_HORIZONTAL_ASSET_SOURCE_PATH}/cookerdoc_480x270.webm`,
     videoId: 'WpQ9We4P3SY',
+    asBackground: true,
   },
   {
     title: 'EcoDoge Biodegradable Dog Waste Bags',
@@ -49,6 +51,7 @@ const horizontalVideos: PortfolioCategory[] = [
     preview: `${PORTFOLIO_HORIZONTAL_ASSET_SOURCE_PATH}/movie1min_480x270.webm`,
     videoId: 'tfBvJPhKDC4',
     category: CategoryEnum.Horizontal,
+    asBackground: true,
   },
   {
     title: 'The Heart Behind AMDA: Inspiring Youth Through Global Education',

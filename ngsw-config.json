@@ -3,6 +3,17 @@
   "index": "/index.html",
   "assetGroups": [
     {
+      "name": "background",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/bg/16mm_20.webp",
+          "/assets/portfolio/horizontal/480x270/*.webm"
+        ]
+      }
+    },
+    {
       "name": "app",
       "installMode": "prefetch",
       "resources": {

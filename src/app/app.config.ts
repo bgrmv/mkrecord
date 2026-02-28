@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   isDevMode,
+  provideAppInitializer,
   provideZonelessChangeDetection,
 } from '@angular/core';
 import {
@@ -17,13 +18,18 @@ import { ROUTES } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAppInitializer(() => {
+      if (isDevMode()) {
+        console.log('App initialized');
+      }
+    }),
     provideZonelessChangeDetection(),
     provideHttpClient(withFetch()),
     provideRouter(ROUTES, withViewTransitions(), withComponentInputBinding()),
     provideClientHydration(),
     provideAnimations(),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: false, // isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],

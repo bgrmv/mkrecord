@@ -2,13 +2,15 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   PLATFORM_ID,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, skip } from 'rxjs';
@@ -43,8 +45,8 @@ import { BackgroundService } from './services/background-service';
     SafePipe,
     YouTubePlayer,
     PlatformModule,
-    CameraCornersLayerComponent
-],
+    CameraCornersLayerComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   providers: [SafePipe, IconService, DeviceDetectorService, BackgroundService],
@@ -59,7 +61,26 @@ export class AppComponent {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly videoBackground = this.backgroundService.videoBackground;
+  protected readonly backgroundIsActive = this.backgroundService.isActive;
+  protected readonly backgroundVideoSrc = this.backgroundService.videoSrc;
+
+  private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
+
+  constructor() {
+    effect(() => {
+      const src = this.backgroundVideoSrc();
+
+      untracked(() => {
+        const video = this._video()?.nativeElement;
+
+        if (!src || !video) return;
+
+        // ensureBackgroundPlay(video).catch(e =>
+        //   console.warn('ensureBackgroundPlay failed', e)
+        // );
+      });
+    });
+  }
 
   activePreview = signal<number>(0);
   // timelineImage = computed(() => {
@@ -72,36 +93,36 @@ export class AppComponent {
 
   // readonly portfolioList = PORTFOLIO_TIMELINE_LIST;
 
-  private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
-  private readonly video$ = toObservable(this.videoBackground).pipe(
-    filter(Boolean),
-    filter(() => !!this._video()),
-    filter(() => isPlatformBrowser(this.platformId)),
-    // take(1),
-    takeUntilDestroyed(this.destroyRef)
-  );
+  // private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
+  // private readonly video$ = toObservable(this.videoBackground).pipe(
+  //   filter(Boolean),
+  //   filter(() => !!this._video()),
+  //   filter(() => isPlatformBrowser(this.platformId)),
+  //   // take(1),
+  //   takeUntilDestroyed(this.destroyRef)
+  // );
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.initPhoneEvents();
-      this.backgroundService.init();
+      // this.backgroundService.init();
     }
 
-    this.video$.subscribe(() => {
-      const video = this._video()!;
-      console.log('Video element available');
-      if (isPlatformBrowser(this.platformId)) {
-        console.log(video, this.videoBackground().isOn);
-        if (video.nativeElement) {
-          video.nativeElement.playbackRate = 0.25;
-          console.log(
-            'Set playback rate',
-            video.nativeElement,
-            video.nativeElement.playbackRate
-          );
-        }
-      }
-    });
+    // this.video$.subscribe(() => {
+    //   const video = this._video()!;
+    //   console.log('Video element available');
+    //   if (isPlatformBrowser(this.platformId)) {
+    //     console.log(video, this.videoBackground().isOn);
+    //     if (video.nativeElement) {
+    //       video.nativeElement.playbackRate = 0.25;
+    //       console.log(
+    //         'Set playback rate',
+    //         video.nativeElement,
+    //         video.nativeElement.playbackRate
+    //       );
+    //     }
+    //   }
+    // });
   }
 
   private initPhoneEvents() {

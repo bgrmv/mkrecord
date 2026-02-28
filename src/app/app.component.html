@@ -11,15 +11,15 @@
 <app-nav-mobile />
 
 <div class="video-brackground">
-  @if (videoBackground().isOn) {
+  @if (backgroundIsActive() && backgroundVideoSrc()) {
     <video
       #video
-      [src]="videoBackground().videoSrc"
-      autoplay
-      muted
+      class="video"
       loop
+      muted
       playsinline
-      class="video"></video>
+      autoplay
+      [src]="backgroundVideoSrc()"></video>
   }
 </div>
 
