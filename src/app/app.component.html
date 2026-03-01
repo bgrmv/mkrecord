@@ -19,7 +19,11 @@
       muted
       playsinline
       autoplay
-      [src]="backgroundVideoSrc()"></video>
+      preload="metadata"
+      disablePictureInPicture
+      aria-hidden="true">
+      <source [src]="backgroundVideoSrc()" type="video/webm" />
+    </video>
   }
 </div>
 

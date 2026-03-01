@@ -13,6 +13,10 @@ import { MatDivider } from '@angular/material/divider';
         align-items: center;
         justify-content: center;
         max-width: 1300px;
+
+        justify-content: center;
+        align-items: start;
+        height: 100%;
       }
 
       section {

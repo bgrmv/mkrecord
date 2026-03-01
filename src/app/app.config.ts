@@ -24,17 +24,11 @@ export const appConfig: ApplicationConfig = {
     }),
     provideZonelessChangeDetection(),
     provideHttpClient(withFetch()),
-    provideRouter(ROUTES, withComponentInputBinding(), withViewTransitions({
-      onViewTransitionCreated: (transition) => {
-        if (isDevMode()) {
-          console.log('View transition created', transition);
-        }
-        body: 
-    })),
+    provideRouter(ROUTES, withComponentInputBinding(), withViewTransitions()),
     provideClientHydration(),
     // provideAnimations(),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: false, // isDevMode(),
+      enabled: true, // isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],

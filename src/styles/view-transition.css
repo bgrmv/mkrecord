@@ -1,0 +1,275 @@
+/* View Transition: dark camera-style defocus effect
+   - No white glow; uses darkening + blur to match dark theme
+   - Exposes variables: --vt-duration, --vt-blur-amount, --vt-easing
+*/
+:root {
+  --vt-duration: 700ms; /* longer, smoother duration */
+  --vt-easing: cubic-bezier(0.16, 0.84, 0.3, 1); /* smoother ease */
+  --vt-blur-amount: 14px; /* stronger blur */
+  --vt-darken: 0.34; /* slightly deeper darkening */
+  --vt-parallax-duration: var(
+    --vt-duration
+  ); /* align parallax to focus duration */
+  /* Parallax vector relative to centre (change these to move along x/y/z)
+      NOTE: these are default values only. Per-transition JS should set
+      `--vt-parallax-x`, `--vt-parallax-y`, `--vt-parallax-z` on the
+      root element (inline) to override these defaults. */
+  --vt-parallax-x-default: 0px; /* positive -> moves right */
+  --vt-parallax-y-default: -120px; /* negative -> moves up */
+  --vt-parallax-z-default: -140px; /* negative -> moves into screen */
+  /* Zoom effect replaces parallax: frame scales (zoom out) during transition */
+  --vt-zoom-factor: 0.92; /* <1 = zoom out (frame appears to move away) */
+  --vt-zoom-out-duration: calc(var(--vt-duration) * 0.45);
+  --vt-zoom-in-duration: var(--vt-duration);
+  --vt-zoom-easing: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --vt-backdrop-blur: 6px; /* backdrop blur for dark overlay */
+  --vt-vignette-alpha: 0.6; /* darkness of vignette overlay */
+}
+
+/* Gentle defocus + slight scale to mimic camera focus shift */
+@keyframes vt-defocus-out {
+  from {
+    filter: blur(0px) saturate(1) brightness(1);
+    opacity: 1; /* keep opaque to avoid revealing background */
+    will-change: filter, transform, opacity;
+  }
+  60% {
+    /* soft hold to make the blur feel like a camera rack */
+    filter: blur(calc(var(--vt-blur-amount) * 0.6)) saturate(0.98)
+      brightness(calc(1 - var(--vt-darken) * 0.6));
+    opacity: 0.96;
+  }
+  80% {
+    filter: blur(calc(var(--vt-blur-amount) * 0.9)) saturate(0.97)
+      brightness(calc(1 - var(--vt-darken) * 0.85));
+    opacity: 0.92;
+  }
+  96% {
+    /* gently reduce blur before final state to avoid a visual "snap" */
+    filter: blur(calc(var(--vt-blur-amount) * 0.55)) saturate(0.99)
+      brightness(calc(1 - var(--vt-darken) * 0.5));
+    opacity: 0.975;
+  }
+  to {
+    filter: blur(var(--vt-blur-amount)) saturate(0.95)
+      brightness(calc(1 - var(--vt-darken)));
+    opacity: 1; /* keep opaque to avoid revealing background */
+  }
+}
+
+@keyframes vt-defocus-in {
+  from {
+    filter: blur(var(--vt-blur-amount)) saturate(0.95)
+      brightness(calc(1 - var(--vt-darken)));
+    opacity: 1;
+    will-change: filter, transform, opacity;
+  }
+  40% {
+    filter: blur(calc(var(--vt-blur-amount) * 0.6)) saturate(0.98)
+      brightness(calc(1 - var(--vt-darken) * 0.4));
+    opacity: 0.95;
+  }
+  80% {
+    filter: blur(2px) saturate(0.99) brightness(0.98);
+    opacity: 0.985;
+  }
+  96% {
+    /* make final small step softer so text/images don't oversharpen */
+    filter: blur(1px) saturate(0.995) brightness(0.995);
+    opacity: 0.995;
+  }
+  to {
+    filter: blur(0px) saturate(1) brightness(1);
+    /* no transform here; parallax handles translateY+scale */
+    opacity: 1;
+  }
+}
+
+/* Zoom: outgoing quickly zooms out (frame shrinks + blurs), incoming zooms back to 1 */
+@keyframes vt-zoom-out {
+  /* quick non-linear zoom out: most of the change happens early */
+  from {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(var(--vt-zoom-factor));
+    /* keep slight sub-pixel to avoid edge gaps */
+  }
+  to {
+    transform: scale(var(--vt-zoom-factor));
+  }
+}
+
+@keyframes vt-zoom-in {
+  /* start from zoomed-out snapshot back to normal, easing slows toward the end */
+  from {
+    transform: scale(var(--vt-zoom-factor));
+  }
+  60% {
+    transform: scale(calc(1 - (1 - var(--vt-zoom-factor)) * 0.35));
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Apply dark defocus to outgoing / incoming views */
+::view-transition-old(*) {
+  /* play defocus (shorter) + zoom-out (sharp) together */
+  animation:
+    vt-defocus-out var(--vt-duration) var(--vt-easing) 1 both,
+    vt-zoom-out var(--vt-zoom-out-duration) var(--vt-zoom-easing) 1 both;
+  isolation: isolate;
+  will-change: transform, filter, opacity;
+}
+
+::view-transition-new(*) {
+  animation:
+    vt-defocus-in var(--vt-duration) var(--vt-easing) 1 both,
+    vt-zoom-in var(--vt-zoom-in-duration) var(--vt-zoom-easing) 1 both;
+  /* vt-glitch var(--vt-duration) var(--vt-easing) 1 both; */
+  isolation: isolate;
+  will-change: transform, filter, opacity;
+}
+
+/* Dark overlay using backdrop-filter to avoid white edge glow */
+::view-transition-old(*)::before,
+::view-transition-new(*)::before {
+  content: '';
+  position: fixed; /* ensure overlay covers viewport even if snapshot scales */
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999; /* ensure overlay sits above snapshots */
+  mix-blend-mode: normal; /* avoid lightening edges */
+  -webkit-backdrop-filter: blur(var(--vt-backdrop-blur));
+  backdrop-filter: blur(var(--vt-backdrop-blur));
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, var(--vt-vignette-alpha)); /* mask bright edges */
+  /* add darker inset shadows on the sides to mask any bright edges */
+  box-shadow:
+    inset 80px 0 120px rgba(0, 0, 0, 0.85),
+    inset -80px 0 120px rgba(0, 0, 0, 0.85),
+    inset 0 0 120px rgba(0, 0, 0, var(--vt-vignette-alpha));
+  border: none;
+  background-color: rgba(0, 0, 0, var(--vt-vignette-alpha));
+  background-clip: padding-box;
+  transition:
+    opacity calc(var(--vt-parallax-duration) * 0.7) var(--vt-easing),
+    backdrop-filter calc(var(--vt-parallax-duration) * 0.7) var(--vt-easing);
+  will-change: opacity, backdrop-filter;
+}
+::view-transition-old(*)::after,
+::view-transition-new(*)::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  /* place above the dark ::before overlay so glitch is visible */
+  z-index: 10002;
+  mix-blend-mode: screen;
+  /* two thin colored bands that will shift during the animation; stronger alpha for visibility */
+  background-image:
+    linear-gradient(
+      transparent 0 44%,
+      rgba(255, 16, 144, 0.12) 44% 46%,
+      transparent 46% 100%
+    ),
+    linear-gradient(
+      transparent 0 28%,
+      rgba(0, 240, 255, 0.08) 28% 30%,
+      transparent 30% 100%
+    );
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity, background-position;
+}
+body {
+  background-color: #000 !important;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --vt-duration: 0ms;
+    --vt-parallax-duration: 0ms;
+  }
+  .vt-defocus {
+    transition: none;
+    transform: none;
+    filter: none;
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------
+   View-Transition Glitch overlay (animation runs during transition)
+   Applies a subtle slice/chromatic overlay on top of snapshots to give
+   a glitchy feel without altering snapshot content. Respects
+   prefers-reduced-motion.
+   -------------------------------------------------- */
+
+@keyframes vt-glitch {
+  0% {
+    opacity: 0;
+    transform: translateX(0) scaleX(1);
+    background-position:
+      0 0,
+      0 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(-30px) scaleX(1.012);
+    background-position:
+      -36px 0,
+      24px 0;
+  }
+  22% {
+    opacity: 0.9;
+    transform: translateX(36px) scaleX(0.992);
+    background-position:
+      42px 0,
+      -36px 0;
+  }
+  38% {
+    opacity: 1;
+    transform: translateX(-18px) scaleX(1);
+    background-position:
+      -24px 0,
+      18px 0;
+  }
+  60% {
+    opacity: 0.9;
+    transform: translateX(12px);
+    background-position:
+      12px 0,
+      -12px 0;
+  }
+  85% {
+    opacity: 0.6;
+    transform: translateX(-6px);
+    background-position:
+      -6px 0,
+      6px 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(0) scaleX(1);
+    background-position:
+      0 0,
+      0 0;
+  }
+}
+
+/* Disable glitch overlay for reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*)::after,
+  ::view-transition-new(*)::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}

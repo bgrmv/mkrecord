@@ -2,8 +2,8 @@
 @import './styles/font.css';
 @import './styles/variables.css';
 @import './styles/core.css';
-@import './styles/transition-api.css';
 @import './styles/keyframes.css';
+@import './styles/view-transition.css';
 
 app-root {
   position: fixed;
