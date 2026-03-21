@@ -1,3 +1,5 @@
+// see docs/todo — P0 #3: SSR unsafe — all document.* calls below crash on server; see docs/todo/tech-debt.md#ssr-safety
+// see docs/todo/deprecated.md#sharedutilsfullscreen-apits — fullScreenChange() exported but never imported
 // TODO: clear & fix
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/fullscreenchange_event
@@ -28,8 +30,8 @@ export function fullScreenChange(event: any) {
   console.log('HEY');
   console.log(event);
 
-  const fullScreenElement = document.fullscreenElement;
-  const fullScreenEnable = document.fullscreenEnabled;
+  const fullScreenElement = document.fullscreenElement; // see docs/todo/tech-debt.md#ssr-safety
+  const fullScreenEnable = document.fullscreenEnabled; // see docs/todo/tech-debt.md#ssr-safety
 
   console.log(fullScreenElement, fullScreenEnable);
   if (!fullScreenElement && fullScreenEnable) {
@@ -38,7 +40,7 @@ export function fullScreenChange(event: any) {
 }
 
 async function pauseAndHideVideos() {
-  for await (const vidElement of document.querySelectorAll('video')) {
+  for await (const vidElement of document.querySelectorAll('video')) { // see docs/todo/tech-debt.md#ssr-safety
     vidElement.pause();
     vidElement.style.display = 'none';
   }
@@ -51,7 +53,7 @@ function playAndShowVideo(target: HTMLVideoElement) {
 }
 
 export const toggleFullscreen = (target: HTMLVideoElement) => {
-  if (document.fullscreenElement) {
+  if (document.fullscreenElement) { // see docs/todo/tech-debt.md#ssr-safety
     document.exitFullscreen();
     pauseAndHideVideos();
   } else {

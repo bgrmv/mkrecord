@@ -9,6 +9,7 @@ const backgroundVideos = portfolios[CategoryEnum.Horizontal].filter(
   video => video.asBackground
 );
 
+// see docs/todo — P0 #6: while(true) loop hangs if all videos share the same preview src; see docs/todo/tech-debt.md#ssr-safety
 const getRandomVideoSrc = (localVideoSrc?: SafeResourceUrl): string => {
   while (true) {
     const randomIdx = Math.floor(Math.random() * backgroundVideos.length);
@@ -17,7 +18,7 @@ const getRandomVideoSrc = (localVideoSrc?: SafeResourceUrl): string => {
       continue;
     }
 
-    console.log(
+    console.log( // see docs/todo/deprecated.md#consolelog-pollution — remove
       'Selected background video:',
       backgroundVideos[randomIdx].preview
     );
@@ -38,7 +39,7 @@ export class BackgroundService {
       filter(event => event instanceof NavigationEnd),
       map(url => (url instanceof NavigationEnd ? url.url : '')),
       map(url => !url.includes('portfolio'))
-      // map(() => false)
+      // map(() => false) // see docs/todo/deprecated.md#servicesbackground-servicets — dead commented code, delete
     ),
     { initialValue: false }
   );

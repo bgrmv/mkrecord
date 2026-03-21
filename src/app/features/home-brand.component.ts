@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+// see docs/todo/deprecated.md#featureshome-brand-componentts — unused imports below; also FSD violation (feature importing sibling feature); see docs/todo/tech-debt.md#fsd-layer-violations
 import { ParallaxItemDirective } from '../shared/directives/parrallax-item.directive';
 import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timeline.component';
 
@@ -52,5 +53,5 @@ import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timel
   `,
 })
 export class HomeBrandComponent {
-  readonly timelineImageSignal = signal<string | null>(null);
+  readonly timelineImageSignal = signal<string | null>(null); // see docs/todo/deprecated.md#featureshome-brand-componentts — never used, delete
 }

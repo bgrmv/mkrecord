@@ -3,6 +3,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+// see docs/todo — P1 #10: missing ChangeDetectionStrategy.OnPush; see docs/todo/tech-debt.md#change-detection
 @Component({
   selector: 'app-nav',
   imports: [MatIconModule, RouterLink, RouterLinkActive, MatButtonToggleModule],
@@ -76,6 +77,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         </li>
 
         <li>
+          <!-- see docs/todo/deprecated.md#corenav-componentts — spurious home attribute below, delete it -->
           <a
             routerLink="/info"
             home

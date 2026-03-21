@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     // provideAnimations(),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: true, // isDevMode(),
+      enabled: true, // isDevMode(), // see docs/todo — P1 #12: should be !isDevMode(); service worker must not run in dev; see docs/todo/tech-debt.md#service-worker-in-dev-mode
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],

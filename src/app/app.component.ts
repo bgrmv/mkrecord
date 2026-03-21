@@ -46,17 +46,17 @@ import { BackgroundService } from './services/background-service';
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [SafePipe, IconService, DeviceDetectorService, BackgroundService],
+  providers: [SafePipe, IconService, DeviceDetectorService, BackgroundService], // see docs/todo — P1 #11: IconService provided here AND in footer.component.ts, violates singleton; see docs/todo/tech-debt.md#singleton-violations
 })
 export class AppComponent {
-  #destroyRef = inject(DestroyRef);
+  #destroyRef = inject(DestroyRef); // see docs/todo — P1 #7: duplicate DestroyRef; this one is unused, delete it; see docs/todo/tech-debt.md#destroyref-duplicate
   #router = inject(Router);
   #safePipe = inject(SafePipe);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly backgroundService = inject(BackgroundService);
   private readonly iconService = inject(IconService);
 
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef); // see docs/todo — P1 #7: duplicate of #destroyRef above; keep only this one
 
   protected readonly backgroundVideoSrc = this.backgroundService.videoSrc;
 
@@ -77,7 +77,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (isPlatformBrowser(this.platformId)) { // see docs/todo/tech-debt.md#platform-service — replace with inject(PlatformService).isBrowser
       this.initPhoneEvents();
     }
   }

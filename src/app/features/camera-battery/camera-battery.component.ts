@@ -48,13 +48,14 @@ export class CameraBatteryComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
+  // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C1: these writable signals are application state, should be owned by CameraStateService
   protected readonly batterySignal = signal<boolean>(true);
   protected readonly batteryIcon = signal<string>(batteryIcons.at(3)!);
 
   ngOnInit() {
     // Run on browser;
     if (isPlatformBrowser(this.platformId)) {
-      interval(1500)
+      interval(1500) // see docs/todo — P2 #14: magic number 1500, extract to named constant
         .pipe(
           map(timer => timer % 2 === 0),
           takeUntilDestroyed(this.destroyRef)

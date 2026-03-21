@@ -118,6 +118,7 @@ import { FooterComponent } from '../core/footer.component';
     `,
   ],
   template: `
+    <!-- see docs/todo — P2 #20: form submit only calls preventDefault, never sends data; see docs/improvements/index.md#8-contacts-form--wire-to-backend -->
     <form
       id="contacts"
       [formGroup]="formGroup"

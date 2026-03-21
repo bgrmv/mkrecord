@@ -38,13 +38,14 @@ export class PortfolioTimelineComponent implements OnInit {
 
   readonly portfolioList = PORTFOLIO_TIMELINE_LIST;
 
-  private readonly unsubscribe = new Subject<void>();
+  private readonly unsubscribe = new Subject<void>(); // see docs/todo — P2 #15 / deprecated.md — Subject declared but never used, delete
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {} // see docs/todo/tech-debt.md#platform-service — migrate to inject(PlatformService).isBrowser
 
   ngOnInit() {
     // SSR
     if (isPlatformBrowser(this.platformId)) {
+      // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C4: rotation interval and activePreview mutation should move to PortfolioService
       interval(5000)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(x => {

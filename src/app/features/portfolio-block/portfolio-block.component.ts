@@ -59,8 +59,9 @@ export class PortfolioBlockComponent {
       closeOnNavigation: true,
     });
 
+    // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C3: dialog state should be managed by a service; also missing takeUntilDestroyed
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      console.log('The dialog was closed'); // see docs/todo/deprecated.md#consolelog-pollution — remove
     });
   }
 }

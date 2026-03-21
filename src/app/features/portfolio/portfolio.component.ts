@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { PORTFOLIO_LIST } from './constants';
 
-const ITEM_WIDTH = 800;
+const ITEM_WIDTH = 800; // see docs/todo — P2 #14: magic number, extract to named constant in constants.ts
 
 @Component({
   selector: 'app-portfolio',
@@ -22,10 +22,10 @@ const ITEM_WIDTH = 800;
   providers: [],
 })
 export class PortfolioComponent implements AfterViewInit {
-  readonly portfolioList = PORTFOLIO_LIST;
+  readonly portfolioList = PORTFOLIO_LIST; // see docs/todo/deprecated.md#featuresportfolioportfolio-componentts — never used in template, delete
 
-  #videoService = inject(VideoService);
-  constructor(public dialog: MatDialog) {}
+  #videoService = inject(VideoService); // see docs/todo — P1 #9: VideoService does not exist in codebase; see docs/todo/deprecated.md
+  constructor(public dialog: MatDialog) {} // see docs/todo — P1 #8: use inject(MatDialog) and remove constructor; see docs/todo/deprecated.md
 
   // #destroyRef = inject(DestroyRef);
   @ViewChild('scrollContainer') scrollContainer: any;
@@ -45,7 +45,7 @@ export class PortfolioComponent implements AfterViewInit {
     }
   }
 
-  openDialog(videoUrl: string): void {
+  openDialog(videoUrl: string): void { // see docs/todo — P2 #19: method body is empty, implement or delete; see docs/todo/deprecated.md
     // this.#videoService.set(videoUrl);
   }
 
@@ -91,7 +91,7 @@ export class PortfolioComponent implements AfterViewInit {
     console.log({ scrolled, finalWidth, lastIndex });
   }
 
-  isCloseTo(number1: number, number2: number, tolerance = ITEM_WIDTH + 100) {
+  isCloseTo(number1: number, number2: number, tolerance = ITEM_WIDTH + 100) { // see docs/todo/deprecated.md#featuresportfolioportfolio-componentts — never called, delete
     // Проверяем, находится ли разница между числами в пределах заданной погрешности
     console.log(number1, number2, Math.abs(number1 - number2) <= tolerance);
     return Math.abs(number1 - number2) <= tolerance;

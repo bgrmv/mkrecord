@@ -28,18 +28,18 @@ export class CameraTimerComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
-  protected readonly timerSignal = signal('2024-12-31T00:00:00.000Z');
+  protected readonly timerSignal = signal('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md#featurescamera-timercamera-timer-componentts — hardcoded past date, meaningless; see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C2
 
   ngOnInit() {
     // Run on browser;
     if (isPlatformBrowser(this.platformId)) {
-      const date = new Date('2024-12-31T00:00:00.000Z');
-      console.log(date);
+      const date = new Date('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md — hardcoded past date, decide on real behavior
+      console.log(date); // see docs/todo/deprecated.md#consolelog-pollution — remove
 
-      interval(1000)
+      interval(1000) // see docs/todo — P2 #14: magic number 1000, extract to named constant
         .pipe(
           scan((acc, curr) => {
-            // acc.setMilliseconds(acc.getMilliseconds() + 1);
+            // acc.setMilliseconds(acc.getMilliseconds() + 1); // see docs/todo/deprecated.md — dead commented line, delete
             acc.setSeconds(acc.getSeconds() + 1);
             return acc;
           }, date),

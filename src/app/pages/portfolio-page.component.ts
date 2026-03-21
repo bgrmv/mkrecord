@@ -139,12 +139,13 @@ export type PortfolioResolution =
   providers: [DeviceDetectorService],
 })
 export class PortfolioPageComponent {
-  private readonly deviceSerivce = inject(DeviceDetectorService);
+  private readonly deviceSerivce = inject(DeviceDetectorService); // see docs/todo — P2 #23: typo, should be deviceService
 
-  public readonly actualCategory = signal<CategoryEnum>(
+  public readonly actualCategory = signal<CategoryEnum>( // see docs/todo/deprecated.md#pagespages-portfolio-page-componentts — never read, delete
     CategoryEnum.Horizontal
   );
 
+  // see docs/todo/tech-debt.md#fsd-layer-violations — F2: device logic in page component; see docs/improvements/index.md — use linkedSignal() from PlatformService
   public readonly gridView = signal<string>(
     this.deviceSerivce.isMobile() ? '1' : '3'
   );

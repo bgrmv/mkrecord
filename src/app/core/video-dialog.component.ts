@@ -91,6 +91,7 @@ export interface DialogData {
     <!-- <h1 mat-dialog-title>{{ data.title | uppercase }}</h1> -->
 
     @if (data.url) {
+      <!-- see docs/todo — P0 #5: hardcoded videoId="rFGxVhX-cIo" ignores data.videoId; see docs/todo/deprecated.md#corevideo-dialog-componentts — this entire @if branch is unreachable (data.url is never set) -->
       <youtube-player
         videoId="rFGxVhX-cIo"
         [playerVars]="{ autoplay: 0, controls: 1, color: 'red' }"
@@ -117,7 +118,7 @@ export interface DialogData {
 })
 export class VideoDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<VideoDialogComponent>);
-  private readonly deviceSerivce = inject(DeviceDetectorService);
+  private readonly deviceSerivce = inject(DeviceDetectorService); // see docs/todo — P2 #23: typo, should be deviceService
   public readonly data = inject<DialogData>(MAT_DIALOG_DATA);
 
   protected xy = computed(() =>

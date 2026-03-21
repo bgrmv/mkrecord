@@ -1,3 +1,4 @@
+// see docs/todo — P0 #4: platform.service.ts implementation is missing; only this spec exists; see docs/todo/tech-debt.md#platform-service
 import { TestBed } from '@angular/core/testing';
 
 import { PlatformService } from './platform.service';

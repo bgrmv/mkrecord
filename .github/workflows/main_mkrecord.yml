@@ -21,6 +21,7 @@ jobs:
         with:
           node-version: '22.x'
 
+      # see docs/todo — P1 #13: uses npm instead of pnpm; lockfile is ignored; see docs/todo/tech-debt.md#cicd
       - name: npm install, build, and test
         run: |
           npm install

@@ -6,16 +6,18 @@ import {
   OnInit,
 } from '@angular/core';
 
+// see docs/todo — P0 #2: SSR unsafe — window.innerWidth/innerHeight on lines 46-47 crash on server; see docs/todo/tech-debt.md#ssr-safety
 @Directive({
   selector: '[parallaxItem]',
 })
 export class ParallaxItemDirective implements OnInit {
+  // see docs/todo/deprecated.md#shareddirectivesparrallax-item-directivets — commented @Input properties, delete
   // @Input() top;
   // @Input() left;
   // @Input() rotate = 30;
   // @Input() opacity = 1;
   // @Input() inversion = false;
-  @Input() movement = 0.025;
+  @Input() movement = 0.025; // see docs/improvements/index.md#1-angular-signal-apis — migrate to input()
 
   // input();
 
@@ -43,8 +45,8 @@ export class ParallaxItemDirective implements OnInit {
   onMouseMove(e: MouseEvent) {
     this.movement = this.movement ? this.movement : 0.015;
 
-    const screenX = window.innerWidth;
-    const screenY = window.innerHeight;
+    const screenX = window.innerWidth; // see docs/todo/tech-debt.md#ssr-safety — window not available on server
+    const screenY = window.innerHeight; // see docs/todo/tech-debt.md#ssr-safety
     const screenXHalf = screenX / 2;
     const screenYHalf = screenY / 2;
 

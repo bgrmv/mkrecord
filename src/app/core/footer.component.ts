@@ -6,7 +6,7 @@ import { IconService } from '../services/icon.service';
 @Component({
   selector: 'app-footer',
   imports: [MatIconModule, MatButtonToggleModule],
-  providers: [IconService],
+  providers: [IconService], // see docs/todo — P1 #11: duplicate IconService provider; also in app.component.ts; add providedIn:'root' to IconService and remove both; see docs/todo/tech-debt.md#singleton-violations
   styles: [
     `
       :host {
