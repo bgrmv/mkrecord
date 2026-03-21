@@ -32,13 +32,14 @@ import { MatDivider } from '@angular/material/divider';
         h2 {
           font-weight: 700;
           font-size: calc(12px + 1vw);
-          text-align: center;
+          text-align: left; /* see docs/todo/ui — U5 */
         }
 
         h5 {
           color: var(--c_red);
           font-weight: 500;
           font-size: calc(11px + 1vw);
+          margin-bottom: 6px; /* see docs/todo/ui — U7 */
         }
 
         p {
@@ -85,6 +86,14 @@ import { MatDivider } from '@angular/material/divider';
       .regalia:hover,
       .experience:hover {
         transform: scale(1.05) translateY(-3px);
+      }
+
+      @media (hover: none) {
+        /* see docs/todo/ui — M4 */
+        .regalia,
+        .experience {
+          transform: none !important;
+        }
       }
 
       @media (max-width: 576px) {

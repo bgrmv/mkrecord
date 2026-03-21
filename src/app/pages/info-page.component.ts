@@ -11,6 +11,7 @@ import { InfoComponent } from '../features/info.component';
       justify-content: center;
       align-items: start;
       height: 100%;
+      overflow-y: auto; /* see docs/todo/ui — A1 */
     }
   `,
 })

@@ -35,6 +35,13 @@ export type PortfolioResolution =
         .mdc-tab--active {
           background-color: var(--c_red);
         }
+
+        /* see docs/todo/ui — U4 */
+        .mdc-tab:not(.mdc-tab--active) {
+          .mdc-tab__text-label {
+            color: var(--color_whitesmoke_darken_2);
+          }
+        }
       }
 
       :host {

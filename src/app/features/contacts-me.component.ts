@@ -100,6 +100,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        gap: 8px; /* see docs/todo/ui — U8 */
 
         fieldset {
           display: grid;
