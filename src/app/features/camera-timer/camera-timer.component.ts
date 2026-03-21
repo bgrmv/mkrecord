@@ -1,13 +1,13 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
   inject,
-  PLATFORM_ID,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval, map, scan } from 'rxjs';
+import { PlatformService } from '../../services/platform.service';
 
 const initialDate = new Date().setHours(0, 0, 0, 0);
 
@@ -26,13 +26,13 @@ const initialDate = new Date().setHours(0, 0, 0, 0);
 })
 export class CameraTimerComponent {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly platformService = inject(PlatformService);
 
   protected readonly timerSignal = signal('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md#featurescamera-timercamera-timer-componentts — hardcoded past date, meaningless; see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C2
 
   ngOnInit() {
     // Run on browser;
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.platformService.isBrowser) {
       const date = new Date('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md — hardcoded past date, decide on real behavior
       console.log(date); // see docs/todo/deprecated.md#consolelog-pollution — remove
 

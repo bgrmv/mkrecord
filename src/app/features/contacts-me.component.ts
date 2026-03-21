@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -10,6 +10,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FooterComponent } from '../core/footer.component';
+import { PlatformService } from '../services/platform.service';
+import emailjs from '@emailjs/browser';
+
+// Replace these with your EmailJS account credentials:
+// https://www.emailjs.com/docs/introduction/how-does-emailjs-work/
+const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
 
 @Component({
   selector: 'app-contacts-me',
@@ -115,16 +123,23 @@ import { FooterComponent } from '../core/footer.component';
           }
         }
       }
+
+      .feedback {
+        margin-top: 12px;
+        font-size: 14px;
+
+        &.success { color: #4caf50; }
+        &.error { color: var(--c_red); }
+      }
     `,
   ],
   template: `
-    <!-- see docs/todo — P2 #20: form submit only calls preventDefault, never sends data; see docs/improvements/index.md#8-contacts-form--wire-to-backend -->
     <form
       id="contacts"
       [formGroup]="formGroup"
-      (submit)="$event.preventDefault()">
-      <q>Tell me about your project, and I’ll bring it to life.</q><br />
-      <q>Let’s film the magic on camera! </q><br />
+      (submit)="onSubmit($event)">
+      <q>Tell me about your project, and I'll bring it to life.</q><br />
+      <q>Let's film the magic on camera! </q><br />
 
       <mat-form-field class="example-full-width" appearance="outline">
         <mat-label>Email</mat-label>
@@ -143,10 +158,17 @@ import { FooterComponent } from '../core/footer.component';
       <button
         color="primary"
         mat-raised-button
-        [disabled]="formGroup.invalid"
+        [disabled]="formGroup.invalid || isSubmitting()"
         type="submit">
-        Send
+        {{ isSubmitting() ? 'Sending…' : 'Send' }}
       </button>
+
+      @if (submitSuccess()) {
+        <p class="feedback success">Message sent! I'll get back to you soon.</p>
+      }
+      @if (submitError()) {
+        <p class="feedback error">{{ submitError() }}</p>
+      }
     </form>
 
     <br />
@@ -156,6 +178,12 @@ import { FooterComponent } from '../core/footer.component';
   `,
 })
 export class ContactsMeComponent {
+  private readonly platformService = inject(PlatformService);
+
+  readonly isSubmitting = signal(false);
+  readonly submitSuccess = signal(false);
+  readonly submitError = signal<string | null>(null);
+
   formGroup = new FormGroup({
     email: new FormControl<string | null>(null, {
       validators: [Validators.email, Validators.required],
@@ -164,4 +192,32 @@ export class ContactsMeComponent {
       validators: [Validators.required],
     }),
   });
+
+  async onSubmit(event: Event) {
+    event.preventDefault();
+
+    if (this.formGroup.invalid || !this.platformService.isBrowser) return;
+
+    this.isSubmitting.set(true);
+    this.submitSuccess.set(false);
+    this.submitError.set(null);
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_email: this.formGroup.value.email,
+          message: this.formGroup.value.text,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
+      this.submitSuccess.set(true);
+      this.formGroup.reset();
+    } catch {
+      this.submitError.set('Failed to send. Please try again later.');
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
 }

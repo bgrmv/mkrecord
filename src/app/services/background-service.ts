@@ -2,7 +2,7 @@ import { inject, Injectable, PLATFORM_ID, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, interval, map, startWith } from 'rxjs';
+import { delay, filter, interval, map, share, startWith } from 'rxjs';
 import { CategoryEnum, portfolios } from '../constants';
 
 const backgroundVideos = portfolios[CategoryEnum.Horizontal].filter(
@@ -44,12 +44,26 @@ export class BackgroundService {
     { initialValue: false }
   );
 
+  private readonly videoRotation$ = interval(5000).pipe(
+    filter(() => this.hasBackgroundVideos()),
+    map(() => getRandomVideoSrc(this.videoSrc())),
+    startWith(getRandomVideoSrc()),
+    share()
+  );
+
   public readonly videoSrc: Signal<SafeResourceUrl | undefined> = toSignal(
-    interval(5000).pipe(
-      filter(() => this.hasBackgroundVideos()),
+    this.videoRotation$.pipe(
+      map(src => this.sanitizer.bypassSecurityTrustResourceUrl(src))
+    ),
+    { initialValue: undefined }
+  );
+
+  /** Next video URL, emitted 2 s before the swap to begin buffering. */
+  public readonly nextVideoSrc: Signal<SafeResourceUrl | undefined> = toSignal(
+    this.videoRotation$.pipe(
       map(() => getRandomVideoSrc(this.videoSrc())),
-      map(src => this.sanitizer.bypassSecurityTrustResourceUrl(src)),
-      startWith(getRandomVideoSrc())
+      delay(3000),
+      map(src => this.sanitizer.bypassSecurityTrustResourceUrl(src))
     ),
     { initialValue: undefined }
   );

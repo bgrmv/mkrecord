@@ -1,92 +1,73 @@
-* {
-  box-sizing: border-box;
-  font-weight: 100;
-  font-family: 'Roboto', sans-serif;
-  color: var(--color_whitesmoke);
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  /* min-width: 500px;
-  overflow: hidden; */
-}
-
-app-root {
-  position: relative;
-}
-
-body::-webkit-scrollbar {
-  width: 1em;
-}
-
-body::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 1em rgba(0, 0, 0, 0.3);
-}
-
-body::-webkit-scrollbar-thumb {
-  background-color: var(--c_red);
-  outline: 1px solid var(--c_red);
-}
-
-body {
-  margin: 0;
-  background-image: url('../assets/bg/16mm_20.webp');
-  background-repeat: repeat;
-  background-size: cover;
-  background-position: top 200px;
-  backdrop-filter: grayscale(1) brightness(120%) contrast(1);
-  background-attachment: fixed;
-}
-
-a {
-  color: var(--color_whitesmoke);
-  text-decoration: none;
-
-  &:focus,
-  &:visited {
-    all: unset;
+@layer base {
+  * {
+    box-sizing: border-box;
+    font-weight: 100;
+    font-family: 'Roboto', sans-serif;
+    color: var(--color_whitesmoke);
   }
 
-  &:hover {
-    color: var(--c_red);
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
   }
-}
 
-/* Typography */
+  app-root {
+    position: relative;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--color_whitesmoke);
-}
+  body::-webkit-scrollbar {
+    width: 1em;
+  }
 
-h1 {
-  font-size: 36px;
-}
-h2 {
-  font-size: 32px;
-}
-h3 {
-  font-size: 28px;
-}
-h4 {
-  font-size: 24px;
-}
-h5 {
-  font-size: 20px;
-}
-h6 {
-  font-size: 16px;
-}
+  body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 1em rgba(0, 0, 0, 0.3);
+  }
 
-p {
-  color: var(--color_whitesmoke);
-  font-weight: 300;
-  text-wrap: balance;
+  body::-webkit-scrollbar-thumb {
+    background-color: var(--c_red);
+    outline: 1px solid var(--c_red);
+  }
+
+  body {
+    margin: 0;
+    background-image: url('../assets/bg/16mm_20.webp');
+    background-repeat: repeat;
+    background-size: cover;
+    background-position: top 200px;
+    backdrop-filter: grayscale(1) brightness(120%) contrast(1);
+    background-attachment: fixed;
+  }
+
+  a {
+    color: var(--color_whitesmoke);
+    text-decoration: none;
+
+    &:focus,
+    &:visited {
+      all: unset;
+    }
+
+    &:hover {
+      color: var(--c_red);
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color_whitesmoke);
+  }
+
+  h1 { font-size: 36px; }
+  h2 { font-size: 32px; }
+  h3 { font-size: 28px; }
+  h4 { font-size: 24px; }
+  h5 { font-size: 20px; }
+  h6 { font-size: 16px; }
+
+  p {
+    color: var(--color_whitesmoke);
+    font-weight: 300;
+    text-wrap: balance;
+  }
 }

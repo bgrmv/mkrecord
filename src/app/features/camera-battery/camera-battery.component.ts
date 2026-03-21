@@ -1,14 +1,13 @@
-import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
   DestroyRef,
   inject,
-  PLATFORM_ID,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { interval, map } from 'rxjs';
+import { PlatformService } from '../../services/platform.service';
 
 const batteryIcons = [
   'battery_1_bar',
@@ -46,7 +45,7 @@ const batteryIcons = [
 })
 export class CameraBatteryComponent {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly platformService = inject(PlatformService);
 
   // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C1: these writable signals are application state, should be owned by CameraStateService
   protected readonly batterySignal = signal<boolean>(true);
@@ -54,7 +53,7 @@ export class CameraBatteryComponent {
 
   ngOnInit() {
     // Run on browser;
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.platformService.isBrowser) {
       interval(1500) // see docs/todo — P2 #14: magic number 1500, extract to named constant
         .pipe(
           map(timer => timer % 2 === 0),

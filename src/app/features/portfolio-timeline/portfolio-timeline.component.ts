@@ -1,11 +1,9 @@
-import { NgOptimizedImage, isPlatformBrowser } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  Inject,
   OnInit,
-  PLATFORM_ID,
   computed,
   inject,
   signal,
@@ -15,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Subject, interval } from 'rxjs';
 
 import { PORTFOLIO_TIMELINE_LIST } from './constants';
+import { PlatformService } from '../../services/platform.service';
 
 @Component({
   selector: 'app-portfolio-timeline',
@@ -26,6 +25,7 @@ import { PORTFOLIO_TIMELINE_LIST } from './constants';
 })
 export class PortfolioTimelineComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformService = inject(PlatformService);
 
   activePreview = signal<number>(0);
   timelineImage = computed(() => {
@@ -40,11 +40,8 @@ export class PortfolioTimelineComponent implements OnInit {
 
   private readonly unsubscribe = new Subject<void>(); // see docs/todo — P2 #15 / deprecated.md — Subject declared but never used, delete
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {} // see docs/todo/tech-debt.md#platform-service — migrate to inject(PlatformService).isBrowser
-
   ngOnInit() {
-    // SSR
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.platformService.isBrowser) {
       // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C4: rotation interval and activePreview mutation should move to PortfolioService
       interval(5000)
         .pipe(takeUntilDestroyed(this.destroyRef))

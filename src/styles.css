@@ -1,6 +1,8 @@
+@layer reset, base, utilities;
+
 @import './styles/reset.css';
-@import './styles/font.css';
 @import './styles/variables.css';
+@import './styles/font.css';
 @import './styles/core.css';
 @import './styles/keyframes.css';
 @import './styles/view-transition.css';

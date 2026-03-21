@@ -14,7 +14,8 @@
             playsinline
             [src]="portfolio.preview"
             [poster]="portfolio.preview"
-            width="540"></video>
+            width="540"
+            (canplay)="onVideoReady($event)"></video>
           <!-- <img
             type="image/webp"
             width="920"
@@ -54,7 +55,8 @@
             playsinline
             [attr.playbackRate]="0.25"
             [src]="portfolio.preview"
-            [poster]="portfolio.preview"></video>
+            [poster]="portfolio.preview"
+            (canplay)="onVideoReady($event)"></video>
           <p>{{ portfolio.title }}</p>
         </div>
       }

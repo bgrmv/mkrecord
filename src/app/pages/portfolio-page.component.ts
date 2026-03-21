@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, linkedSignal } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { CategoryEnum, portfolios } from '../constants';
 import { PortfolioBlockComponent } from '../features/portfolio-block/portfolio-block.component';
+import { PlatformService } from '../services/platform.service';
 
 export type PortfolioResolution =
   | '480x270'
@@ -136,18 +136,13 @@ export type PortfolioResolution =
       </mat-tab-group>
     </div>
   `,
-  providers: [DeviceDetectorService],
+  providers: [],
 })
 export class PortfolioPageComponent {
-  private readonly deviceSerivce = inject(DeviceDetectorService); // see docs/todo — P2 #23: typo, should be deviceService
+  private readonly platformService = inject(PlatformService);
 
-  public readonly actualCategory = signal<CategoryEnum>( // see docs/todo/deprecated.md#pagespages-portfolio-page-componentts — never read, delete
-    CategoryEnum.Horizontal
-  );
-
-  // see docs/todo/tech-debt.md#fsd-layer-violations — F2: device logic in page component; see docs/improvements/index.md — use linkedSignal() from PlatformService
-  public readonly gridView = signal<string>(
-    this.deviceSerivce.isMobile() ? '1' : '3'
+  public readonly gridView = linkedSignal(() =>
+    this.platformService.isMobile() ? '1' : '3'
   );
 
   public readonly categoryEnum = CategoryEnum;

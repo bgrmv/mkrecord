@@ -1,10 +1,8 @@
-import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
   DestroyRef,
   ElementRef,
   inject,
-  PLATFORM_ID,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -12,21 +10,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, skip } from 'rxjs';
 import { HeaderComponent } from './core/header.component';
-import { CameraBatteryComponent } from './features/camera-battery/camera-battery.component';
-import { CameraTimerComponent } from './features/camera-timer/camera-timer.component';
-
 import { SafePipe } from './shared/pipes/safe.pipe';
-
 import { PlatformModule } from '@angular/cdk/platform';
 import { NavMobileComponent } from './core/nav-mobile.component';
-import { CameraQualityResolutionComponent } from './features/camera-quality-resolution.component';
 import { IconService } from './services/icon.service';
-
 import { YouTubePlayer } from '@angular/youtube-player';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { FooterComponent } from './core/footer.component';
-import { CameraCornersLayerComponent } from './features/camera-corners-layer.component';
 import { BackgroundService } from './services/background-service';
+import { PlatformService } from './services/platform.service';
+import { CameraOverlayComponent } from './features/camera-overlay/camera-overlay.component';
 
 @Component({
   selector: 'app-root',
@@ -36,13 +29,10 @@ import { BackgroundService } from './services/background-service';
     HeaderComponent,
     FooterComponent,
     NavMobileComponent,
-    CameraTimerComponent,
-    CameraBatteryComponent,
-    CameraQualityResolutionComponent,
+    CameraOverlayComponent,
     SafePipe,
     YouTubePlayer,
     PlatformModule,
-    CameraCornersLayerComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
@@ -52,13 +42,14 @@ export class AppComponent {
   #destroyRef = inject(DestroyRef); // see docs/todo — P1 #7: duplicate DestroyRef; this one is unused, delete it; see docs/todo/tech-debt.md#destroyref-duplicate
   #router = inject(Router);
   #safePipe = inject(SafePipe);
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly platformService = inject(PlatformService);
   private readonly backgroundService = inject(BackgroundService);
   private readonly iconService = inject(IconService);
 
   private readonly destroyRef = inject(DestroyRef); // see docs/todo — P1 #7: duplicate of #destroyRef above; keep only this one
 
   protected readonly backgroundVideoSrc = this.backgroundService.videoSrc;
+  protected readonly nextVideoSrc = this.backgroundService.nextVideoSrc;
 
   private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
 
@@ -77,7 +68,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) { // see docs/todo/tech-debt.md#platform-service — replace with inject(PlatformService).isBrowser
+    if (this.platformService.isBrowser) {
       this.initPhoneEvents();
     }
   }

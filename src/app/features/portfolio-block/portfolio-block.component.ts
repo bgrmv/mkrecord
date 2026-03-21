@@ -1,9 +1,11 @@
 import { NgOptimizedImage } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   ElementRef,
   inject,
   input,
+  OnDestroy,
   viewChildren,
 } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -13,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CategoryEnum } from '../../constants';
 import { VideoDialogComponent } from '../../core/video-dialog.component';
 import { PortfolioCategory } from '../../types';
+import { PlatformService } from '../../services/platform.service';
 
 @Component({
   selector: 'app-portfolio-block',
@@ -26,8 +29,9 @@ import { PortfolioCategory } from '../../types';
   templateUrl: './portfolio-block.component.html',
   styleUrl: './portfolio-block.component.css',
 })
-export class PortfolioBlockComponent {
+export class PortfolioBlockComponent implements OnDestroy {
   private readonly dialog = inject(MatDialog);
+  private readonly platformService = inject(PlatformService);
 
   public readonly portfolios = input.required<PortfolioCategory[]>();
   public readonly gridView = input.required<string>();
@@ -36,10 +40,37 @@ export class PortfolioBlockComponent {
 
   videos = viewChildren<ElementRef<HTMLVideoElement>>('video');
 
+  private observer: IntersectionObserver | null = null;
+
   ngAfterViewInit() {
     this.videos().forEach(videoRef => {
       videoRef.nativeElement.playbackRate = 0.5;
     });
+
+    if (this.platformService.isBrowser) {
+      this.observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      });
+
+      this.videos().forEach(videoRef => {
+        this.observer!.observe(videoRef.nativeElement);
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
+  protected onVideoReady(event: Event) {
+    (event.target as HTMLVideoElement).classList.add('loaded');
   }
 
   openDialog(portfolio: PortfolioCategory): void {

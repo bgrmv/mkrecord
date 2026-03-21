@@ -103,6 +103,24 @@ Key items:
 
 ---
 
+## UI / Visual Issues
+
+See: [ui.md](ui.md)
+
+Reported visual, layout, typography, and feature issues:
+
+| Group | Count | Examples |
+|-------|-------|---------|
+| Desktop UI | 12 | Logotype size, inactive tab color, Info layout, fonts |
+| Mobile UI | 7 | Corner sizing, dvh fonts, parallax off, prefetch |
+| Portfolio features | 2 | Vertical videos, larger titles |
+| About Me | 4 | Scrolling, bio text, mobile font size |
+| Contact Me | 4 | Name/phone fields, cache, send animation |
+| Legal | 1 | Cookies / Terms & Conditions |
+| Navigation blocked | 1 | z-index stacking context audit |
+
+---
+
 ## Tooling to Add
 
 See: [tools-to-use.md](tools-to-use.md)

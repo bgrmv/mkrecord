@@ -5,7 +5,7 @@
 </main>
 
 <!-- Layers -->
-<app-camera-corners-layer />
+<app-camera-overlay />
 
 <!-- Mobile -->
 <app-nav-mobile />
@@ -23,6 +23,15 @@
       disablePictureInPicture
       aria-hidden="true">
       <source [src]="backgroundVideoSrc()" type="video/webm" />
+    </video>
+  }
+  @if (nextVideoSrc()) {
+    <video
+      style="display:none"
+      muted
+      preload="auto"
+      aria-hidden="true">
+      <source [src]="nextVideoSrc()" type="video/webm" />
     </video>
   }
 </div>

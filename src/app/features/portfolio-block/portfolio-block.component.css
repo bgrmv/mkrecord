@@ -1,11 +1,23 @@
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 :host {
   width: 100%;
+  container-type: inline-size;
 
   scrollbar-color: var(--c_red) rgba(0, 0, 0, 0.3);
   scrollbar-width: 5em;
   ::-webkit-scrollbar-button {
     background-color: green;
     color: yellow;
+  }
+
+  video:not(.loaded) {
+    background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
   }
 
   video {
@@ -58,6 +70,10 @@
       &.view-3 {
         grid-template-columns: repeat(3, 1fr);
         aspect-ratio: 16 / 9;
+
+        @container (max-width: 600px) {
+          grid-template-columns: 1fr;
+        }
 
         div {
           /* height: 160px; */
