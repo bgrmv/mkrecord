@@ -24,6 +24,7 @@ function randomChoice(arr: string[]): string {
       }
     `,
   ],
+  // see docs/todo/angular-modern-api.md — A1: use toSignal() because async pipe adds CommonModule dependency and doesn't integrate with zoneless change detection
   template: `<p>{{ quality$ | async }}</p>`,
 })
 export class CameraQualityResolutionComponent {

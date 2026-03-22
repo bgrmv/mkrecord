@@ -6,47 +6,52 @@ Suggestions tied to existing code patterns in this codebase. These are not fixes
 
 ## 1. Angular Signal APIs
 
+> **Full migration audit:** see [`docs/todo/angular-modern-api.md`](../todo/angular-modern-api.md) — every item explains **what** to use and **why**, so each change teaches you the pattern.
+
 ### `resource()` for async data loading
 
 Angular 19+ `resource()` API provides built-in loading/error states for async operations.
-
-Current pattern in `background-service.ts`:
-```ts
-public readonly videoSrc = toSignal(
-  interval(5000).pipe(map(…))
-);
-```
 
 `resource()` candidate: any future HTTP data loading (e.g., if portfolio metadata moves from `constants.ts` to an API). It provides `value()`, `isLoading()`, `error()` signals automatically — no `toSignal` + manual `catchError` needed.
 
 ---
 
-### `linkedSignal()` for derived writable state
+### `linkedSignal()` for derived writable state — DONE
 
-`linkedSignal()` (Angular 19+) creates a writable signal that resets when its source changes — removing the need for manual effect subscriptions.
+`linkedSignal()` (Angular 19+) creates a writable signal that resets when its source changes.
 
-Candidate in `pages/portfolio-page.component.ts:148-149`:
+Already implemented in `pages/portfolio-page.component.ts:157-159`:
 ```ts
-// Current: gridView is computed once at construction from deviceService
-public readonly gridView = signal<string>(
-  this.deviceSerivce.isMobile() ? '1' : '3'
-);
-
-// Better: responds to screen size changes reactively
 public readonly gridView = linkedSignal(() =>
-  this.platformService.isMobile() ? '1' : '3'
+  this.platformService.isMobile() ? '1' : '3',
 );
 ```
 
+Use this as the canonical example.
+
 ---
 
-### Migrate `@Input()` to `input()` signal API
+### `toSignal()` to replace `async` pipe — see angular-modern-api.md #A1
 
-`features/portfolio-block/portfolio-block.component.ts` already uses `input.required()` — use it as the reference for all remaining `@Input` usages:
+`features/camera-quality-resolution.component.ts:27` still uses `quality$ | async`. Convert to `toSignal()` to remove `CommonModule` dependency and integrate with zoneless change detection.
 
-- `shared/directives/parrallax-item.directive.ts:18` — `@Input() movement = 0.025` → `movement = input(0.025)`
+---
 
-Any new `@Input` decorators added to the codebase must use `input()` instead.
+### `afterNextRender()` to replace lifecycle hooks — see angular-modern-api.md #B1-B3
+
+Replace `ngAfterViewInit`, `ngOnInit` (when browser-only) with `afterNextRender()` — SSR-safe by design.
+
+---
+
+### `computed()` to replace imperative `subscribe()` → `signal.set()` — see angular-modern-api.md #E1-E2
+
+When a subscription only forwards values from observable to signal, use `toSignal()`. When one signal is derived from another, use `computed()`.
+
+---
+
+### Migrate `@Input()` to `input()` signal API — DONE
+
+All components already use `input()` / `input.required()`. No `@Input()` decorators remain.
 
 ---
 
@@ -257,3 +262,241 @@ Add to the component:
 - `HttpClient.post()` or EmailJS SDK call in `onSubmit()`
 
 Validate with Angular reactive forms validators already partially configured (`formGroup` exists).
+
+---
+
+## 9. HTTP Interceptors & Typed API Service
+
+No HTTP interceptors or typed service layer exist yet. This becomes critical when backend integration is needed.
+
+### Recommended Structure
+
+```ts
+// src/app/services/api.service.ts
+@Injectable({ providedIn: 'root' })
+export class ApiService {
+  constructor(private http: HttpClient) {}
+
+  getPortfolios(): Observable<Portfolio[]> {
+    return this.http.get<Portfolio[]>('/api/portfolios').pipe(
+      catchError(err => {
+        console.error('Portfolio fetch failed', err);
+        return throwError(() => new Error('Failed to load portfolios'));
+      })
+    );
+  }
+
+  submitContact(data: ContactFormData): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>('/api/contact', data).pipe(
+      retry({ count: 2, delay: 1000 }),
+      catchError(err => {
+        console.error('Contact submission failed', err);
+        return throwError(() => new Error('Failed to send message'));
+      })
+    );
+  }
+}
+```
+
+### HTTP Interceptor (Error Handling)
+
+```ts
+// src/app/core/http-error.interceptor.ts
+import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError } from 'rxjs';
+
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+  return next(req).pipe(
+    catchError(err => {
+      // Log to monitoring service (Sentry, LogRocket, etc.)
+      console.error('HTTP Error:', err.status, err.message);
+      return throwError(() => err);
+    })
+  );
+};
+
+// In app.config.ts:
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([errorInterceptor])
+    ),
+  ],
+};
+```
+
+**Priority:** Low until backend API is ready. Keep this doc as a reference for when integration happens.
+
+---
+
+## 10. Route Lazy Loading
+
+Currently all routes load eagerly. Implement lazy loading for heavy routes (portfolio, contacts).
+
+```ts
+// ✅ Recommended
+export const ROUTES: Routes = [
+  { path: '', component: HomePageComponent },
+  {
+    path: 'portfolio',
+    loadComponent: () => import('./pages/portfolio-page.component')
+      .then(m => m.PortfolioPageComponent)
+  },
+  {
+    path: 'contacts',
+    loadComponent: () => import('./pages/contacts-page.component')
+      .then(m => m.ContactsPageComponent)
+  },
+];
+```
+
+**Benefit:** Initial bundle ~50kb smaller; portfolio/contacts load on demand.
+
+**Priority:** Medium; implement with HTTP interceptor when backend integration starts.
+
+---
+
+## 11. ESLint Rules for Architecture Enforcement
+
+Add `@angular-eslint` rules to catch architectural violations automatically:
+
+```json
+// .eslintrc.json
+{
+  "rules": {
+    "@angular-eslint/prefer-on-push-component-change-detection": "warn",
+    "@angular-eslint/no-empty-lifecycle-method": "warn",
+    "@angular-eslint/no-host-metadata-property": "warn"
+  }
+}
+```
+
+This catches:
+- Components missing `ChangeDetectionStrategy.OnPush`
+- Empty `ngOnInit` / `ngOnDestroy` lifecycle methods
+- `@HostListener` (recommends `host` property instead)
+
+**Priority:** Medium; valuable for team consistency.
+
+---
+
+## 12. Bundle Size & Performance Monitoring
+
+### Recommended Tools
+
+1. **source-map-explorer** — visualize bundle composition
+   ```bash
+   pnpm add -D source-map-explorer
+   npm run build:prod
+   npx source-map-explorer 'dist/mkrecord/browser/**/*.js'
+   ```
+
+2. **Lighthouse CI** — automated performance checks in CI/CD
+   ```bash
+   pnpm add -D @lhci/cli
+   ```
+
+3. **Angular DevTools** — Chrome extension for signal graph debugging
+
+**Priority:** Low; implement after performance issues are identified (if any).
+
+---
+
+## 13. Virtual Scrolling & IntersectionObserver Optimization
+
+Portfolio has 17 videos all autoplaying simultaneously → memory spike. Two approaches:
+
+### Option A: Angular CDK Virtual Scroll (Recommended for large lists)
+```ts
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
+@Component({
+  imports: [ScrollingModule],
+  template: `
+    <cdk-virtual-scroll-viewport [itemSize]="300">
+      @for (video of portfolios; track video.id) {
+        <app-portfolio-block [video]="video"/>
+      }
+    </cdk-virtual-scroll-viewport>
+  `
+})
+```
+
+### Option B: IntersectionObserver (Lightweight, browser-native)
+```ts
+// Per video element, guard with PlatformService.isBrowser
+constructor() {
+  afterNextRender(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const video = (e.target as HTMLVideoElement);
+        e.isIntersecting ? video.play() : video.pause();
+      });
+    });
+    this.videoElements().forEach(v => observer.observe(v.nativeElement));
+  });
+}
+```
+
+**Priority:** Low; profile memory usage first. Implement if necessary.
+
+---
+
+## 14. Advanced TypeScript Configuration
+
+Enable stricter TypeScript checking:
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@features/*": ["src/app/features/*"],
+      "@services/*": ["src/app/services/*"]
+    }
+  }
+}
+```
+
+**Impact:**
+- `noUnusedLocals/Parameters` catches dead code automatically
+- Path aliases improve import clarity and refactoring
+
+**Priority:** Medium; implement with P2 fixes (tech-debt cleanup).
+
+---
+
+## 15. E2E Testing with Playwright
+
+Add end-to-end tests for critical user journeys:
+
+```bash
+pnpm add -D @playwright/test
+
+# tests/portfolio.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('should load portfolio and play video', async ({ page }) => {
+  await page.goto('http://localhost:4200/portfolio');
+  const video = page.locator('video').first();
+  await expect(video).toBeVisible();
+  await expect(video).toHaveAttribute('src');
+});
+
+test('should submit contact form', async ({ page }) => {
+  await page.goto('http://localhost:4200/contacts');
+  await page.fill('input[name="email"]', 'test@example.com');
+  await page.fill('textarea[name="message"]', 'Test message');
+  await page.click('button[type="submit"]');
+  await expect(page.locator('text=Success')).toBeVisible();
+});
+```
+
+**Priority:** Low; implement after critical P0/P1 bugs are fixed.

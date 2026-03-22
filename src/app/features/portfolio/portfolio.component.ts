@@ -29,9 +29,11 @@ export class PortfolioComponent {
 
   protected scrollContainerRef = viewChild<HTMLElement>('scrollContainer'); // see docs/todo/tech-debt.md#angular-quirks — contentChild used instead of ViewChild due to Angular timing issues; should be refactored when Angular releases fixes for ViewChild timing
 
+  // see docs/todo/angular-modern-api.md — K1: use signal() because with zoneless change detection, plain mutable fields don't trigger view updates
   disabledLeft = true;
   disabledRight = false;
 
+  // see docs/todo/angular-modern-api.md — D1: use host property in @Component because it centralizes all host bindings in metadata, making them visible at a glance
   @HostListener('document:keydown', ['$event'])
   setScroll(event: KeyboardEvent) {
     if (event.key === 'ArrowLeft') {

@@ -44,6 +44,7 @@ export class PortfolioBlockComponent implements OnDestroy, AfterViewInit {
 
   private observer: IntersectionObserver | null = null;
 
+  // see docs/todo/angular-modern-api.md — B1: use afterNextRender() because it's SSR-safe by design and replaces both ngAfterViewInit + isBrowser guard; use DestroyRef.onDestroy() instead of ngOnDestroy
   ngAfterViewInit() {
     this.videos().forEach((videoRef) => {
       videoRef.nativeElement.playbackRate = 0.5;

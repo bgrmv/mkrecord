@@ -6,7 +6,9 @@
       "Bash(pnpm lint:*)",
       "Bash(pnpm format:check)",
       "Bash(npx tsc:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(pnpm -v)",
+      "Bash(npx ng:*)"
     ]
   }
 }

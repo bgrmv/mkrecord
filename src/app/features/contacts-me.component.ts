@@ -192,6 +192,7 @@ export class ContactsMeComponent {
   readonly submitSuccess = signal(false);
   readonly submitError = signal<string | null>(null);
 
+  // see docs/todo/angular-modern-api.md — H1: migrate to signal-based forms when Angular stabilizes them — they integrate natively with the signal graph
   formGroup = new FormGroup({
     email: new FormControl<string | null>(null, {
       validators: [Validators.email, Validators.required],

@@ -16,12 +16,14 @@ export class ParallaxItemDirective implements OnInit {
 
   private readonly eleRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
+  // see docs/todo/angular-modern-api.md — B2: use afterNextRender() because setting DOM styles requires the element to be rendered; ngOnInit runs on server too where DOM manipulation is wasteful
   ngOnInit(): void {
     this.eleRef.nativeElement.style.transform = `translate(0px, 0px)`;
     this.eleRef.nativeElement.style.transition =
       'transform 0.2s allow-discrete';
   }
 
+  // see docs/todo/angular-modern-api.md — D2: use host property in @Directive because it centralizes host bindings in metadata
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(e: MouseEvent) {
     const movement = this.movement() || 0.015;

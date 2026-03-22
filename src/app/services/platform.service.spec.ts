@@ -1,6 +1,4 @@
-// see docs/todo — P0 #4: platform.service.ts implementation is missing; only this spec exists; see docs/todo/tech-debt.md#platform-service
 import { TestBed } from '@angular/core/testing';
-
 import { PlatformService } from './platform.service';
 
 describe('PlatformService', () => {
@@ -13,5 +11,13 @@ describe('PlatformService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should have isBrowser as a boolean', () => {
+    expect(typeof service.isBrowser).toBe('boolean');
+  });
+
+  it('should have isMobile signal with initial value false', () => {
+    expect(service.isMobile()).toBe(false);
   });
 });

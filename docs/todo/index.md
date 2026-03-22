@@ -3,6 +3,8 @@
 This is the master list. Each item links to a detailed section in the sibling docs.
 Add `// see docs/todo — P# #N` comments at the referenced file:line in source code.
 
+**START HERE:** [../best-practices.md](../best-practices.md) — comprehensive audit of Angular 21 best practices usage (what works, what's missing, what needs fixing).
+
 ---
 
 ## P0 — Critical (fix before next deployment)
@@ -86,14 +88,39 @@ Quick count:
 
 ---
 
+## Angular Modern API — Migration Audit
+
+See: [angular-modern-api.md](angular-modern-api.md)
+
+Where to replace legacy/suboptimal patterns with modern Angular APIs. Each item explains **why** — so every change is a learning moment.
+
+| Priority | # | What | File | API |
+|----------|---|------|------|-----|
+| **High** | A1 | `async` pipe → `toSignal()` | `camera-quality-resolution.component.ts:27` | `toSignal()` |
+| **High** | B1 | `ngAfterViewInit`/`ngOnDestroy` → `afterNextRender()` + `DestroyRef` | `portfolio-block.component.ts:47` | `afterNextRender()` |
+| **High** | B2 | `ngOnInit` DOM styles → `afterNextRender()` | `parrallax-item.directive.ts:19` | `afterNextRender()` |
+| **High** | B3 | `ngOnInit` + isBrowser guard → `afterNextRender()` | `app.component.ts:73` | `afterNextRender()` |
+| **High** | K1 | Mutable class fields → `signal()` | `portfolio.component.ts:32-33` | `signal()` |
+| Medium | C1 | `ngOnInit` subscription → constructor | `camera-battery.component.ts:57` | `takeUntilDestroyed()` |
+| Medium | C2 | `ngOnInit` subscription → constructor | `camera-timer.component.ts:34` | `takeUntilDestroyed()` |
+| Medium | C3 | `ngOnInit` subscription → constructor | `portfolio-timeline.component.ts:43` | `takeUntilDestroyed()` |
+| Medium | D1 | `@HostListener` → `host` property | `portfolio.component.ts:35` | `host` |
+| Medium | D2 | `@HostListener` → `host` property | `parrallax-item.directive.ts:25` | `host` |
+| Medium | E1 | `subscribe()` → `toSignal()` + `computed()` | `camera-battery.component.ts:65` | `toSignal()` + `computed()` |
+| Medium | E2 | `subscribe()` → `toSignal()` | `camera-timer.component.ts:50` | `toSignal()` |
+| Low | H1 | Reactive Forms → Signal Forms | `contacts-me.component.ts:195` | signal forms (wait) |
+| Low | I1 | Uncomment `effect()` + `untracked()` | `app.component.ts:59` | `effect()` |
+
+---
+
 ## Improvements (non-blocking enhancements)
 
 See: [../improvements/index.md](../improvements/index.md)
 
 Key items:
 1. `resource()` API for async data loading
-2. `linkedSignal()` for derived writable state
-3. `PlatformService` implementation (unblocks P0 #4)
+2. `linkedSignal()` for derived writable state — **done** in `portfolio-page.component.ts:157`
+3. `PlatformService` implementation — **done** in `services/platform.service.ts`
 4. Camera components consolidation → `CameraOverlayComponent`
 5. Video preloading before 5s interval fires
 6. Virtual scroll / IntersectionObserver for portfolio videos

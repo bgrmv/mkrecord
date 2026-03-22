@@ -88,7 +88,9 @@ All architectural decisions, known issues, and improvement proposals live in `do
 
 | File | Purpose |
 |------|---------|
+| [`AGENT.md`](AGENT.md) | Rules for AI agents: teaching comments format (`// use X because Y`). **Mandatory reading.** |
 | [`docs/todo/index.md`](docs/todo/index.md) | Master priority list (P0/P1/P2 + FSD/CQRS violations). **Start here before any fix.** |
+| [`docs/todo/angular-modern-api.md`](docs/todo/angular-modern-api.md) | Modern Angular API migration audit: `toSignal`, `afterNextRender`, `computed`, `host`, `signal()`. Each item explains **why**. |
 | [`docs/todo/tech-debt.md`](docs/todo/tech-debt.md) | Architecture violations: SSR safety, Platform Service, Change Detection, Singleton, CQRS, FSD, CI/CD |
 | [`docs/todo/deprecated.md`](docs/todo/deprecated.md) | Dead code inventory per file — unused signals, empty methods, console.logs, commented blocks |
 | [`docs/todo/tools-to-use.md`](docs/todo/tools-to-use.md) | Tooling roadmap: angular-eslint, Playwright, es-toolkit, tsconfig flags, path aliases |
@@ -105,6 +107,8 @@ All architectural decisions, known issues, and improvement proposals live in `do
 6. **`inject()` over constructor** — use `inject()` for all dependency injection; no constructor parameters for DI.
 7. **Input signals** — use `input()` / `input.required()` instead of `@Input()` decorator.
 8. **Annotate issues** — any code that falls under an existing todo must be tagged `// see docs/todo — P# #N`.
+9. **Teaching comments** — when replacing a legacy pattern with a modern API, add `// use <API> because <reason>` so the change teaches the developer. See [`AGENT.md`](AGENT.md) for format and examples.
+10. **Modern Angular APIs** — prefer `afterNextRender()` over `ngOnInit`/`ngAfterViewInit` for browser-only code, `toSignal()` over `async` pipe, `computed()` over imperative `subscribe()` → `signal.set()`, `host` property over `@HostListener`. See [`docs/todo/angular-modern-api.md`](docs/todo/angular-modern-api.md).
 
 ## Deployment
 

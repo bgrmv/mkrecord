@@ -31,6 +31,7 @@ export class CameraTimerComponent implements OnInit {
 
   protected readonly timerSignal = signal('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md#featurescamera-timercamera-timer-componentts — hardcoded past date, meaningless; see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C2
 
+  // see docs/todo/angular-modern-api.md — C2: use constructor + afterNextRender() — same as C1; E2: use toSignal() because subscribe() only forwards values to signal
   ngOnInit() {
     // Run on browser;
     if (this.platformService.isBrowser) {

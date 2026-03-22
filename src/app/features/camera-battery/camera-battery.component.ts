@@ -54,6 +54,8 @@ export class CameraBatteryComponent implements OnInit {
   protected readonly batterySignal = signal<boolean>(true);
   protected readonly batteryIcon = signal<string>(batteryIcons.at(3)!);
 
+  // see docs/todo/angular-modern-api.md — C1: use constructor + afterNextRender() because takeUntilDestroyed() without explicit DestroyRef only works in injection context (constructor)
+  // see docs/todo/angular-modern-api.md — E1: use toSignal() + computed() because subscribe() only maps observable→signal — toSignal() does this declaratively; computed() derives batteryIcon from tick
   ngOnInit() {
     // Run on browser;
     if (this.platformService.isBrowser) {

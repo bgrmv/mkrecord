@@ -70,6 +70,7 @@ export class AppComponent implements OnInit {
     // });
   }
 
+  // see docs/todo/angular-modern-api.md — B3: use afterNextRender() because the entire body is guarded by isBrowser — afterNextRender() does this automatically
   ngOnInit() {
     if (this.platformService.isBrowser) {
       this.initPhoneEvents();

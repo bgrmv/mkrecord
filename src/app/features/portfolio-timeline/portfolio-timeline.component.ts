@@ -40,6 +40,7 @@ export class PortfolioTimelineComponent implements OnInit {
 
   private readonly unsubscribe = new Subject<void>(); // see docs/todo — P2 #15 / deprecated.md — Subject declared but never used, delete
 
+  // see docs/todo/angular-modern-api.md — C3: use constructor + afterNextRender() — same as C1; interval should also move to PortfolioTimelineService (CQRS C4)
   ngOnInit() {
     if (this.platformService.isBrowser) {
       // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C4: rotation interval and activePreview mutation should move to PortfolioService

@@ -1,5 +1,24 @@
 # Technical Debt
 
+## 📌 Context: What's Working Well
+
+Before diving into issues, know what's production-ready:
+
+✅ **Strengths:**
+- Signals API (signal, computed, toSignal, linkedSignal) — excellent adoption
+- OnPush + Zoneless change detection — well configured
+- Standalone components with clean imports — 100% adoption
+- Dependency injection with inject() — consistent across all layers
+- Type safety with strict mode — properly configured
+- RxJS cleanup (takeUntilDestroyed) — good discipline
+- Modern template control flow (@if, @for, @switch) — 100% coverage
+- Input/output signal APIs (input(), viewChild()) — no legacy decorators
+- Lazy image loading — implemented in portfolio
+
+**See:** [../best-practices.md](../best-practices.md) for the full audit.
+
+---
+
 ## SSR Safety
 
 **Rule:** Never call `document.*` or `window.*` directly. Always guard with `PlatformService` or `isPlatformBrowser(inject(PLATFORM_ID))`.
