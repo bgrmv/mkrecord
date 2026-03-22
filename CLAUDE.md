@@ -109,6 +109,7 @@ All architectural decisions, known issues, and improvement proposals live in `do
 8. **Annotate issues** — any code that falls under an existing todo must be tagged `// see docs/todo — P# #N`.
 9. **Teaching comments** — when replacing a legacy pattern with a modern API, add `// use <API> because <reason>` so the change teaches the developer. See [`AGENT.md`](AGENT.md) for format and examples.
 10. **Modern Angular APIs** — prefer `afterNextRender()` over `ngOnInit`/`ngAfterViewInit` for browser-only code, `toSignal()` over `async` pipe, `computed()` over imperative `subscribe()` → `signal.set()`, `host` property over `@HostListener`. See [`docs/todo/angular-modern-api.md`](docs/todo/angular-modern-api.md).
+11. **Import paths** — cross-layer imports use `@alias` path mappings (`@services/*`, `@shared/*`, `@features/*`, etc.); within the same directory use `./` relative imports. No `baseUrl` (deprecated in TS 5.x+). See `tsconfig.json#paths`.
 
 ## Deployment
 

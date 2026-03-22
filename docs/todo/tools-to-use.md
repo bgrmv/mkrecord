@@ -134,26 +134,30 @@ Fix all errors, then keep the flags enabled permanently.
 
 ## 6. TypeScript Path Aliases
 
-**Status:** All imports use relative paths (`../../services/…`, `../../../shared/…`). Long paths break when files are moved and reduce readability.
+**Status:** ✅ Done. All cross-layer imports use path aliases. Same-directory `./` imports remain relative (intentional).
 
-Add to `tsconfig.json` `compilerOptions`:
+Configured in `tsconfig.json` `compilerOptions.paths` (no `baseUrl` — deprecated in TS 5.x+):
 ```json
-"baseUrl": ".",
 "paths": {
-  "@app/*":      ["src/app/*"],
-  "@core/*":     ["src/app/core/*"],
-  "@features/*": ["src/app/features/*"],
-  "@services/*": ["src/app/services/*"],
-  "@pages/*":    ["src/app/pages/*"],
-  "@shared/*":   ["src/app/shared/*"],
-  "@env/*":      ["src/environments/*"]
+  "@app/*":      ["./src/app/*"],
+  "@core/*":     ["./src/app/core/*"],
+  "@features/*": ["./src/app/features/*"],
+  "@services/*": ["./src/app/services/*"],
+  "@pages/*":    ["./src/app/pages/*"],
+  "@shared/*":   ["./src/app/shared/*"]
 }
 ```
 
-Usage after:
+Aliases follow FSD layers: `@pages` → `@features` → `@services` → `@shared`. Upper layers import from lower via aliases; same-layer siblings use `./`.
+
 ```ts
+// cross-layer (use alias)
 import { PlatformService } from '@services/platform.service';
-import { SafePipe } from '@shared/pipes/safe.pipe';
+import { browserInterval } from '@shared/utils/ssr-rxjs';
+import { CategoryEnum } from '@app/constants';
+
+// same-directory (keep relative)
+import { PlatformService } from './platform.service';
 ```
 
 ---

@@ -21,60 +21,63 @@ Before diving into issues, know what's production-ready:
 
 ## SSR Safety
 
-**Rule:** Never call `document.*` or `window.*` directly. Always guard with `PlatformService` or `isPlatformBrowser(inject(PLATFORM_ID))`.
+### Best Practices
 
-### Violations
+**Rule:** Never call `document.*`, `window.*`, or `navigator.*` directly. Always guard browser-only code.
 
-**`features/intro/intro.component.ts:14`**
-```ts
-const videoTarget = document.getElementById('vid');
-```
-Called unconditionally in `onPlay()`. The Angular SSR engine renders this component on the server where `document` is undefined.
-Fix: inject `PlatformService`, guard with `if (platformService.isBrowser)`.
+**Decision tree — which pattern to use:**
 
----
+| Situation | Pattern | Example |
+|-----------|---------|---------|
+| RxJS `interval()`/`timer()` | `browserInterval(platform, ms)` | `browserInterval(this.platform, 5000).pipe(...)` |
+| DOM init in component | `afterNextRender(() => { ... })` | Style setup, `IntersectionObserver` |
+| Method that may run on server | `if (!this.platform.isBrowser) return;` | Event handlers, `onPlay()` |
+| Standalone utility function | `if (typeof document === 'undefined') return;` | `fullscreen-api.ts`, `video-utils.ts` |
+| `SafeResourceUrl` for static assets | **Don't use.** Pass plain `string` | `videoSrc: Signal<string>` |
 
-**`shared/directives/parrallax-item.directive.ts:46-47`**
-```ts
-const screenX = window.innerWidth;
-const screenY = window.innerHeight;
-```
-Inside `@HostListener('document:mousemove')` — fires on SSR during hydration on some versions.
-Fix: check `isPlatformBrowser` before accessing `window`, or use Angular CDK `BreakpointObserver`.
+**Why `browserInterval()` over bare `interval()` + guard?**
+- `interval()` creates an **uncleanable timer leak** on the server — it never completes, blocking SSR response and leaking memory
+- `browserInterval(platform, ms)` returns `EMPTY` on the server — zero overhead, no leak
+- Utility lives in `shared/utils/ssr-rxjs.ts`
 
----
+**Why avoid `SafeResourceUrl` for static assets?**
+- `SafeResourceUrl.toString()` returns `"SafeValue must use [property]=binding: <url> (see https://angular.dev/best-practices/security)"` instead of the raw URL
+- During SSR, Angular serializes `[src]` bindings to strings — this message becomes the actual URL in the HTML
+- The router interprets this as a navigation request → **NG04002** error
+- Only use `bypassSecurityTrustResourceUrl()` for genuinely untrusted/dynamic URLs (user input, external APIs)
 
-**`shared/utils/fullscreen-api.ts:31-34, 41, 54-55`**
-```ts
-document.fullscreenElement       // line 31
-document.fullscreenEnabled       // line 32
-document.querySelectorAll(…)     // line 41
-document.fullscreenElement       // line 54
-document.exitFullscreen()        // line 55
-```
-All called at module scope or in exported functions without SSR guard. Called from `IntroComponent` which runs on server.
-Fix: wrap all `document` access in `isPlatformBrowser`; or convert the whole file to an `@Injectable` class.
+### ✅ Fixed Violations
+
+All P0 SSR violations have been guarded:
+
+- `features/intro/intro.component.ts` — `document.getElementById` guarded with `PlatformService.isBrowser`
+- `shared/directives/parrallax-item.directive.ts` — `window.innerWidth/Height` guarded; `ngOnInit` replaced with `afterNextRender()`
+- `shared/utils/fullscreen-api.ts` — all `document.*` calls guarded with `typeof document !== 'undefined'`
+- `shared/utils/video-utils.ts` — `document.addEventListener/removeEventListener` guarded
+- `services/background-service.ts` — `interval(5000)` replaced with `browserInterval()`; `SafeResourceUrl` removed (static asset URLs)
+- `features/camera-quality-resolution.component.ts` — `interval(3000)` replaced with `browserInterval()`
+- `features/camera-battery/camera-battery.component.ts` — `interval(1500)` replaced with `browserInterval()`
+- `features/camera-timer/camera-timer.component.ts` — `interval(1000)` replaced with `browserInterval()`
+- `features/portfolio-timeline/portfolio-timeline.component.ts` — `interval(5000)` replaced with `browserInterval()`
+- `features/portfolio-block/portfolio-block.component.ts` — DOM access (`playbackRate`, `IntersectionObserver`) moved inside `isBrowser` guard
 
 ---
 
 ## Platform Service
 
-**Status:** Only `services/platform.service.spec.ts` exists. No `platform.service.ts` implementation.
+**Status:** ✅ Implemented in `services/platform.service.ts`.
 
-Five components call `isPlatformBrowser(inject(PLATFORM_ID))` directly:
-- `app.component.ts:80`
-- `features/camera-battery/camera-battery.component.ts:56`
-- `features/camera-timer/camera-timer.component.ts:35`
-- `features/portfolio-timeline/portfolio-timeline.component.ts:43` (constructor injection)
-
-Required implementation shape (do not write yet — document only):
 ```ts
 @Injectable({ providedIn: 'root' })
 export class PlatformService {
-  readonly isBrowser: boolean = isPlatformBrowser(inject(PLATFORM_ID));
-  readonly isMobile: boolean; // wrapping DeviceDetectorService
+  readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  readonly isMobile: Signal<boolean>; // wrapping BreakpointObserver
 }
 ```
+
+All components use `PlatformService` — no direct `isPlatformBrowser(inject(PLATFORM_ID))` calls remain.
+
+**SSR-safe RxJS utility:** `shared/utils/ssr-rxjs.ts` provides `browserInterval(platform, period)` — use this instead of bare `interval()` anywhere a timer must not run on the server.
 
 ---
 

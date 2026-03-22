@@ -1,7 +1,7 @@
-// @ts-check
 import angular from '@angular-eslint/eslint-plugin';
 import angularTemplate from '@angular-eslint/eslint-plugin-template';
 import templateParser from '@angular-eslint/template-parser';
+import boundaries from 'eslint-plugin-boundaries';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import tseslint from 'typescript-eslint';
 
@@ -33,8 +33,20 @@ export default tseslint.config(
     },
     plugins: {
       '@angular-eslint': angular,
+      boundaries,
     },
     processor: angularTemplate.processors['extract-inline-html'],
+    settings: {
+      // FSD layer boundaries — defines allowed import directions
+      'boundaries/elements': [
+        { type: 'pages', pattern: 'src/app/pages/*' },
+        { type: 'features', pattern: 'src/app/features/*' },
+        { type: 'services', pattern: 'src/app/services/*' },
+        { type: 'shared', pattern: 'src/app/shared/*' },
+        { type: 'core', pattern: 'src/app/core/*' },
+        { type: 'app', pattern: 'src/app/*', mode: 'file' },
+      ],
+    },
     rules: {
       // Angular recommended rules
       ...angular.configs.recommended.rules,
@@ -60,6 +72,72 @@ export default tseslint.config(
       // Relax rules that conflict with Angular patterns
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
+
+      // ─── FSD boundaries ─────────────────────────────────────────────
+      // Enforce FSD layer import direction: pages → features → services → shared
+      'boundaries/dependencies': [
+        'error',
+        {
+          default: 'disallow',
+          rules: [
+            // pages → features, services, shared, core, app root
+            {
+              from: { type: 'pages' },
+              allow: [
+                { to: { type: 'features' } },
+                { to: { type: 'services' } },
+                { to: { type: 'shared' } },
+                { to: { type: 'core' } },
+                { to: { type: 'app' } },
+              ],
+            },
+            // features → services, shared, core, app root (NOT sibling features)
+            {
+              from: { type: 'features' },
+              allow: [
+                { to: { type: 'services' } },
+                { to: { type: 'shared' } },
+                { to: { type: 'core' } },
+                { to: { type: 'app' } },
+              ],
+            },
+            // services → shared, core, app root
+            {
+              from: { type: 'services' },
+              allow: [
+                { to: { type: 'shared' } },
+                { to: { type: 'core' } },
+                { to: { type: 'app' } },
+              ],
+            },
+            // shared → app root only (constants, etc.)
+            {
+              from: { type: 'shared' },
+              allow: [{ to: { type: 'app' } }],
+            },
+            // core → services, shared, app root
+            {
+              from: { type: 'core' },
+              allow: [
+                { to: { type: 'services' } },
+                { to: { type: 'shared' } },
+                { to: { type: 'app' } },
+              ],
+            },
+            // app root files → any layer
+            {
+              from: { type: 'app' },
+              allow: [
+                { to: { type: 'pages' } },
+                { to: { type: 'features' } },
+                { to: { type: 'services' } },
+                { to: { type: 'shared' } },
+                { to: { type: 'core' } },
+              ],
+            },
+          ],
+        },
+      ],
     },
   },
 

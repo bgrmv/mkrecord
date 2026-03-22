@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { InfoComponent } from '../features/info.component';
+import { InfoComponent } from '@features/info.component';
 
 @Component({
   selector: 'app-info-page',

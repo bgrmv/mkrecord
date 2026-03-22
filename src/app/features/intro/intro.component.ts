@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { toggleFullscreen } from '../../shared/utils/fullscreen-api';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toggleFullscreen } from '@shared/utils/fullscreen-api';
 import { MatIconModule } from '@angular/material/icon';
+import { PlatformService } from '@services/platform.service';
 
 @Component({
   selector: 'app-intro',
@@ -9,11 +10,14 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './intro.component.html',
   styleUrl: './intro.component.css',
 })
-// see docs/todo — P0 #1: SSR unsafe; see docs/todo/tech-debt.md#ssr-safety
 export class IntroComponent {
+  private readonly platform = inject(PlatformService);
+
   async onPlay() {
-    // console.log(event.)
-    const videoTarget = document.getElementById('vid'); // see docs/todo/tech-debt.md#ssr-safety — requires PlatformService guard
+    // use PlatformService.isBrowser because document.getElementById is not available during SSR
+    if (!this.platform.isBrowser) return;
+
+    const videoTarget = document.getElementById('vid');
     if (videoTarget) {
       // TODO: move it to service
       await toggleFullscreen(videoTarget as HTMLVideoElement);

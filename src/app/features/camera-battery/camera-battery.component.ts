@@ -8,8 +8,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { interval, map } from 'rxjs';
-import { PlatformService } from '../../services/platform.service';
+import { map } from 'rxjs';
+import { PlatformService } from '@services/platform.service';
+import { browserInterval } from '@shared/utils/ssr-rxjs';
 
 const batteryIcons = [
   'battery_1_bar',
@@ -58,17 +59,16 @@ export class CameraBatteryComponent implements OnInit {
   // see docs/todo/angular-modern-api.md — E1: use toSignal() + computed() because subscribe() only maps observable→signal — toSignal() does this declaratively; computed() derives batteryIcon from tick
   ngOnInit() {
     // Run on browser;
-    if (this.platformService.isBrowser) {
-      interval(1500) // see docs/todo — P2 #14: magic number 1500, extract to named constant
-        .pipe(
-          map((timer) => timer % 2 === 0),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe((timer) => {
-          this.batterySignal.update(() => timer);
+    // use browserInterval because bare interval() creates an uncleanable timer leak during SSR
+    browserInterval(this.platformService, 1500) // see docs/todo — P2 #14: magic number 1500, extract to named constant
+      .pipe(
+        map((timer: number) => timer % 2 === 0),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((timer) => {
+        this.batterySignal.update(() => timer);
 
-          this.batteryIcon.set(batteryIcons.at(timer ? 2 : 3)!);
-        });
-    }
+        this.batteryIcon.set(batteryIcons.at(timer ? 2 : 3)!);
+      });
   }
 }

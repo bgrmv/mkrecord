@@ -14,8 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { FooterComponent } from '../core/footer.component';
-import { PlatformService } from '../services/platform.service';
+import { FooterComponent } from '@core/footer.component';
+import { PlatformService } from '@services/platform.service';
 import emailjs from '@emailjs/browser';
 
 // Replace these with your EmailJS account credentials:

@@ -58,6 +58,13 @@ function waitForPlayable(video: HTMLVideoElement, timeout: number) {
 
 function waitForUserInteractionPlay(video: HTMLVideoElement) {
   return new Promise<void>((resolve) => {
+    // use typeof document check because this utility may be called during SSR
+    // where document is not available
+    if (typeof document === 'undefined') {
+      resolve();
+      return;
+    }
+
     const tryPlay = async () => {
       try {
         await video.play();

@@ -11,9 +11,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { CategoryEnum, portfolios } from '../constants';
-import { PortfolioBlockComponent } from '../features/portfolio-block/portfolio-block.component';
-import { PlatformService } from '../services/platform.service';
+import { CategoryEnum, portfolios } from '@app/constants';
+import { PortfolioBlockComponent } from '@features/portfolio-block/portfolio-block.component';
+import { PlatformService } from '@services/platform.service';
 
 export type PortfolioResolution =
   | '480x270'

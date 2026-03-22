@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { HomeBrandComponent } from '../features/home-brand.component';
+import { HomeBrandComponent } from '@features/home-brand.component';
 
 @Component({
   selector: 'app-home-page',

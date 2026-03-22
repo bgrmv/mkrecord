@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
-import { IconService } from '../services/icon.service';
+import { IconService } from '@services/icon.service';
 
 @Component({
   selector: 'app-footer',

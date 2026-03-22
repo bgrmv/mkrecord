@@ -13,10 +13,10 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { CategoryEnum } from '../../constants';
-import { VideoDialogComponent } from '../../core/video-dialog.component';
-import { PlatformService } from '../../services/platform.service';
-import { PortfolioCategory } from '../../types';
+import { CategoryEnum } from '@app/constants';
+import { VideoDialogComponent } from '@core/video-dialog.component';
+import { PlatformService } from '@services/platform.service';
+import { PortfolioCategory } from '@app/types';
 
 @Component({
   selector: 'app-portfolio-block',
@@ -46,28 +46,30 @@ export class PortfolioBlockComponent implements OnDestroy, AfterViewInit {
 
   // see docs/todo/angular-modern-api.md — B1: use afterNextRender() because it's SSR-safe by design and replaces both ngAfterViewInit + isBrowser guard; use DestroyRef.onDestroy() instead of ngOnDestroy
   ngAfterViewInit() {
+    // use PlatformService.isBrowser because video playback, playbackRate, and IntersectionObserver
+    // are browser-only APIs not available during SSR
+    if (!this.platformService.isBrowser) return;
+
     this.videos().forEach((videoRef) => {
       videoRef.nativeElement.playbackRate = 0.5;
     });
 
-    if (this.platformService.isBrowser) {
-      this.observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            video.play().catch((e) => {
-              console.error('Video play failed', e);
-            });
-          } else {
-            video.pause();
-          }
-        });
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting) {
+          video.play().catch((e) => {
+            console.error('Video play failed', e);
+          });
+        } else {
+          video.pause();
+        }
       });
+    });
 
-      this.videos().forEach((videoRef) => {
-        this.observer!.observe(videoRef.nativeElement);
-      });
-    }
+    this.videos().forEach((videoRef) => {
+      this.observer!.observe(videoRef.nativeElement);
+    });
   }
 
   ngOnDestroy() {

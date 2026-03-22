@@ -1,35 +1,42 @@
 import {
+  afterNextRender,
   Directive,
   ElementRef,
   HostListener,
   inject,
   input,
-  OnInit,
 } from '@angular/core';
+import { PlatformService } from '@services/platform.service';
 
-// see docs/todo — P0 #2: SSR unsafe — window.innerWidth/innerHeight on lines 46-47 crash on server; see docs/todo/tech-debt.md#ssr-safety
 @Directive({
   selector: '[parallaxItem]',
 })
-export class ParallaxItemDirective implements OnInit {
+export class ParallaxItemDirective {
   readonly movement = input(0.025);
 
   private readonly eleRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly platform = inject(PlatformService);
 
-  // see docs/todo/angular-modern-api.md — B2: use afterNextRender() because setting DOM styles requires the element to be rendered; ngOnInit runs on server too where DOM manipulation is wasteful
-  ngOnInit(): void {
-    this.eleRef.nativeElement.style.transform = `translate(0px, 0px)`;
-    this.eleRef.nativeElement.style.transition =
-      'transform 0.2s allow-discrete';
+  constructor() {
+    // use afterNextRender because setting DOM styles requires the element to be rendered;
+    // it only runs in the browser, replacing both ngOnInit + isBrowser guard
+    afterNextRender(() => {
+      this.eleRef.nativeElement.style.transform = `translate(0px, 0px)`;
+      this.eleRef.nativeElement.style.transition =
+        'transform 0.2s allow-discrete';
+    });
   }
 
   // see docs/todo/angular-modern-api.md — D2: use host property in @Directive because it centralizes host bindings in metadata
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(e: MouseEvent) {
+    // use PlatformService.isBrowser because window.innerWidth/Height is not available during SSR
+    if (!this.platform.isBrowser) return;
+
     const movement = this.movement() || 0.015;
 
-    const screenX = window.innerWidth; // see docs/todo/tech-debt.md#ssr-safety — window not available on server
-    const screenY = window.innerHeight; // see docs/todo/tech-debt.md#ssr-safety
+    const screenX = window.innerWidth;
+    const screenY = window.innerHeight;
     const screenXHalf = screenX / 2;
     const screenYHalf = screenY / 2;
 

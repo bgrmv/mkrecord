@@ -8,8 +8,9 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { interval, map, scan } from 'rxjs';
-import { PlatformService } from '../../services/platform.service';
+import { map, scan } from 'rxjs';
+import { PlatformService } from '@services/platform.service';
+import { browserInterval } from '@shared/utils/ssr-rxjs';
 
 @Component({
   selector: 'app-camera-timer',
@@ -34,23 +35,21 @@ export class CameraTimerComponent implements OnInit {
   // see docs/todo/angular-modern-api.md — C2: use constructor + afterNextRender() — same as C1; E2: use toSignal() because subscribe() only forwards values to signal
   ngOnInit() {
     // Run on browser;
-    if (this.platformService.isBrowser) {
-      const date = new Date('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md — hardcoded past date, decide on real behavior
-      console.log(date); // see docs/todo/deprecated.md#consolelog-pollution — remove
+    const date = new Date('2024-12-31T00:00:00.000Z'); // see docs/todo/deprecated.md — hardcoded past date, decide on real behavior
+    console.log(date); // see docs/todo/deprecated.md#consolelog-pollution — remove
 
-      interval(1000) // see docs/todo — P2 #14: magic number 1000, extract to named constant
-        .pipe(
-          scan((acc) => {
-            // acc.setMilliseconds(acc.getMilliseconds() + 1); // see docs/todo/deprecated.md — dead commented line, delete
-            acc.setSeconds(acc.getSeconds() + 1);
-            return acc;
-          }, date),
-          map((timer) => timer.toISOString().slice(0, 23)),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe((timer) => {
-          this.timerSignal.update(() => timer);
-        });
-    }
+    // use browserInterval because bare interval() creates an uncleanable timer leak during SSR
+    browserInterval(this.platformService, 1000) // see docs/todo — P2 #14: magic number 1000, extract to named constant
+      .pipe(
+        scan((acc) => {
+          acc.setSeconds(acc.getSeconds() + 1);
+          return acc;
+        }, date),
+        map((timer: Date) => timer.toISOString().slice(0, 23)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((timer) => {
+        this.timerSignal.update(() => timer);
+      });
   }
 }

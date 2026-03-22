@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ContactsMeComponent } from '../features/contacts-me.component';
+import { ContactsMeComponent } from '@features/contacts-me.component';
 
 @Component({
   selector: 'app-contacts-page',

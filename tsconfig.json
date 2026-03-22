@@ -9,7 +9,15 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     // see docs/todo — P2 #22: add noUnusedLocals, noUnusedParameters, exactOptionalPropertyTypes; see docs/todo/tools-to-use.md#5-typescript-strict-flags
-    // see docs/todo — P2 #21: add baseUrl and paths for import aliases; see docs/todo/tools-to-use.md#6-typescript-path-aliases
+    // FSD path aliases — upper layers import lower via @alias, same-directory stays ./
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@services/*": ["./src/app/services/*"],
+      "@shared/*": ["./src/app/shared/*"],
+      "@features/*": ["./src/app/features/*"],
+      "@core/*": ["./src/app/core/*"],
+      "@pages/*": ["./src/app/pages/*"]
+    },
     "skipLibCheck": true,
     "esModuleInterop": true,
     "sourceMap": true,

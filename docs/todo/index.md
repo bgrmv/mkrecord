@@ -11,14 +11,14 @@ Add `// see docs/todo — P# #N` comments at the referenced file:line in source 
 
 These will crash SSR or silently show wrong content in production.
 
-| # | Issue | File:line | Detail |
-|---|-------|-----------|--------|
-| 1 | `document.getElementById` without SSR guard | `features/intro/intro.component.ts:14` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) |
-| 2 | `window.innerWidth/innerHeight` without SSR guard | `shared/directives/parrallax-item.directive.ts:46-47` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) |
-| 3 | `document.*` in fullscreen utility | `shared/utils/fullscreen-api.ts:31-34,41,54-55` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) |
-| 4 | `PlatformService` implementation missing (only spec exists) | `services/platform.service.spec.ts:1` | [tech-debt.md#platform-service](tech-debt.md#platform-service) |
-| 5 | Hardcoded `videoId="rFGxVhX-cIo"` ignores `data.videoId` (dialog always shows wrong video) | `core/video-dialog.component.ts:95` | [deprecated.md#corevideo-dialog-componentts](deprecated.md#corevideo-dialog-componentts) |
-| 6 | `while(true)` infinite loop in `getRandomVideoSrc` | `services/background-service.ts:13` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) |
+| # | Issue | File:line | Detail | Status |
+|---|-------|-----------|--------|--------|
+| 1 | `document.getElementById` without SSR guard | `features/intro/intro.component.ts` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ✅ Fixed — `PlatformService.isBrowser` guard |
+| 2 | `window.innerWidth/innerHeight` without SSR guard | `shared/directives/parrallax-item.directive.ts` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ✅ Fixed — `isBrowser` guard + `afterNextRender()` |
+| 3 | `document.*` in fullscreen utility | `shared/utils/fullscreen-api.ts` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ✅ Fixed — `typeof document` guards |
+| 4 | `PlatformService` implementation missing | `services/platform.service.ts` | [tech-debt.md#platform-service](tech-debt.md#platform-service) | ✅ Fixed — implemented with `isBrowser` + `isMobile` |
+| 5 | Hardcoded `videoId="rFGxVhX-cIo"` ignores `data.videoId` (dialog always shows wrong video) | `core/video-dialog.component.ts:95` | [deprecated.md#corevideo-dialog-componentts](deprecated.md#corevideo-dialog-componentts) | ❌ |
+| 6 | `while(true)` infinite loop in `getRandomVideoSrc` | `services/background-service.ts:14` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ❌ |
 
 ---
 
@@ -47,7 +47,7 @@ These will crash SSR or silently show wrong content in production.
 | 18 | 10+ `console.log` calls in production code paths | multiple files | [deprecated.md#consolelog-pollution](deprecated.md#consolelog-pollution) |
 | 19 | Empty `openDialog()` body — method does nothing | `features/portfolio/portfolio.component.ts:48` | [deprecated.md](deprecated.md) |
 | 20 | Contacts form only calls `preventDefault`, never sends data | `features/contacts-me.component.ts:124` | [improvements/index.md#8-contacts-form--wire-to-backend](../improvements/index.md#8-contacts-form--wire-to-backend) |
-| 21 | Missing path aliases in `tsconfig.json` | `tsconfig.json` | [tools-to-use.md#6-typescript-path-aliases](tools-to-use.md#6-typescript-path-aliases) |
+| 21 | ~~Missing path aliases in `tsconfig.json`~~ | `tsconfig.json` | [tools-to-use.md#6-typescript-path-aliases](tools-to-use.md#6-typescript-path-aliases) | ✅ Done |
 | 22 | Missing strict tsconfig flags (`noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`) | `tsconfig.json` | [tools-to-use.md#5-typescript-strict-flags](tools-to-use.md#5-typescript-strict-flags) |
 | 23 | Typo `deviceSerivce` (missing 'i') | `core/video-dialog.component.ts:120`, `pages/portfolio-page.component.ts:142` | — |
 
@@ -127,6 +127,7 @@ Key items:
 7. Loading skeleton for video thumbnails
 8. CSS `@layer` cascade organization + container queries
 9. Contacts form wired to backend
+10. SSR-safe RxJS utilities — **done** in `shared/utils/ssr-rxjs.ts` (`browserInterval`)
 
 ---
 

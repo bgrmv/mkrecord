@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { interval, map, startWith } from 'rxjs';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { map, startWith } from 'rxjs';
+import { PlatformService } from '@services/platform.service';
+import { browserInterval } from '@shared/utils/ssr-rxjs';
 
 const cameraQualities = ['FHD', 'QHD 2K', 'UHD 4K', '8K UHD'];
 
@@ -28,7 +30,8 @@ function randomChoice(arr: string[]): string {
   template: `<p>{{ quality$ | async }}</p>`,
 })
 export class CameraQualityResolutionComponent {
-  protected quality$ = interval(3000).pipe(
+  // use browserInterval because bare interval() creates an uncleanable timer leak during SSR
+  protected quality$ = browserInterval(inject(PlatformService), 3000).pipe(
     startWith(randomChoice(cameraQualities)),
     map(() => randomChoice(cameraQualities)),
   );

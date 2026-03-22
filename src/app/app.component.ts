@@ -11,17 +11,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, skip } from 'rxjs';
-import { HeaderComponent } from './core/header.component';
-import { SafePipe } from './shared/pipes/safe.pipe';
+import { HeaderComponent } from '@core/header.component';
+import { SafePipe } from '@shared/pipes/safe.pipe';
 import { PlatformModule } from '@angular/cdk/platform';
-import { NavMobileComponent } from './core/nav-mobile.component';
-import { IconService } from './services/icon.service';
+import { NavMobileComponent } from '@core/nav-mobile.component';
+import { IconService } from '@services/icon.service';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { FooterComponent } from './core/footer.component';
-import { BackgroundService } from './services/background-service';
-import { PlatformService } from './services/platform.service';
-import { CameraOverlayComponent } from './features/camera-overlay/camera-overlay.component';
+import { FooterComponent } from '@core/footer.component';
+import { BackgroundService } from '@services/background-service';
+import { PlatformService } from '@services/platform.service';
+import { CameraOverlayComponent } from '@features/camera-overlay/camera-overlay.component';
 
 @Component({
   selector: 'app-root',

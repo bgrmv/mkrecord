@@ -1,20 +1,21 @@
-import { inject, Injectable, PLATFORM_ID, Signal } from '@angular/core';
+import { inject, Injectable, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { delay, filter, interval, map, share, startWith } from 'rxjs';
-import { CategoryEnum, portfolios } from '../constants';
+import { delay, filter, map, share, startWith } from 'rxjs';
+import { CategoryEnum, portfolios } from '@app/constants';
+import { browserInterval } from '@shared/utils/ssr-rxjs';
+import { PlatformService } from './platform.service';
 
 const backgroundVideos = portfolios[CategoryEnum.Horizontal].filter(
   (video) => video.asBackground,
 );
 
 // see docs/todo — P0 #6: while(true) loop hangs if all videos share the same preview src; see docs/todo/tech-debt.md#ssr-safety
-const getRandomVideoSrc = (localVideoSrc?: SafeResourceUrl): string => {
+const getRandomVideoSrc = (currentSrc?: string): string => {
   while (true) {
     const randomIdx = Math.floor(Math.random() * backgroundVideos.length);
 
-    if (backgroundVideos[randomIdx].preview === localVideoSrc) {
+    if (backgroundVideos[randomIdx].preview === currentSrc) {
       continue;
     }
 
@@ -31,40 +32,49 @@ const getRandomVideoSrc = (localVideoSrc?: SafeResourceUrl): string => {
   providedIn: 'root',
 })
 export class BackgroundService {
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly platform = inject(PlatformService);
   private readonly router = inject(Router);
-  private readonly sanitizer = inject(DomSanitizer);
+
+  private currentRawSrc?: string;
 
   public readonly hasBackgroundVideos: Signal<boolean> = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map((url) => (url instanceof NavigationEnd ? url.url : '')),
       map((url) => !url.includes('portfolio')),
-      // map(() => false) // see docs/todo/deprecated.md#servicesbackground-servicets — dead commented code, delete
     ),
     { initialValue: false },
   );
 
-  private readonly videoRotation$ = interval(5000).pipe(
+  // use browserInterval because bare interval() creates an uncleanable timer leak during SSR
+  private readonly videoRotation$ = browserInterval(this.platform, 5000).pipe(
     filter(() => this.hasBackgroundVideos()),
-    map(() => getRandomVideoSrc(this.videoSrc())),
-    startWith(getRandomVideoSrc()),
+    map(() => {
+      const src = getRandomVideoSrc(this.currentRawSrc);
+      this.currentRawSrc = src;
+      return src;
+    }),
+    startWith((() => {
+      const src = getRandomVideoSrc();
+      this.currentRawSrc = src;
+      return src;
+    })()),
     share(),
   );
 
-  public readonly videoSrc: Signal<SafeResourceUrl | undefined> = toSignal(
-    this.videoRotation$.pipe(
-      map((src) => this.sanitizer.bypassSecurityTrustResourceUrl(src)),
-    ),
+  // use string instead of SafeResourceUrl because video src values come from static constants,
+  // not user input — bypassSecurityTrustResourceUrl is unnecessary and its toString()
+  // triggers spurious NG04002 router navigation during SSR
+  public readonly videoSrc: Signal<string | undefined> = toSignal(
+    this.videoRotation$,
     { initialValue: undefined },
   );
 
-  /** Next video URL, emitted 2 s before the swap to begin buffering. */
-  public readonly nextVideoSrc: Signal<SafeResourceUrl | undefined> = toSignal(
+  /** Next video URL, emitted 3 s before the swap to begin buffering. */
+  public readonly nextVideoSrc: Signal<string | undefined> = toSignal(
     this.videoRotation$.pipe(
-      map(() => getRandomVideoSrc(this.videoSrc())),
+      map(() => getRandomVideoSrc(this.currentRawSrc)),
       delay(3000),
-      map((src) => this.sanitizer.bypassSecurityTrustResourceUrl(src)),
     ),
     { initialValue: undefined },
   );
