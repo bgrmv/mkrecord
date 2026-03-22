@@ -3,6 +3,8 @@ import {
   DestroyRef,
   inject,
   signal,
+  OnInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +22,7 @@ const batteryIcons = [
 
 @Component({
   selector: 'app-camera-battery',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatIconModule],
   styles: [
     `
@@ -43,7 +46,7 @@ const batteryIcons = [
   ],
   template: ` <mat-icon [fontIcon]="batteryIcon()" /> `,
 })
-export class CameraBatteryComponent {
+export class CameraBatteryComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformService = inject(PlatformService);
 
@@ -56,10 +59,10 @@ export class CameraBatteryComponent {
     if (this.platformService.isBrowser) {
       interval(1500) // see docs/todo — P2 #14: magic number 1500, extract to named constant
         .pipe(
-          map(timer => timer % 2 === 0),
-          takeUntilDestroyed(this.destroyRef)
+          map((timer) => timer % 2 === 0),
+          takeUntilDestroyed(this.destroyRef),
         )
-        .subscribe(timer => {
+        .subscribe((timer) => {
           this.batterySignal.update(() => timer);
 
           this.batteryIcon.set(batteryIcons.at(timer ? 2 : 3)!);

@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'duration',
 })
 export class DurationPipe implements PipeTransform {
-  transform(value: number, ...args: unknown[]): string {
+  transform(value: number): string {
     if (value < 0) {
       return 'Invalid duration';
     }

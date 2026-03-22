@@ -11,11 +11,31 @@
     --c_black: #0d0d0d;
 
     --color_whitesmoke: whitesmoke;
-    --color_whitesmoke_darken_1: color-mix(in srgb, whitesmoke 80%, transparent);
-    --color_whitesmoke_darken_2: color-mix(in srgb, whitesmoke 60%, transparent);
-    --color_whitesmoke_darken_3: color-mix(in srgb, whitesmoke 40%, transparent);
-    --color_whitesmoke_darken_4: color-mix(in srgb, whitesmoke 20%, transparent);
-    --color_whitesmoke_darken_5: color-mix(in srgb, whitesmoke 10%, transparent);
+    --color_whitesmoke_darken_1: color-mix(
+      in srgb,
+      whitesmoke 80%,
+      transparent
+    );
+    --color_whitesmoke_darken_2: color-mix(
+      in srgb,
+      whitesmoke 60%,
+      transparent
+    );
+    --color_whitesmoke_darken_3: color-mix(
+      in srgb,
+      whitesmoke 40%,
+      transparent
+    );
+    --color_whitesmoke_darken_4: color-mix(
+      in srgb,
+      whitesmoke 20%,
+      transparent
+    );
+    --color_whitesmoke_darken_5: color-mix(
+      in srgb,
+      whitesmoke 10%,
+      transparent
+    );
 
     --color_black_9: color-mix(in srgb, black 90%, transparent);
     --color_black_8: color-mix(in srgb, black 80%, transparent);

@@ -1,6 +1,6 @@
 export async function ensureBackgroundPlay(
   video: HTMLVideoElement,
-  timeout = 100
+  timeout = 100,
 ): Promise<void> {
   setPlaybackProps(video);
 
@@ -15,7 +15,7 @@ export async function ensureBackgroundPlay(
   } catch (e) {
     console.warn(
       'Background video autoplay blocked, will retry on user interaction',
-      e
+      e,
     );
     await waitForUserInteractionPlay(video);
   }
@@ -25,12 +25,12 @@ function setPlaybackProps(video: HTMLVideoElement) {
   try {
     video.muted = true;
     video.autoplay = true;
-    (video as any).playsInline = true;
+    video.playsInline = true;
   } catch {}
 }
 
 function waitForPlayable(video: HTMLVideoElement, timeout: number) {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     if (video.readyState >= 3) return resolve();
 
     let resolved = false;
@@ -57,7 +57,7 @@ function waitForPlayable(video: HTMLVideoElement, timeout: number) {
 }
 
 function waitForUserInteractionPlay(video: HTMLVideoElement) {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     const tryPlay = async () => {
       try {
         await video.play();

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { InfoComponent } from '../features/info.component';
 
 @Component({
   selector: 'app-info-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [InfoComponent],
   template: ` <app-info /> `,
   styles: `

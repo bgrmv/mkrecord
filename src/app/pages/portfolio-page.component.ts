@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, linkedSignal } from '@angular/core';
+import {
+  Component,
+  inject,
+  linkedSignal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -19,6 +24,7 @@ export type PortfolioResolution =
 
 @Component({
   selector: 'app-portfolio-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     MatChipsModule,
@@ -149,7 +155,7 @@ export class PortfolioPageComponent {
   private readonly platformService = inject(PlatformService);
 
   public readonly gridView = linkedSignal(() =>
-    this.platformService.isMobile() ? '1' : '3'
+    this.platformService.isMobile() ? '1' : '3',
   );
 
   public readonly categoryEnum = CategoryEnum;

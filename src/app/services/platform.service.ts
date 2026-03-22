@@ -11,7 +11,7 @@ export class PlatformService {
   readonly isMobile: Signal<boolean> = toSignal(
     inject(BreakpointObserver)
       .observe([Breakpoints.XSmall, Breakpoints.Small])
-      .pipe(map(state => state.matches)),
-    { initialValue: false }
+      .pipe(map((state) => state.matches)),
+    { initialValue: false },
   );
 }

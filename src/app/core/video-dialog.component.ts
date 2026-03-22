@@ -1,4 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -25,6 +30,7 @@ export interface DialogData {
 
 @Component({
   selector: 'app-video-dialog',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
     FormsModule,
@@ -122,6 +128,6 @@ export class VideoDialogComponent {
   public readonly data = inject<DialogData>(MAT_DIALOG_DATA);
 
   protected xy = computed(() =>
-    this.deviceSerivce.isMobile() ? { x: 320, y: 180 } : { x: 960, y: 540 }
+    this.deviceSerivce.isMobile() ? { x: 320, y: 180 } : { x: 960, y: 540 },
   );
 }

@@ -26,11 +26,7 @@
     </video>
   }
   @if (nextVideoSrc()) {
-    <video
-      style="display:none"
-      muted
-      preload="auto"
-      aria-hidden="true">
+    <video style="display: none" muted preload="auto" aria-hidden="true">
       <source [src]="nextVideoSrc()" type="video/webm" />
     </video>
   }

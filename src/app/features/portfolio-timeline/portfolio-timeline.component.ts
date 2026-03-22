@@ -12,8 +12,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { Subject, interval } from 'rxjs';
 
-import { PORTFOLIO_TIMELINE_LIST } from './constants';
 import { PlatformService } from '../../services/platform.service';
+import { PORTFOLIO_TIMELINE_LIST } from './constants';
 
 @Component({
   selector: 'app-portfolio-timeline',
@@ -45,8 +45,8 @@ export class PortfolioTimelineComponent implements OnInit {
       // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C4: rotation interval and activePreview mutation should move to PortfolioService
       interval(5000)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(x => {
-          this.activePreview.update(currentIndex => {
+        .subscribe(() => {
+          this.activePreview.update((currentIndex) => {
             if (currentIndex === PORTFOLIO_TIMELINE_LIST.length - 1) {
               return 0;
             }

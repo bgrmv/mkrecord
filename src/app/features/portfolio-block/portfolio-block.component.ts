@@ -1,7 +1,8 @@
 import { NgOptimizedImage } from '@angular/common';
 import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   ElementRef,
   inject,
   input,
@@ -14,11 +15,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { CategoryEnum } from '../../constants';
 import { VideoDialogComponent } from '../../core/video-dialog.component';
-import { PortfolioCategory } from '../../types';
 import { PlatformService } from '../../services/platform.service';
+import { PortfolioCategory } from '../../types';
 
 @Component({
   selector: 'app-portfolio-block',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconModule,
     NgOptimizedImage,
@@ -29,7 +31,7 @@ import { PlatformService } from '../../services/platform.service';
   templateUrl: './portfolio-block.component.html',
   styleUrl: './portfolio-block.component.css',
 })
-export class PortfolioBlockComponent implements OnDestroy {
+export class PortfolioBlockComponent implements OnDestroy, AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly platformService = inject(PlatformService);
 
@@ -43,23 +45,25 @@ export class PortfolioBlockComponent implements OnDestroy {
   private observer: IntersectionObserver | null = null;
 
   ngAfterViewInit() {
-    this.videos().forEach(videoRef => {
+    this.videos().forEach((videoRef) => {
       videoRef.nativeElement.playbackRate = 0.5;
     });
 
     if (this.platformService.isBrowser) {
-      this.observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
-            video.play().catch(() => {});
+            video.play().catch((e) => {
+              console.error('Video play failed', e);
+            });
           } else {
             video.pause();
           }
         });
       });
 
-      this.videos().forEach(videoRef => {
+      this.videos().forEach((videoRef) => {
         this.observer!.observe(videoRef.nativeElement);
       });
     }
@@ -91,7 +95,7 @@ export class PortfolioBlockComponent implements OnDestroy {
     });
 
     // see docs/todo/tech-debt.md#cqrs--state-ownership-violations — C3: dialog state should be managed by a service; also missing takeUntilDestroyed
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
       console.log('The dialog was closed'); // see docs/todo/deprecated.md#consolelog-pollution — remove
     });
   }

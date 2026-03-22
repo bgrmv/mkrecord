@@ -4,6 +4,8 @@ import {
   ElementRef,
   inject,
   viewChild,
+  OnInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +25,7 @@ import { CameraOverlayComponent } from './features/camera-overlay/camera-overlay
 
 @Component({
   selector: 'app-root',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterOutlet,
     MatIconModule,
@@ -38,7 +41,7 @@ import { CameraOverlayComponent } from './features/camera-overlay/camera-overlay
   styleUrls: ['./app.component.css'],
   providers: [SafePipe, IconService, DeviceDetectorService, BackgroundService], // see docs/todo — P1 #11: IconService provided here AND in footer.component.ts, violates singleton; see docs/todo/tech-debt.md#singleton-violations
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   #destroyRef = inject(DestroyRef); // see docs/todo — P1 #7: duplicate DestroyRef; this one is unused, delete it; see docs/todo/tech-debt.md#destroyref-duplicate
   #router = inject(Router);
   #safePipe = inject(SafePipe);
@@ -76,9 +79,9 @@ export class AppComponent {
   private initPhoneEvents() {
     this.#router.events
       .pipe(
-        filter(event => event instanceof NavigationEnd),
+        filter((event) => event instanceof NavigationEnd),
         skip(1),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.triggerVibration();

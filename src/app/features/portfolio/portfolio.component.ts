@@ -1,10 +1,10 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   HostListener,
-  ViewChild,
   inject,
+  viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,23 +15,22 @@ const ITEM_WIDTH = 800; // see docs/todo — P2 #14: magic number, extract to na
 
 @Component({
   selector: 'app-portfolio',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, MatIconModule, NgOptimizedImage],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.css',
   providers: [],
 })
-export class PortfolioComponent implements AfterViewInit {
+export class PortfolioComponent {
   readonly portfolioList = PORTFOLIO_LIST; // see docs/todo/deprecated.md#featuresportfolioportfolio-componentts — never used in template, delete
 
-  #videoService = inject(VideoService); // see docs/todo — P1 #9: VideoService does not exist in codebase; see docs/todo/deprecated.md
-  constructor(public dialog: MatDialog) {} // see docs/todo — P1 #8: use inject(MatDialog) and remove constructor; see docs/todo/deprecated.md
+  readonly dialog = inject(MatDialog);
 
-  // #destroyRef = inject(DestroyRef);
-  @ViewChild('scrollContainer') scrollContainer: any;
+  protected scrollContainerRef = viewChild<HTMLElement>('scrollContainer'); // see docs/todo/tech-debt.md#angular-quirks — contentChild used instead of ViewChild due to Angular timing issues; should be refactored when Angular releases fixes for ViewChild timing
 
-  disabledLeft: boolean = true;
-  disabledRight: boolean = false;
+  disabledLeft = true;
+  disabledRight = false;
 
   @HostListener('document:keydown', ['$event'])
   setScroll(event: KeyboardEvent) {
@@ -45,26 +44,18 @@ export class PortfolioComponent implements AfterViewInit {
     }
   }
 
-  openDialog(videoUrl: string): void { // see docs/todo — P2 #19: method body is empty, implement or delete; see docs/todo/deprecated.md
-    // this.#videoService.set(videoUrl);
-  }
-
-  ngAfterViewInit() {
-    const container = this.scrollContainer.nativeElement as HTMLElement;
-    const scrollWidth = container.scrollWidth;
-    const scrolled = container.scrollLeft;
-  }
-
   onScrollLeft() {
-    const container = this.scrollContainer.nativeElement as HTMLElement;
-    const scrolled = container.scrollLeft;
+    const scrollRef = this.scrollContainerRef();
+    if (!scrollRef) return;
+
+    const scrolled = scrollRef.scrollLeft;
 
     // Ensure scrolled is a multiple of ITEM_WIDTH to avoid misalignment
     const finalWidth = Math.max(
       0,
-      Math.floor(scrolled / ITEM_WIDTH) * ITEM_WIDTH - ITEM_WIDTH
+      Math.floor(scrolled / ITEM_WIDTH) * ITEM_WIDTH - ITEM_WIDTH,
     );
-    container.scrollLeft = finalWidth;
+    scrollRef.scrollLeft = finalWidth;
 
     this.disabledLeft = finalWidth === 0;
     this.disabledRight = false;
@@ -73,7 +64,9 @@ export class PortfolioComponent implements AfterViewInit {
   }
 
   onScrollRight() {
-    const container = this.scrollContainer.nativeElement as HTMLElement;
+    const container = this.scrollContainerRef();
+    if (!container) return;
+
     const scrollWidth = container.scrollWidth;
     const scrolled = container.scrollLeft;
     const lastIndex = Math.floor(scrollWidth / ITEM_WIDTH) - 1;
@@ -81,7 +74,7 @@ export class PortfolioComponent implements AfterViewInit {
     // Ensure scrolled is a multiple of ITEM_WIDTH to avoid misalignment
     const finalWidth = Math.min(
       scrollWidth - container.clientWidth,
-      Math.floor(scrolled / ITEM_WIDTH) * ITEM_WIDTH + ITEM_WIDTH
+      Math.floor(scrolled / ITEM_WIDTH) * ITEM_WIDTH + ITEM_WIDTH,
     );
     container.scrollLeft = finalWidth;
 
@@ -91,7 +84,8 @@ export class PortfolioComponent implements AfterViewInit {
     console.log({ scrolled, finalWidth, lastIndex });
   }
 
-  isCloseTo(number1: number, number2: number, tolerance = ITEM_WIDTH + 100) { // see docs/todo/deprecated.md#featuresportfolioportfolio-componentts — never called, delete
+  isCloseTo(number1: number, number2: number, tolerance = ITEM_WIDTH + 100) {
+    // see docs/todo/deprecated.md#featuresportfolioportfolio-componentts — never called, delete
     // Проверяем, находится ли разница между числами в пределах заданной погрешности
     console.log(number1, number2, Math.abs(number1 - number2) <= tolerance);
     return Math.abs(number1 - number2) <= tolerance;

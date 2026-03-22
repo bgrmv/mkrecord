@@ -14,7 +14,7 @@ import {
 export class ParallaxItemDirective implements OnInit {
   readonly movement = input(0.025);
 
-  private readonly eleRef = inject(ElementRef);
+  private readonly eleRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   ngOnInit(): void {
     this.eleRef.nativeElement.style.transform = `translate(0px, 0px)`;

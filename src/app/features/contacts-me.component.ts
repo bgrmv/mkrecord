@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -21,6 +26,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
 
 @Component({
   selector: 'app-contacts-me',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     MatInputModule,
@@ -129,16 +135,17 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
         margin-top: 12px;
         font-size: 14px;
 
-        &.success { color: #4caf50; }
-        &.error { color: var(--c_red); }
+        &.success {
+          color: #4caf50;
+        }
+        &.error {
+          color: var(--c_red);
+        }
       }
     `,
   ],
   template: `
-    <form
-      id="contacts"
-      [formGroup]="formGroup"
-      (submit)="onSubmit($event)">
+    <form id="contacts" [formGroup]="formGroup" (submit)="onSubmit($event)">
       <q>Tell me about your project, and I'll bring it to life.</q><br />
       <q>Let's film the magic on camera! </q><br />
 
@@ -211,7 +218,7 @@ export class ContactsMeComponent {
           from_email: this.formGroup.value.email,
           message: this.formGroup.value.text,
         },
-        { publicKey: EMAILJS_PUBLIC_KEY }
+        { publicKey: EMAILJS_PUBLIC_KEY },
       );
       this.submitSuccess.set(true);
       this.formGroup.reset();

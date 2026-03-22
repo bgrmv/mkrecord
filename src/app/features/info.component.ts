@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-info',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatDivider],
   styles: [
     `

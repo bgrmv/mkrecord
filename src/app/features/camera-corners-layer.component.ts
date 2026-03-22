@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CameraBatteryComponent } from './camera-battery/camera-battery.component';
 import { CameraQualityResolutionComponent } from './camera-quality-resolution.component';
 import { CameraRecComponent } from './camera-rec.component';
@@ -6,6 +6,7 @@ import { CameraTimerComponent } from './camera-timer/camera-timer.component';
 
 @Component({
   selector: 'app-camera-corners-layer',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CameraTimerComponent,
     CameraBatteryComponent,

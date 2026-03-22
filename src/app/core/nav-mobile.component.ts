@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -6,6 +6,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 // see docs/todo — P1 #10: missing ChangeDetectionStrategy.OnPush; see docs/todo/tech-debt.md#change-detection
 @Component({
   selector: 'app-nav-mobile',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatIconModule, RouterLink, RouterLinkActive, MatButtonToggleModule],
   styles: [
     `

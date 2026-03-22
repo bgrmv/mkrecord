@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -7,6 +7,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 @Component({
   selector: 'app-nav',
   imports: [MatIconModule, RouterLink, RouterLinkActive, MatButtonToggleModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [
     `
       :host {

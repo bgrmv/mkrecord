@@ -1,8 +1,5 @@
 <section>
-  <div
-    #scrollContainer
-    class="scroll-container"
-  >
+  <div #scrollContainer class="scroll-container">
     @for (
       portfolios of portfolioList;
       track portfolios;
@@ -13,16 +10,12 @@
 
         <div class="grid-row portfolio">
           @for (portfolio of portfolios; track portfolio) {
-            <div
-              class="preview"
-              (click)="openDialog(portfolio.videoUrl)"
-            >
+            <div class="preview" (click)="openDialog(portfolio.videoUrl)">
               <img
                 width="600"
                 height="900"
                 [ngSrc]="portfolio.preview"
-                loading="lazy"
-              />
+                loading="lazy" />
             </div>
           }
         </div>
@@ -36,8 +29,7 @@
       class="left"
       (click)="onScrollLeft()"
       (keydown)="setScroll($event)"
-      [disabled]="disabledLeft"
-    >
+      [disabled]="disabledLeft">
       <!-- Arrow left -->
       <mat-icon fontIcon="navigate_next"></mat-icon>
     </button>
@@ -46,8 +38,7 @@
       class="right"
       (click)="onScrollRight()"
       (keydown)="setScroll($event)"
-      [disabled]="disabledRight"
-    >
+      [disabled]="disabledRight">
       <mat-icon fontIcon="navigate_next"></mat-icon>
       <!-- Arrow right -->
     </button>

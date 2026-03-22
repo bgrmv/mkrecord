@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const p = require\\(''@angular-eslint/eslint-plugin-template''\\); console.log\\(Object.keys\\(p\\)\\)\")",
+      "Bash(node -e \":*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm format:check)",
+      "Bash(npx tsc:*)",
+      "WebSearch"
+    ]
+  }
+}

@@ -26,7 +26,7 @@
       </video>
  */
 
-export function fullScreenChange(event: any) {
+export function fullScreenChange() {
   console.log('HEY');
   console.log(event);
 
@@ -39,24 +39,26 @@ export function fullScreenChange(event: any) {
   }
 }
 
-async function pauseAndHideVideos() {
-  for await (const vidElement of document.querySelectorAll('video')) { // see docs/todo/tech-debt.md#ssr-safety
+function pauseAndHideVideos() {
+  for (const vidElement of document.querySelectorAll('video')) {
+    // see docs/todo/tech-debt.md#ssr-safety
     vidElement.pause();
     vidElement.style.display = 'none';
   }
 }
 
-function playAndShowVideo(target: HTMLVideoElement) {
+async function playAndShowVideo(target: HTMLVideoElement) {
   target.style.display = 'block';
-  target.play();
-  target.requestFullscreen();
+  await target.play();
+  await target.requestFullscreen();
 }
 
-export const toggleFullscreen = (target: HTMLVideoElement) => {
-  if (document.fullscreenElement) { // see docs/todo/tech-debt.md#ssr-safety
-    document.exitFullscreen();
+export const toggleFullscreen = async (target: HTMLVideoElement) => {
+  if (document.fullscreenElement) {
+    // see docs/todo/tech-debt.md#ssr-safety
+    await document.exitFullscreen();
     pauseAndHideVideos();
   } else {
-    playAndShowVideo(target);
+    await playAndShowVideo(target);
   }
 };
