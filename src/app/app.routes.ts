@@ -1,34 +1,38 @@
 import { Routes } from '@angular/router';
-import { EmptyComponent } from './core/empty.component';
-import { ContactsPageComponent } from './pages/contacts-page.component';
-import { HomePageComponent } from './pages/home-page.component';
-import { InfoPageComponent } from './pages/info-page.component';
-import { PortfolioPageComponent } from './pages/portfolio-page.component';
 
 export const ROUTES: Routes = [
   {
     path: '',
     title: 'Home',
     pathMatch: 'full',
-    component: HomePageComponent,
+    loadComponent: () =>
+      import('./pages/home-page.component').then(m => m.HomePageComponent),
   },
   {
     path: 'info',
     title: 'Info',
-    component: InfoPageComponent,
+    loadComponent: () =>
+      import('./pages/info-page.component').then(m => m.InfoPageComponent),
   },
   {
     path: 'portfolio',
     title: 'Portfolio',
-    component: PortfolioPageComponent,
+    loadComponent: () =>
+      import('./pages/portfolio-page.component').then(
+        m => m.PortfolioPageComponent,
+      ),
   },
   {
     path: 'contacts',
     title: 'Contacts',
-    component: ContactsPageComponent,
+    loadComponent: () =>
+      import('./pages/contacts-page.component').then(
+        m => m.ContactsPageComponent,
+      ),
   },
   {
     path: '**',
-    component: EmptyComponent,
+    loadComponent: () =>
+      import('./core/empty.component').then(m => m.EmptyComponent),
   },
 ];

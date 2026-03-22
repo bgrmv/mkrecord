@@ -31,7 +31,7 @@ import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timel
         display: flex;
         gap: 10px;
         flex-direction: column;
-        width: calc(100vw - 60%);
+        width: calc(100vh - 60%);
 
         img.studio {
           padding: 10px 0;
