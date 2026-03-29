@@ -21,6 +21,13 @@ import { CameraTimerComponent } from './camera-timer/camera-timer.component';
         width: 100%;
         height: 100%;
         pointer-events: none;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        // use CSS custom properties to brighten entire camera overlay during parallax; affects all child elements
+        filter: brightness(var(--corner-brightness, 1));
+        opacity: var(--corner-opacity, 0.6);
+        transition: opacity 0.3s ease-out, filter 0.3s ease-out;
       }
 
       .corners-container {

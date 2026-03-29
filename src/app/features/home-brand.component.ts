@@ -1,22 +1,19 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-// see docs/todo/deprecated.md#featureshome-brand-componentts — unused imports below; also FSD violation (feature importing sibling feature); see docs/todo/tech-debt.md#fsd-layer-violations
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+// use ParallaxItemDirective because it provides depth effect for brand logo via mouse tracking with requestAnimationFrame optimization
 import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directive';
-import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timeline.component';
 
 @Component({
   selector: 'app-home-brand',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PortfolioTimelineComponent, ParallaxItemDirective],
+  imports: [],
+  // use hostDirectives because it applies directive to component's host element in angular way; better than direct DOM manipulation
+  hostDirectives: [ParallaxItemDirective],
   styles: [
     `
       :host {
         position: relative;
         width: calc(45% - 150px);
         min-width: 230px;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
         display: flex;
 
         justify-content: center;
@@ -32,6 +29,15 @@ import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timel
         gap: 10px;
         flex-direction: column;
         width: calc(100vh - 60%);
+
+        // use CSS custom property for glitch effect from parallax directive; applies micro-offset to brand images
+        transform: translate(var(--glitch-offset-x, 0), var(--glitch-offset-y, 0));
+        transition: transform 0.05s linear;
+
+        img {
+          // use will-change to prepare GPU for glitch animations
+          will-change: transform;
+        }
 
         img.studio {
           padding: 10px 0;
@@ -53,6 +59,4 @@ import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timel
     </div>
   `,
 })
-export class HomeBrandComponent {
-  readonly timelineImageSignal = signal<string | null>(null); // see docs/todo/deprecated.md#featureshome-brand-componentts — never used, delete
-}
+export class HomeBrandComponent {}

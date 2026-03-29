@@ -1,9 +1,9 @@
 import { inject, Injectable, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { delay, filter, map, share, startWith } from 'rxjs';
 import { CategoryEnum, portfolios } from '@app/constants';
 import { browserInterval } from '@shared/utils/ssr-rxjs';
+import { delay, filter, map, share, startWith } from 'rxjs';
 import { PlatformService } from './platform.service';
 
 const backgroundVideos = portfolios[CategoryEnum.Horizontal].filter(
@@ -54,11 +54,13 @@ export class BackgroundService {
       this.currentRawSrc = src;
       return src;
     }),
-    startWith((() => {
-      const src = getRandomVideoSrc();
-      this.currentRawSrc = src;
-      return src;
-    })()),
+    startWith(
+      (() => {
+        const src = getRandomVideoSrc();
+        this.currentRawSrc = src;
+        return src;
+      })(),
+    ),
     share(),
   );
 
