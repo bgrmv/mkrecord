@@ -1,0 +1,22 @@
+{
+  "name": "frontend-design",
+  "version": "1.0.0",
+  "description": "Frontend design skill for creating distinctive, production-grade UI with bold aesthetic choices",
+  "author": {
+    "name": "Prithvi Rajasekaran, Alexander Bricken",
+    "email": "prithvi@anthropic.com, alexander@anthropic.com"
+  },
+  "triggers": {
+    "keywords": [
+      "дизайн",
+      "UI",
+      "interface",
+      "component",
+      "styling",
+      "aesthetic",
+      "визуальный",
+      "верстка",
+      "стилизация"
+    ]
+  }
+}

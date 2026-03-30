@@ -8,7 +8,14 @@
       "Bash(npx tsc:*)",
       "WebSearch",
       "Bash(pnpm -v)",
-      "Bash(npx ng:*)"
+      "Bash(npx ng:*)",
+      "Bash(pnpm start:dev)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(pnpm build:dev)",
+      "Bash(netstat -ano)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git reset:*)"
     ]
   }
 }
