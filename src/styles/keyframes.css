@@ -1,0 +1,45 @@
+/* use keyframes for cursor levitate animation — subtle vertical float */
+@keyframes cursor-levitate {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* use keyframes for cursor pulse animation on interactive hover */
+@keyframes cursor-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.5;
+  }
+}
+
+/* use keyframes for cursor glitch effect on click — mirrors vt-glitch chromatic aberration */
+@keyframes cursor-glitch {
+  0% {
+    transform: translate(0, 0);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    transform: translate(3px, -2px);
+    filter: hue-rotate(90deg);
+  }
+  50% {
+    transform: translate(-2px, 2px);
+    filter: hue-rotate(180deg);
+  }
+  75% {
+    transform: translate(2px, 1px);
+    filter: hue-rotate(270deg);
+  }
+  100% {
+    transform: translate(0, 0);
+    filter: hue-rotate(360deg);
+  }
+}

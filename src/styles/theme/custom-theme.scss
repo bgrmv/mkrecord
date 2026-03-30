@@ -33,6 +33,14 @@ html {
   @include mat.list-theme($theme);
   @include mat.chips-theme($theme);
   @include mat.button-toggle-theme($theme);
+  @include mat.chips-overrides((
+    outline-color: rgba(224, 78, 66, 0.5),
+    label-text-color: #e8e8e8,
+    selected-label-text-color: white,
+    focus-state-layer-color: rgba(224, 78, 66, 0.08),
+    hover-state-layer-color: rgba(224, 78, 66, 0.04),
+    container-shape-radius: 20px,
+  ));
   @include mat.tabs-theme($theme);
   @include mat.tabs-overrides(
     (

@@ -10,9 +10,11 @@ import { InfoComponent } from '@features/info.component';
     :host {
       display: flex;
       justify-content: center;
-      align-items: start;
+      align-items: center;
       height: 100%;
-      overflow-y: auto; /* see docs/todo/ui — A1 */
+      width: 100%;
+      overflow: hidden;
+      padding-top: clamp(20px, 3vh, 40px);
     }
   `,
 })

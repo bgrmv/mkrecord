@@ -87,4 +87,11 @@
     font-weight: 300;
     text-wrap: balance;
   }
+
+  /* use media query to hide native cursor on pointer devices (desktop) — custom cursor handles this */
+  @media (hover: hover) and (pointer: fine) {
+    * {
+      cursor: none !important;
+    }
+  }
 }
