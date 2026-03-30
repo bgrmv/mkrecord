@@ -22,6 +22,7 @@ import { FooterComponent } from '@core/footer.component';
 import { BackgroundService } from '@services/background-service';
 import { PlatformService } from '@services/platform.service';
 import { CameraOverlayComponent } from '@features/camera-overlay/camera-overlay.component';
+import { CursorComponent } from '@features/cursor/cursor.component';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,7 @@ import { CameraOverlayComponent } from '@features/camera-overlay/camera-overlay.
     FooterComponent,
     NavMobileComponent,
     CameraOverlayComponent,
+    CursorComponent,
     SafePipe,
     YouTubePlayer,
     PlatformModule,
