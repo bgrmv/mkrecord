@@ -96,6 +96,25 @@ All architectural decisions, known issues, and improvement proposals live in `do
 | [`docs/todo/tools-to-use.md`](docs/todo/tools-to-use.md) | Tooling roadmap: angular-eslint, Playwright, es-toolkit, tsconfig flags, path aliases |
 | [`docs/improvements/index.md`](docs/improvements/index.md) | Non-blocking best-practice improvements: signals API, CSS architecture, video preloading, virtual scroll |
 | [`docs/architecture.md`](docs/architecture.md) | Component hierarchy, data flow diagrams, full tech stack |
+| [`docs/frontend-design/SKILL.md`](docs/frontend-design/SKILL.md) | **Frontend Design Plugin** — principles for distinctive, production-grade UI. Activated by design-related keywords. |
+| [`docs/frontend-design/HOW_TO_USE.md`](docs/frontend-design/HOW_TO_USE.md) | **How to use** the Frontend Design skill — examples, triggers, and context for camera-aesthetic mkrecord. |
+
+### Claude Code Plugins
+
+#### Frontend Design Plugin
+
+This project is equipped with the **Frontend Design Plugin** (configured in `.claude-plugin/plugin.json`). The plugin automatically activates when you use design-related keywords in prompts:
+
+**Keywords that trigger it**: `дизайн`, `UI`, `interface`, `component`, `styling`, `aesthetic`, `визуальный`, `верстка`, `стилизация`
+
+**What it does**: When triggered, the plugin applies distinctive design principles to create production-grade interfaces with bold aesthetic choices, avoiding generic AI aesthetics.
+
+**How to use**: Just mention design/UI in your prompts. Examples:
+- *"Улучши дизайн Header компонента с camera-aesthetic"*
+- *"Переработай UI portfolio-cards с distinctive styling"*
+- *"Создай новый компонент intro-screen с bold дизайном"*
+
+**Read first**: [`docs/frontend-design/HOW_TO_USE.md`](docs/frontend-design/HOW_TO_USE.md) for detailed examples and principles.
 
 ### Rules when writing code
 
