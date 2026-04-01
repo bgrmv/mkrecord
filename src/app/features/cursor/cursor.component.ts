@@ -1,12 +1,19 @@
 import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
+  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
+  Injector,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DomPortal, DomPortalOutlet } from '@angular/cdk/portal';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { MatDialog } from '@angular/material/dialog';
 import { MouseHeatService } from '@services/mouse-heat.service';
 import { PlatformService } from '@services/platform.service';
 
@@ -116,39 +123,44 @@ export class CursorComponent {
   constructor() {
     const doc = inject(DOCUMENT);
     const el = inject(ElementRef<HTMLElement>);
+    const appRef = inject(ApplicationRef);
+    const injector = inject(Injector);
+    const overlayContainer = inject(OverlayContainer);
+    const matDialog = inject(MatDialog);
+    const destroyRef = inject(DestroyRef);
 
-    // use cursor-portal as home base; when a popover opens (cdk-overlay uses
-    // popover="manual" which enters the browser top layer — no z-index beats it),
-    // move cursor inside the active popover so it shares the top layer;
-    // restore to portal when every popover has closed
+    // use DomPortal + DomPortalOutlet (Angular CDK) instead of raw appendChild;
+    // use MatDialog observables instead of mousemove + composedPath heuristics —
+    // afterAllClosed fires reliably on dialog close regardless of mouse movement,
+    // fixing the cursor-disappear-after-close bug
     afterNextRender(() => {
       const host = el.nativeElement;
-      const home = doc.getElementById('cursor-portal') ?? doc.body;
-      home.appendChild(host);
+      const homeEl = doc.getElementById('cursor-portal') ?? doc.body;
+      const cursorPortal = new DomPortal(host);
 
-      // use mousemove + composedPath to dynamically re-parent cursor:
-      // if the mouse is inside an open popover (cdk uses popover="manual" which
-      // enters the browser top layer), move cursor inside that popover so it
-      // shares the top layer; otherwise keep cursor in home.
-      // this replaces toggle-based tracking — dialog close is handled for free:
-      // the next mousemove after close puts cursor back in home automatically
-      doc.addEventListener(
-        'mousemove',
-        (e: MouseEvent) => {
-          const activePopover = (e.composedPath() as Element[]).find(
-            (node) =>
-              node !== host &&
-              node instanceof HTMLElement &&
-              node.matches('[popover]:popover-open'),
-          ) as HTMLElement | undefined;
-
-          const dest = activePopover ?? home;
-          if (host.parentElement !== dest) {
-            dest.appendChild(host);
-          }
-        },
-        { passive: true, capture: true },
+      const homeOutlet = new DomPortalOutlet(homeEl, appRef, injector);
+      const overlayOutlet = new DomPortalOutlet(
+        overlayContainer.getContainerElement(),
+        appRef,
+        injector,
       );
+
+      homeOutlet.attach(cursorPortal);
+
+      matDialog.afterOpened.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
+        if (homeOutlet.hasAttached()) homeOutlet.detach();
+        if (!overlayOutlet.hasAttached()) overlayOutlet.attach(cursorPortal);
+      });
+
+      matDialog.afterAllClosed.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
+        if (overlayOutlet.hasAttached()) overlayOutlet.detach();
+        if (!homeOutlet.hasAttached()) homeOutlet.attach(cursorPortal);
+      });
+
+      destroyRef.onDestroy(() => {
+        if (homeOutlet.hasAttached()) homeOutlet.detach();
+        if (overlayOutlet.hasAttached()) overlayOutlet.detach();
+      });
     });
   }
 
