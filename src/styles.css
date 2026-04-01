@@ -7,6 +7,11 @@
 @import './styles/keyframes.css';
 @import './styles/view-transition.css';
 
+/* use cursor:none globally so the custom cursor component is the only visible cursor */
+*, *::before, *::after {
+  cursor: none !important;
+}
+
 app-root {
   position: fixed;
   top: 0;
@@ -22,6 +27,12 @@ app-root {
 .grid-row {
   width: 100%;
   display: flex;
+}
+
+/* use explicit unlayered z-index to override @layer cdk-overlay (z-index:1000);
+   cursor component sits at 10000 — overlay stack must stay below that */
+.cdk-overlay-container {
+  z-index: 9980;
 }
 
 .backdrop-dialog {

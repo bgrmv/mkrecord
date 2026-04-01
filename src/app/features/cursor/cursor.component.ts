@@ -1,7 +1,10 @@
+import { DOCUMENT } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   inject,
 } from '@angular/core';
 import { MouseHeatService } from '@services/mouse-heat.service';
@@ -18,7 +21,7 @@ import { PlatformService } from '@services/platform.service';
         top: 0;
         left: 0;
         pointer-events: none;
-        z-index: 10000;
+        z-index: 2147483647;
       }
 
       .cursor-container {
@@ -109,6 +112,45 @@ import { PlatformService } from '@services/platform.service';
 export class CursorComponent {
   readonly platform = inject(PlatformService);
   private readonly mouseHeat = inject(MouseHeatService);
+
+  constructor() {
+    const doc = inject(DOCUMENT);
+    const el = inject(ElementRef<HTMLElement>);
+
+    // use cursor-portal as home base; when a popover opens (cdk-overlay uses
+    // popover="manual" which enters the browser top layer — no z-index beats it),
+    // move cursor inside the active popover so it shares the top layer;
+    // restore to portal when every popover has closed
+    afterNextRender(() => {
+      const host = el.nativeElement;
+      const home = doc.getElementById('cursor-portal') ?? doc.body;
+      home.appendChild(host);
+
+      // use mousemove + composedPath to dynamically re-parent cursor:
+      // if the mouse is inside an open popover (cdk uses popover="manual" which
+      // enters the browser top layer), move cursor inside that popover so it
+      // shares the top layer; otherwise keep cursor in home.
+      // this replaces toggle-based tracking — dialog close is handled for free:
+      // the next mousemove after close puts cursor back in home automatically
+      doc.addEventListener(
+        'mousemove',
+        (e: MouseEvent) => {
+          const activePopover = (e.composedPath() as Element[]).find(
+            (node) =>
+              node !== host &&
+              node instanceof HTMLElement &&
+              node.matches('[popover]:popover-open'),
+          ) as HTMLElement | undefined;
+
+          const dest = activePopover ?? home;
+          if (host.parentElement !== dest) {
+            dest.appendChild(host);
+          }
+        },
+        { passive: true, capture: true },
+      );
+    });
+  }
 
   /* use computed to center the dot on the cursor position */
   readonly dotTransform = computed(() => {

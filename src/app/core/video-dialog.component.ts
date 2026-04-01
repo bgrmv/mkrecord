@@ -66,9 +66,25 @@ export interface DialogData {
         background-color: transparent;
       }
 
+      .video-wrapper {
+        position: relative;
+        display: block;
+        overflow: hidden;
+      }
+
       youtube-player {
         display: block;
         overflow: hidden;
+      }
+
+      /* use pointer-events:auto overlay so mousemove fires over the iframe,
+         letting the cursor component track position inside the video;
+         cursor:none suppresses the native browser cursor over the iframe */
+      .video-overlay {
+        position: absolute;
+        inset: 0;
+        cursor: none;
+        pointer-events: auto;
       }
 
       ::ng-deep .youtube-player-placeholder-button {
@@ -104,13 +120,16 @@ export interface DialogData {
         placeholderImageQuality="high"
         [disablePlaceholder]="false" />
     } @else {
-      <youtube-player
-        [videoId]="data.videoId"
-        [playerVars]="{ autoplay: 1, controls: 1, color: 'red', showinfo: 1 }"
-        placeholderImageQuality="high"
-        [disablePlaceholder]="false"
-        [width]="xy().x"
-        [height]="xy().y" />
+      <div class="video-wrapper">
+        <youtube-player
+          [videoId]="data.videoId"
+          [playerVars]="{ autoplay: 1, controls: 1, color: 'red', showinfo: 1 }"
+          placeholderImageQuality="high"
+          [disablePlaceholder]="false"
+          [width]="xy().x"
+          [height]="xy().y" />
+        <div class="video-overlay"></div>
+      </div>
     }
   `,
   providers: [
