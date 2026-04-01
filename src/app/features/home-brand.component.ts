@@ -54,9 +54,11 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
   ],
   template: `
     <div class="brand">
-      <img class="mk" src="assets/brand/mk.svg" />
-      <img class="studio" src="assets/brand/studio.svg" />
+      
+      <img class="mk" src="assets/brand/mk-white.svg" />
     </div>
+    <!-- <img class="mk" src="assets/brand/mk.svg" />
+    <img class="studio" src="assets/brand/studio.svg" /> -->
   `,
 })
 export class HomeBrandComponent {}

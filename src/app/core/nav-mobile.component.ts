@@ -1,108 +1,248 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { IconService } from '@services/icon.service';
 
-// see docs/todo — P1 #10: missing ChangeDetectionStrategy.OnPush; see docs/todo/tech-debt.md#change-detection
 @Component({
   selector: 'app-nav-mobile',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, RouterLink, RouterLinkActive, MatButtonToggleModule],
+  imports: [MatIconModule, RouterLink, RouterLinkActive],
+  providers: [IconService],
   styles: [
     `
+      @keyframes focus-glow {
+        0%,
+        100% {
+          text-shadow:
+            0 0 8px rgba(224, 78, 66, 0.3),
+            1px 1px 0 rgb(0, 0, 0);
+        }
+        50% {
+          text-shadow:
+            0 0 16px rgba(224, 78, 66, 0.5),
+            0 0 24px rgba(224, 78, 66, 0.2),
+            1px 1px 0 rgb(0, 0, 0);
+        }
+      }
+
       :host {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-
-        display: flex;
-        align-items: center;
-
-        /* padding: 15px 0 !important; */
-
-        z-index: 9999;
-
-        width: 100%;
-        /* border-top: 1px solid var(--color_whitesmoke_darken_4); */
-        /* background-color: black; */
-        /* height: max-content; */
-
-        height: 60px; /* Задайте высоту панели */
         z-index: 1000;
-        padding-bottom: env(
-          safe-area-inset-bottom
-        ); /* Для учета вырезов экранов */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Добавьте тень для визуального разделения */
+        display: flex;
+        flex-direction: column;
       }
 
-      nav {
-        width: 100%;
-        height: 100%;
+      /* --- Compact footer --- */
+      .mobile-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 6px 16px;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(224, 78, 66, 0.1);
 
-        font-size: 50px;
-
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 0;
-
-        color: var(--color_whitesmoke);
-
-        a {
-          width: 100%;
-          height: 100%;
+        .social-link {
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 4px;
+          color: var(--color_whitesmoke_darken_3);
+          transition: color 200ms ease;
 
-          &.active {
-            color: var(--color_black_9);
-            background-color: var(--c_red);
+          &:hover,
+          &:active {
+            color: var(--c_red_d1);
           }
+
+          mat-icon {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+          }
+        }
+
+        .copyright {
+          font-size: 9px;
+          color: var(--color_whitesmoke_darken_4);
+          margin-left: 8px;
+          white-space: nowrap;
+          font-weight: 300;
         }
       }
 
-      .nav-mobile-icon {
-        width: 25px;
-        height: 25px;
-        font-size: 25px;
+      /* --- Bottom tab bar --- */
+      nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: rgba(0, 0, 0, 0.92);
+        backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(224, 78, 66, 0.15);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .tab-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        padding: 10px 0;
+        position: relative;
+        color: var(--color_whitesmoke_darken_3);
+        transition:
+          color 200ms ease,
+          background 200ms ease;
+
+        /* Top accent line */
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 2px;
+          background: var(--c_red);
+          border-radius: 0 0 2px 2px;
+          transition: width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .tab-icon {
+          font-size: 22px;
+          width: 22px;
+          height: 22px;
+          color: inherit;
+          transition: transform 200ms ease;
+        }
+
+        .tab-label {
+          font-family: 'Orbitron', 'Roboto', sans-serif;
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: inherit;
+        }
+
+        &:active {
+          background: rgba(224, 78, 66, 0.06);
+
+          .tab-icon {
+            transform: scale(0.9);
+          }
+        }
+
+        &.active {
+          color: var(--c_red);
+          animation: focus-glow 1.5s ease-in-out infinite;
+
+          &::before {
+            width: 60%;
+            box-shadow: 0 0 8px rgba(224, 78, 66, 0.4);
+          }
+
+          .tab-icon {
+            filter: drop-shadow(0 0 4px rgba(224, 78, 66, 0.3));
+          }
+        }
       }
     `,
   ],
   template: `
+    <!-- Compact footer with social links -->
+    <div class="mobile-footer">
+      <a
+        href="https://t.me/mkrec_studio"
+        target="_blank"
+        class="social-link"
+        aria-label="Telegram">
+        <mat-icon svgIcon="telegram" />
+      </a>
+      <a
+        href="https://www.youtube.com/@Marekus21"
+        target="_blank"
+        class="social-link"
+        aria-label="YouTube">
+        <mat-icon svgIcon="youtube" />
+      </a>
+      <a
+        href="https://www.facebook.com/KondratjevM"
+        target="_blank"
+        class="social-link"
+        aria-label="Facebook">
+        <mat-icon svgIcon="facebook" />
+      </a>
+      <a
+        href="https://www.instagram.com/mkrec.studio/"
+        target="_blank"
+        class="social-link"
+        aria-label="Instagram">
+        <mat-icon svgIcon="instagram" />
+      </a>
+      <a
+        href="https://www.linkedin.com/in/marek-kondratjev/"
+        target="_blank"
+        class="social-link"
+        aria-label="LinkedIn">
+        <mat-icon svgIcon="linkedin" />
+      </a>
+      <a
+        href="mailto:mkrecstudioweb@gmail.com"
+        rel="noopener noreferrer"
+        target="_blank"
+        class="social-link"
+        aria-label="Email">
+        <mat-icon svgIcon="gmail" />
+      </a>
+      <span class="copyright">© MK Rec Studio</span>
+    </div>
+
+    <!-- Bottom tab bar -->
     <nav>
       <a
-        class="page-header"
+        class="tab-btn"
         routerLink="/"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
         ariaCurrentWhenActive="page">
-        <mat-icon fontIcon="home_outlined" class="nav-mobile-icon"></mat-icon>
+        <mat-icon fontIcon="home" class="tab-icon" />
+        <span class="tab-label">Home</span>
       </a>
 
       <a
+        class="tab-btn"
         routerLink="/portfolio"
         routerLinkActive="active"
         ariaCurrentWhenActive="page">
-        <mat-icon fontIcon="photo_library" class="nav-mobile-icon"></mat-icon>
+        <mat-icon fontIcon="photo_library" class="tab-icon" />
+        <span class="tab-label">Work</span>
       </a>
 
-      <!-- see docs/todo/deprecated.md#corenav-mobile-componentts — spurious home attribute below, delete it -->
       <a
+        class="tab-btn"
         routerLink="/info"
-        home
         routerLinkActive="active"
         ariaCurrentWhenActive="page">
-        <mat-icon fontIcon="info" class="nav-mobile-icon"></mat-icon>
+        <mat-icon fontIcon="info" class="tab-icon" />
+        <span class="tab-label">About</span>
       </a>
 
       <a
+        class="tab-btn"
         routerLink="/contacts"
         routerLinkActive="active"
         ariaCurrentWhenActive="page">
-        <mat-icon fontIcon="call" class="nav-mobile-icon"></mat-icon>
+        <mat-icon fontIcon="call" class="tab-icon" />
+        <span class="tab-label">Contact</span>
       </a>
     </nav>
   `,
 })
-export class NavMobileComponent {}
+export class NavMobileComponent {
+  protected readonly year = new Date().getFullYear();
+}

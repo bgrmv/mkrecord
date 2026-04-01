@@ -14,7 +14,6 @@ import { InfoComponent } from '@features/info.component';
       height: 100%;
       width: 100%;
       overflow: hidden;
-      padding-top: clamp(20px, 3vh, 40px);
     }
   `,
 })

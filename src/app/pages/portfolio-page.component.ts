@@ -1,149 +1,229 @@
+import {
+  animate,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
-  Component,
-  inject,
-  linkedSignal,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
 } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CategoryEnum, portfolios } from '@app/constants';
-import { PortfolioBlockComponent } from '@features/portfolio-block/portfolio-block.component';
+import { PortfolioBlockHorizontalComponent } from '@entities/portfolio-block/portfolio-block-horizontal.component';
+import { PortfolioBlockVerticalComponent } from '@entities/portfolio-block/portfolio-block-vertical.component';
 import { PlatformService } from '@services/platform.service';
 
-export type PortfolioResolution =
-  | '480x270'
-  | '640x360'
-  | '800x450'
-  | '960x540'
-  | '1920x1080';
+const fadeIn = trigger('fadeIn', [
+  transition(':enter', [
+    style({ opacity: 0, transform: 'translateY(10px)' }),
+    animate(
+      '600ms cubic-bezier(0.16, 0.84, 0.3, 1)',
+      style({ opacity: 1, transform: 'translateY(0)' }),
+    ),
+  ]),
+]);
 
 @Component({
   selector: 'app-portfolio-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    MatChipsModule,
-    MatButtonToggleModule,
-    MatCheckboxModule,
-    PortfolioBlockComponent,
-    MatIconModule,
-    MatDividerModule,
-    MatTabsModule,
-  ],
+  imports: [CommonModule, PortfolioBlockHorizontalComponent, PortfolioBlockVerticalComponent, MatTabsModule],
+  animations: [fadeIn],
   styles: [
     `
+      /* ── Tab overrides ── */
+      /* use ::ng-deep because Material tab wrappers are outside component scope */
       ::ng-deep {
+        .mat-mdc-tab-group {
+          flex: 1;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
         .mdc-tab--active {
           background-color: var(--c_red);
         }
 
-        /* see docs/todo/ui — U4 */
-        .mdc-tab:not(.mdc-tab--active) {
-          .mdc-tab__text-label {
-            color: var(--color_whitesmoke_darken_2);
-          }
+        .mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+          color: var(--color_whitesmoke_darken_1);
+        }
+
+        .mat-mdc-tab-header {
+          border-bottom: 1px solid rgba(224, 78, 66, 0.25);
+        }
+
+        .mdc-tab__text-label {
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          font-weight: 800;
+          font-size: clamp(12px, 1.6vw, 16px);
+        }
+
+        .mat-mdc-tab-body-wrapper {
+          flex: 1;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .mat-mdc-tab-body {
+          flex: 1;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .mat-mdc-tab-body-content {
+          flex: 1;
+          min-height: 0;
+          overflow: hidden !important;
+          display: flex;
+          flex-direction: column;
         }
       }
 
       :host {
         z-index: 9999;
+        width: 100%;
         height: 100%;
         display: flex;
-        justify-content: center;
-        align-items: center;
         flex-direction: column;
         overflow: hidden;
-        min-height: 960px;
+        padding: clamp(8px, 1.5vw, 16px);
+        box-sizing: border-box;
       }
 
-      .mat-mdc-standard-chip {
-        border-radius: 0;
-
-        button::before {
-          border-radius: 0 !important;
-        }
-      }
-
-      :host {
-        mat-icon {
-          color: var(--c_red);
-        }
-
-        mat-chip-listbox {
-          max-width: 100%;
-        }
-
-        ::ng-deep
-          .mat-mdc-standard-chip.mdc-evolution-chip--selected.mdc-evolution-chip--disabled {
-          background-color: var(--c_red);
-        }
-
-        ::ng-deep .mat-mdc-chip-set-stacked .mdc-evolution-chip-set__chips {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-          gap: 4px 6px;
-        }
-
-        ::ng-deep
-          .mat-mdc-chip-set-stacked
-          .mdc-evolution-chip__text-label.mat-mdc-chip-action-label {
-          color: var(--c_red);
-        }
-
-        ::ng-deep
-          .mat-mdc-standard-chip.mdc-evolution-chip--selected:not(
-            .mdc-evolution-chip--disabled
-          ) {
-          background-color: var(--c_red);
-          color: black;
-          border-color: var(--c_red);
-        }
-
-        ::ng-deep
-          .mat-mdc-standard-chip
-          .mdc-evolution-chip__action--primary::before {
-          color: blue;
-          border-radius: 0 !important;
-          border-color: var(--c_red);
-        }
-      }
-    `,
-    `
-      .mat-tab-group {
-        margin-bottom: 48px;
-      }
-
-      .portofolio-container {
+      .portfolio-container {
+        position: relative;
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
-        min-height: 960px;
+        border: 1px solid rgba(224, 78, 66, 0.15);
+        background: linear-gradient(
+          145deg,
+          rgba(13, 13, 13, 0.4),
+          rgba(30, 18, 16, 0.2)
+        );
+      }
+
+      /* ── Corner marks ── */
+
+      .corner-mark {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .corner-mark::before,
+      .corner-mark::after {
+        content: '';
+        position: absolute;
+        background: var(--c_red_d1);
+      }
+
+      .corner-tl {
+        top: 4px;
+        left: 4px;
+      }
+      .corner-tl::before {
+        width: 16px;
+        height: 1px;
+        top: 0;
+        left: 0;
+      }
+      .corner-tl::after {
+        width: 1px;
+        height: 16px;
+        top: 0;
+        left: 0;
+      }
+
+      .corner-tr {
+        top: 4px;
+        right: 4px;
+      }
+      .corner-tr::before {
+        width: 16px;
+        height: 1px;
+        top: 0;
+        right: 0;
+      }
+      .corner-tr::after {
+        width: 1px;
+        height: 16px;
+        top: 0;
+        right: 0;
+      }
+
+      .corner-bl {
+        bottom: 4px;
+        left: 4px;
+      }
+      .corner-bl::before {
+        width: 16px;
+        height: 1px;
+        bottom: 0;
+        left: 0;
+      }
+      .corner-bl::after {
+        width: 1px;
+        height: 16px;
+        bottom: 0;
+        left: 0;
+      }
+
+      .corner-br {
+        bottom: 4px;
+        right: 4px;
+      }
+      .corner-br::before {
+        width: 16px;
+        height: 1px;
+        bottom: 0;
+        right: 0;
+      }
+      .corner-br::after {
+        width: 1px;
+        height: 16px;
+        bottom: 0;
+        right: 0;
       }
 
       @media (max-width: 576px) {
-        .portofolio-container {
-          max-height: 486px;
+        :host {
+          padding: clamp(4px, 2vw, 10px);
         }
       }
     `,
   ],
   template: `
-    <div class="portofolio-container">
-      <mat-tab-group animationDuration="1000ms">
+    <div class="portfolio-container" [@fadeIn]>
+      <span class="corner-mark corner-tl"></span>
+      <span class="corner-mark corner-tr"></span>
+      <span class="corner-mark corner-bl"></span>
+      <span class="corner-mark corner-br"></span>
+
+      <mat-tab-group animationDuration="600ms">
         <mat-tab [label]="categoryEnum.Horizontal | titlecase">
-          <app-portfolio-block
-            [gridView]="gridView()"
-            [category]="categoryEnum.Horizontal"
+          <app-portfolio-block-horizontal
+            [gridView]="'1'"
+            [slotMode]="isDesktop()"
             [portfolios]="portfolios[categoryEnum.Horizontal]" />
         </mat-tab>
 
         <mat-tab [label]="categoryEnum.Vertical | titlecase">
-          <app-portfolio-block
+          <app-portfolio-block-vertical
             [gridView]="'1'"
-            [category]="categoryEnum.Vertical"
+            [slotMode]="isDesktop()"
             [portfolios]="portfolios[categoryEnum.Vertical]" />
         </mat-tab>
       </mat-tab-group>
@@ -154,9 +234,7 @@ export type PortfolioResolution =
 export class PortfolioPageComponent {
   private readonly platformService = inject(PlatformService);
 
-  public readonly gridView = linkedSignal(() =>
-    this.platformService.isMobile() ? '1' : '3',
-  );
+  public readonly isDesktop = computed(() => !this.platformService.isMobile());
 
   public readonly categoryEnum = CategoryEnum;
 

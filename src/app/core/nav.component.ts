@@ -72,7 +72,7 @@ const cinematicFocus = trigger('cinematicFocus', [
         text-align: center;
         align-items: center;
         justify-content: center;
-        font-size: calc(11px + 2vmin);
+        font-size: calc(9px + 1.5vmin);
         color: var(--color_whitesmoke);
 
         > ul {

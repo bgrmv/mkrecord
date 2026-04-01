@@ -1,0 +1,66 @@
+@if (slotMode()) {
+  <!-- Desktop: 3 vertical lanes with auto-scroll Y -->
+  <div class="lanes-container">
+    @for (lane of lanes(); track $index) {
+      <div class="lane-wrapper">
+        <div
+          class="lane"
+          #lane
+          (mouseenter)="onLaneEnter($index)"
+          (mouseleave)="onLaneLeave($index)">
+          @for (portfolio of lane; track $index) {
+            <div class="card-wrap" (click)="openDialog(portfolio)">
+              <span class="corner-mark corner-tl"></span>
+              <span class="corner-mark corner-tr"></span>
+              <span class="corner-mark corner-bl"></span>
+              <span class="corner-mark corner-br"></span>
+              <video
+                #video
+                loop
+                muted
+                autoplay
+                playsinline
+                [src]="portfolio.preview"
+                [poster]="portfolio.preview"
+                (canplay)="onVideoReady($event)"></video>
+              <p class="card-title">{{ portfolio.title }}</p>
+            </div>
+          }
+        </div>
+
+        @if (scrollHints()[$index]) {
+          <div class="scroll-hint hint-down">
+            <span class="hint-arrow">›</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <!-- Mobile fallback: simple scrollable list -->
+  <section
+    class="grid view-1 vertical"
+    [@staggerGrid]="portfolios().length">
+    @for (portfolio of portfolios(); track portfolio) {
+      <div
+        class="preview card-wrap"
+        [@fadeInUp]
+        (click)="openDialog(portfolio)">
+        <span class="corner-mark corner-tl"></span>
+        <span class="corner-mark corner-tr"></span>
+        <span class="corner-mark corner-bl"></span>
+        <span class="corner-mark corner-br"></span>
+        <video
+          #video
+          loop
+          muted
+          autoplay
+          playsinline
+          [src]="portfolio.preview"
+          [poster]="portfolio.preview"
+          width="540"
+          (canplay)="onVideoReady($event)"></video>
+      </div>
+    }
+  </section>
+}

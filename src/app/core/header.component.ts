@@ -22,7 +22,8 @@ import { NavComponent } from './nav.component';
         justify-content: center;
         position: relative;
         top: 0;
-        padding: clamp(12px, 2vh, 20px) clamp(20px, 3vw, 40px);
+        height: 100%;
+        padding: 0 clamp(20px, 3vw, 40px);
         z-index: 9999;
         background: linear-gradient(
           180deg,

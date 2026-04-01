@@ -16,33 +16,31 @@ import { IconService } from '@services/icon.service';
 
       footer {
         width: 100%;
-        bottom: 0;
-        left: 0;
-        text-align: center;
-        /* display: grid;
-    grid-template-columns: 350px 350px; */
+        height: 100%;
+        display: flex;
+        align-items: center;
         justify-content: center;
-
-        .logotype {
-          mat-icon {
-            width: 150px;
-            height: 100px;
-          }
-        }
+        gap: clamp(16px, 3vw, 32px);
+        padding: 0 clamp(20px, 3vw, 40px);
 
         p {
-          padding: 5px 0;
-          font-size: 12px;
-          color: var(--color_whitesmoke_darken_1);
+          margin: 0;
+          padding: 0;
+          font-size: 11px;
+          color: var(--color_whitesmoke_darken_2);
+          white-space: nowrap;
 
           .brand {
-            color: var(--c_red);
+            color: var(--c_red_d1);
             font-weight: 500;
           }
 
           &.fullname {
             text-transform: uppercase;
             font-weight: 900;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            color: var(--color_whitesmoke_darken_1);
           }
 
           a {
@@ -50,91 +48,59 @@ import { IconService } from '@services/icon.service';
             color: var(--color_whitesmoke_darken_2);
 
             &:hover {
-              color: var(--c_red);
+              color: var(--c_red_d1);
             }
           }
         }
 
         .social {
+          display: flex;
+          align-items: center;
+          gap: 0;
+
           .social-group {
             display: inline-flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--c_red);
-            padding: 10px;
+            color: var(--c_red_d1);
+            padding: 6px;
             font-weight: 300;
           }
         }
 
         a:hover ::ng-deep mat-icon svg {
-          fill: var(--c_red);
+          fill: var(--c_red_d1);
         }
       }
     `,
   ],
   template: `
     <footer>
-      <div>
-        <p class="fullname">Marek Kondratjev</p>
-        <div class="social">
-          <a
-            href="https://t.me/mkrec_studio"
-            target="_blank"
-            class="social-group">
-            <mat-icon svgIcon="telegram"></mat-icon>
-          </a>
-          <a
-            href="https://www.youtube.com/@Marekus21"
-            target="_blank"
-            class="social-group">
-            <mat-icon svgIcon="youtube"></mat-icon>
-          </a>
-          <a
-            href="https://www.facebook.com/KondratjevM"
-            target="_blank"
-            class="social-group">
-            <mat-icon svgIcon="facebook"></mat-icon>
-          </a>
-          <a
-            href="https://www.instagram.com/mkrec.studio/"
-            target="_blank"
-            class="social-group">
-            <mat-icon svgIcon="instagram"></mat-icon>
-          </a>
-          <a
-            href="https://www.linkedin.com/in/marek-kondratjev/"
-            target="_blank"
-            class="social-group">
-            <mat-icon svgIcon="linkedin"></mat-icon>
-          </a>
-          <a
-            href="mailto:mkrecstudioweb@gmail.com"
-            rel="noopener noreferrer"
-            target="_blank"
-            class="social-group">
-            <mat-icon svgIcon="gmail"></mat-icon>
-          </a>
-        </div>
-        <p>
-          Copyright ©
-          <span class="brand">MK Rec Studio</span>
-          ‒ 2024
-        </p>
-        <!-- <p>
-          Developed by
-          <span>
-            <a href="#" target="_blank"> &#64;dpaniq </a>
-            /
-            <a href="#" target="_blank"> &#64;Nastya </a>
-            /
-            <a href="#" target="_blank"> &#64;mkrec_studio </a>
-            /
-            <a href="#" target="_blank"> &#64;Valletta </a>
-          </span>
-        </p> -->
+      <p class="fullname">Marek Kondratjev</p>
+      <div class="social">
+        <a href="https://t.me/mkrec_studio" target="_blank" class="social-group">
+          <mat-icon svgIcon="telegram"></mat-icon>
+        </a>
+        <a href="https://www.youtube.com/@Marekus21" target="_blank" class="social-group">
+          <mat-icon svgIcon="youtube"></mat-icon>
+        </a>
+        <a href="https://www.facebook.com/KondratjevM" target="_blank" class="social-group">
+          <mat-icon svgIcon="facebook"></mat-icon>
+        </a>
+        <a href="https://www.instagram.com/mkrec.studio/" target="_blank" class="social-group">
+          <mat-icon svgIcon="instagram"></mat-icon>
+        </a>
+        <a href="https://www.linkedin.com/in/marek-kondratjev/" target="_blank" class="social-group">
+          <mat-icon svgIcon="linkedin"></mat-icon>
+        </a>
+        <a href="mailto:mkrecstudioweb@gmail.com" rel="noopener noreferrer" target="_blank" class="social-group">
+          <mat-icon svgIcon="gmail"></mat-icon>
+        </a>
       </div>
+      <p>© <span class="brand">MK Rec Studio</span> | {{ year }}</p>
     </footer>
   `,
 })
-export class FooterComponent {}
+export class FooterComponent {
+  protected readonly year = new Date().getFullYear();
+}
