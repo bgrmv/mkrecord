@@ -1,7 +1,6 @@
 @layer base {
   * {
     box-sizing: border-box;
-    font-weight: 100;
     font-family: 'Roboto', sans-serif;
     color: var(--color_whitesmoke);
   }
@@ -86,4 +85,23 @@
       cursor: none !important;
     }
   }
+}
+
+/* ── Active tab glow (global because ::ng-deep in inline styles doesn't emit background rules) ── */
+.mdc-tab--active.mat-mdc-tab {
+  background-color: rgba(224, 78, 66, 0.12) !important;
+  position: relative;
+}
+
+.mdc-tab--active.mat-mdc-tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 120% at 50% 110%,
+    rgba(224, 78, 66, 0.28) 0%,
+    rgba(224, 78, 66, 0.08) 55%,
+    transparent 100%
+  );
+  pointer-events: none;
 }

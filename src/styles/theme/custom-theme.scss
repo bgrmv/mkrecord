@@ -47,14 +47,10 @@ html {
       active-indicator-color: var(--c_red),
       active-focus-indicator-color: var(--c_red),
       active-hover-indicator-color: var(--c_red),
-      inactive-hover-label-text-color: var(--c_red),
-      background-color: var(--c_red),
-      divider-color: var(--c_red),
-      // text
-      // label-text-size: 20px,
-      // label-text-weight: 600,
-      active-label-text-color: var(--c_red),
-      active-focus-label-text-color: var(--c_red),
+      inactive-hover-label-text-color: var(--c_red_l1),
+      divider-color: rgba(224, 78, 66, 0.3),
+      active-label-text-color: var(--c_red_l1),
+      active-focus-label-text-color: var(--c_red_l1),
     )
   );
   @include mat.divider-overrides(

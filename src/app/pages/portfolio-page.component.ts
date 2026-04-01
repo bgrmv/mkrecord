@@ -11,6 +11,7 @@ import {
   computed,
   inject,
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CategoryEnum, portfolios } from '@app/constants';
 import { PortfolioBlockHorizontalComponent } from '@entities/portfolio-block/portfolio-block-horizontal.component';
@@ -30,7 +31,7 @@ const fadeIn = trigger('fadeIn', [
 @Component({
   selector: 'app-portfolio-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PortfolioBlockHorizontalComponent, PortfolioBlockVerticalComponent, MatTabsModule],
+  imports: [CommonModule, PortfolioBlockHorizontalComponent, PortfolioBlockVerticalComponent, MatTabsModule, MatIconModule],
   animations: [fadeIn],
   styles: [
     `
@@ -44,23 +45,56 @@ const fadeIn = trigger('fadeIn', [
           flex-direction: column;
         }
 
-        .mdc-tab--active {
-          background-color: var(--c_red);
+        .mdc-tab--active .mdc-tab__text-label {
+          color: var(--c_red_l1) !important;
+          text-shadow:
+            0 0 8px rgba(242, 93, 80, 0.9),
+            0 0 24px rgba(242, 93, 80, 0.5),
+            0 0 48px rgba(242, 93, 80, 0.2);
+        }
+
+        .mdc-tab--active .mat-icon {
+          color: var(--c_red_l1);
+          filter: drop-shadow(0 0 6px rgba(242, 93, 80, 0.8));
+        }
+
+        /* use Orbitron because it matches the camera/tech aesthetic of the site */
+        .mdc-tab__text-label {
+          font-family: 'Orbitron', sans-serif;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          font-weight: 900;
+          font-size: clamp(10px, 1.3vw, 13px);
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
 
         .mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
-          color: var(--color_whitesmoke_darken_1);
+          color: rgba(245, 245, 245, 0.65);
+          transition: color 0.3s ease;
+        }
+
+        .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
+          color: rgba(245, 245, 245, 0.9);
+        }
+
+        .mdc-tab:not(.mdc-tab--active) .mat-icon {
+          color: rgba(245, 245, 245, 0.5);
         }
 
         .mat-mdc-tab-header {
-          border-bottom: 1px solid rgba(224, 78, 66, 0.25);
+          border-bottom: 1px solid rgba(224, 78, 66, 0.3);
+          background: linear-gradient(
+            180deg,
+            rgba(13, 13, 13, 0.6) 0%,
+            rgba(20, 10, 10, 0.4) 100%
+          );
         }
 
-        .mdc-tab__text-label {
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          font-weight: 800;
-          font-size: clamp(12px, 1.6vw, 16px);
+        /* active indicator line glow */
+        .mdc-tab-indicator__content--underline {
+          box-shadow: 0 0 6px var(--c_red), 0 0 18px rgba(224, 78, 66, 0.5);
         }
 
         .mat-mdc-tab-body-wrapper {
@@ -213,14 +247,22 @@ const fadeIn = trigger('fadeIn', [
       <span class="corner-mark corner-br"></span>
 
       <mat-tab-group animationDuration="600ms">
-        <mat-tab [label]="categoryEnum.Horizontal | titlecase">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon>crop_landscape</mat-icon>
+            Landscape
+          </ng-template>
           <app-portfolio-block-horizontal
             [gridView]="'1'"
             [slotMode]="isDesktop()"
             [portfolios]="portfolios[categoryEnum.Horizontal]" />
         </mat-tab>
 
-        <mat-tab [label]="categoryEnum.Vertical | titlecase">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon>crop_portrait</mat-icon>
+            Portrait
+          </ng-template>
           <app-portfolio-block-vertical
             [gridView]="'1'"
             [slotMode]="isDesktop()"
