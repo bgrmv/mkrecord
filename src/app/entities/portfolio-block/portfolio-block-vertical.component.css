@@ -5,6 +5,9 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
   gap: 8px;
+  /* flex: none overrides base flex:1 so height isn't stretched beyond the set value */
+  flex: none;
+  height: 376px;
 }
 
 .lanes-container .lane-wrapper {
