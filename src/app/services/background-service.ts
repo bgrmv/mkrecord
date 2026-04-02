@@ -1,4 +1,4 @@
-import { inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Injectable, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { CategoryEnum, portfolios } from '@app/constants';
@@ -9,6 +9,8 @@ import { PlatformService } from './platform.service';
 const backgroundVideos = portfolios[CategoryEnum.Horizontal].filter(
   (video) => video.asBackground,
 );
+
+const PAGES_WITHOUT_BG = ['portfolio', 'contacts'];
 
 // see docs/todo — P0 #6: while(true) loop hangs if all videos share the same preview src; see docs/todo/tech-debt.md#ssr-safety
 const getRandomVideoSrc = (currentSrc?: string): string => {
@@ -41,7 +43,8 @@ export class BackgroundService {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map((url) => (url instanceof NavigationEnd ? url.url : '')),
-      map((url) => !url.includes('portfolio')),
+      // use Array.some() because the list of disabled pages can grow without changing the predicate
+      map((url) => !PAGES_WITHOUT_BG.some((page) => url.includes(page))),
     ),
     { initialValue: false },
   );
@@ -64,20 +67,28 @@ export class BackgroundService {
     share(),
   );
 
-  // use string instead of SafeResourceUrl because video src values come from static constants,
-  // not user input — bypassSecurityTrustResourceUrl is unnecessary and its toString()
-  // triggers spurious NG04002 router navigation during SSR
-  public readonly videoSrc: Signal<string | undefined> = toSignal(
+  private readonly _rawVideoSrc: Signal<string | undefined> = toSignal(
     this.videoRotation$,
     { initialValue: undefined },
   );
 
-  /** Next video URL, emitted 3 s before the swap to begin buffering. */
-  public readonly nextVideoSrc: Signal<string | undefined> = toSignal(
+  private readonly _rawNextVideoSrc: Signal<string | undefined> = toSignal(
     this.videoRotation$.pipe(
       map(() => getRandomVideoSrc(this.currentRawSrc)),
       delay(3000),
     ),
     { initialValue: undefined },
+  );
+
+  // use computed() because startWith() sets a src unconditionally — gating here ensures
+  // videoSrc emits undefined when navigating to a page without background video,
+  // so the @if in the template removes the <video> element and stops playback
+  public readonly videoSrc: Signal<string | undefined> = computed(() =>
+    this.hasBackgroundVideos() ? this._rawVideoSrc() : undefined,
+  );
+
+  /** Next video URL, emitted 3 s before the swap to begin buffering. */
+  public readonly nextVideoSrc: Signal<string | undefined> = computed(() =>
+    this.hasBackgroundVideos() ? this._rawNextVideoSrc() : undefined,
   );
 }
