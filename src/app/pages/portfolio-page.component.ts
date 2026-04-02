@@ -123,11 +123,10 @@ const fadeIn = trigger('fadeIn', [
       :host {
         z-index: 9999;
         width: 100%;
-        /* 
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-        */
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
         overflow: hidden;
         padding: clamp(8px, 1.5vw, 16px);
         box-sizing: border-box;

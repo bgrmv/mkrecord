@@ -19,6 +19,7 @@ import {
   viewChildren,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { PortfolioCategory } from '@app/types';
 import { VideoDialogComponent } from '@core/video-dialog.component';
 
@@ -54,7 +55,7 @@ const staggerGrid = trigger('staggerGrid', [
 @Component({
   selector: 'app-portfolio-block-vertical',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [MatIcon],
   animations: [fadeInUp, staggerGrid],
   templateUrl: './portfolio-block-vertical.component.html',
   styleUrl: './portfolio-block-vertical.component.css',
@@ -78,7 +79,7 @@ export class PortfolioBlockVerticalComponent implements OnDestroy {
   private resumeTimeouts = new Map<number, ReturnType<typeof setTimeout>>();
   private scrollListeners: (() => void)[] = [];
 
-  protected readonly scrollHints = signal([true, true, true]);
+  protected readonly scrollHints = signal([false, true, false]);
 
   // use computed() because derived state — splits portfolios into 3 lanes, duplicated for seamless loop
   protected readonly lanes = computed(() => {
