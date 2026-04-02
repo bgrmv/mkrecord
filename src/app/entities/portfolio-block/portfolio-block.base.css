@@ -30,8 +30,7 @@
   width: 100%;
   flex: 1;
   min-height: 0;
-  display: flex;
-  display: block;
+  display: block; /* flex */
   flex-direction: column;
   overflow: hidden;
 }
@@ -218,13 +217,14 @@ section.grid {
   padding: 8px;
   flex: 1;
   min-height: 0;
+  /* scroll-snap-type: y mandatory; */
 }
 
 section.grid.view-1 {
   grid-template-columns: 1fr;
 }
 
-section.grid.view-1.vertical .preview {
+section.grid.view-1 .preview {
   scroll-snap-align: start;
 }
 

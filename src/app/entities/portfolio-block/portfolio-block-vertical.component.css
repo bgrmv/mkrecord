@@ -24,6 +24,7 @@
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-snap-type: y mandatory;
 
   &::-webkit-scrollbar {
     display: none;
@@ -33,6 +34,7 @@
 .lane .card-wrap {
   flex-shrink: 0;
   width: 100%;
+  scroll-snap-align: start;
 }
 
 .lane .card-wrap video {

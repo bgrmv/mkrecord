@@ -180,11 +180,15 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
       );
 
       // use wheel listener because overflow-y:hidden ignores vertical mouse wheel;
-      // converting deltaY→scrollLeft enables natural wheel scrolling on horizontal lanes
+      // snap to nearest 2-card boundary in JS (CSS snap conflicts with scrollTo smooth)
       const onWheel = (e: WheelEvent) => {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
           e.preventDefault();
-          el.scrollLeft += e.deltaY;
+          const cardWidth = (el.firstElementChild as HTMLElement)?.offsetWidth ?? 0;
+          const snapUnit = (cardWidth + 8) * 1.5;
+          const direction = e.deltaY > 0 ? 1 : -1;
+          const nearest = Math.round(el.scrollLeft / snapUnit) * snapUnit;
+          el.scrollTo({ left: nearest + direction * snapUnit, behavior: 'smooth' });
         }
       };
       el.addEventListener('wheel', onWheel, { passive: false });
