@@ -115,7 +115,7 @@ const fadeIn = trigger('fadeIn', [
           flex: 1;
           min-height: 0;
           overflow: hidden !important;
-          display: flex;
+          display: flex !important;
           flex-direction: column;
         }
       }
@@ -123,9 +123,11 @@ const fadeIn = trigger('fadeIn', [
       :host {
         z-index: 9999;
         width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
+        /* 
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        */
         overflow: hidden;
         padding: clamp(8px, 1.5vw, 16px);
         box-sizing: border-box;
@@ -252,10 +254,14 @@ const fadeIn = trigger('fadeIn', [
             <mat-icon>crop_landscape</mat-icon>
             Landscape
           </ng-template>
-          <app-portfolio-block-horizontal
-            [gridView]="'1'"
-            [slotMode]="isDesktop()"
-            [portfolios]="portfolios[categoryEnum.Horizontal]" />
+          <!-- use matTabContent because lazy rendering ensures DOM has real
+               dimensions when the component initializes auto-scroll -->
+          <ng-template matTabContent>
+            <app-portfolio-block-horizontal
+              [gridView]="'1'"
+              [slotMode]="isDesktop()"
+              [portfolios]="portfolios[categoryEnum.Horizontal]" />
+          </ng-template>
         </mat-tab>
 
         <mat-tab>
@@ -263,10 +269,12 @@ const fadeIn = trigger('fadeIn', [
             <mat-icon>crop_portrait</mat-icon>
             Portrait
           </ng-template>
-          <app-portfolio-block-vertical
-            [gridView]="'1'"
-            [slotMode]="isDesktop()"
-            [portfolios]="portfolios[categoryEnum.Vertical]" />
+          <ng-template matTabContent>
+            <app-portfolio-block-vertical
+              [gridView]="'1'"
+              [slotMode]="isDesktop()"
+              [portfolios]="portfolios[categoryEnum.Vertical]" />
+          </ng-template>
         </mat-tab>
       </mat-tab-group>
     </div>

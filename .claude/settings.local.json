@@ -15,7 +15,8 @@
       "Bash(netstat -ano)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(grep -E \"\\\\.\\(css|scss\\)$\")"
     ]
   }
 }

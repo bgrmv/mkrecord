@@ -7,7 +7,7 @@ import {
   trigger,
 } from '@angular/animations';
 import {
-  AfterViewInit,
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -21,7 +21,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { PortfolioCategory } from '@app/types';
 import { VideoDialogComponent } from '@core/video-dialog.component';
-import { PlatformService } from '@services/platform.service';
+
 
 const fadeInUp = trigger('fadeInUp', [
   transition(':enter', [
@@ -59,9 +59,8 @@ const staggerGrid = trigger('staggerGrid', [
   templateUrl: './portfolio-block-vertical.component.html',
   styleUrl: './portfolio-block-vertical.component.css',
 })
-export class PortfolioBlockVerticalComponent implements OnDestroy, AfterViewInit {
+export class PortfolioBlockVerticalComponent implements OnDestroy {
   private readonly dialog = inject(MatDialog);
-  private readonly platformService = inject(PlatformService);
 
   public readonly portfolios = input.required<PortfolioCategory[]>();
   public readonly gridView = input.required<string>();
@@ -89,11 +88,18 @@ export class PortfolioBlockVerticalComponent implements OnDestroy, AfterViewInit
     return groups.map((g) => [...g, ...g]);
   });
 
-  // see docs/todo/angular-modern-api.md — B1: use afterNextRender() because it's SSR-safe by design
-  ngAfterViewInit() {
-    // use PlatformService.isBrowser because video playback, IntersectionObserver
-    // are browser-only APIs not available during SSR
-    if (!this.platformService.isBrowser) return;
+  // use afterNextRender() because it's SSR-safe by design and runs after DOM paint
+  constructor() {
+    afterNextRender(() => this.bootstrap());
+  }
+
+  // use bootstrap retry because matTabContent projects the template asynchronously;
+  // viewChildren may be empty when afterNextRender first fires
+  private bootstrap(): void {
+    if (this.videos().length === 0) {
+      requestAnimationFrame(() => this.bootstrap());
+      return;
+    }
 
     this.videos().forEach((ref) => {
       ref.nativeElement.playbackRate = 0.5;
@@ -128,7 +134,13 @@ export class PortfolioBlockVerticalComponent implements OnDestroy, AfterViewInit
 
   private initRetries = 0;
 
+  // use 700ms delay because Material tab animation is 600ms;
+  // DOM dimensions aren't stable until animation completes
   private waitForLanes(): void {
+    setTimeout(() => this.pollLanes(), 700);
+  }
+
+  private pollLanes(): void {
     const lanes = this.laneRefs();
     const firstLane = lanes.length > 0 ? lanes[0].nativeElement : null;
 
@@ -137,7 +149,7 @@ export class PortfolioBlockVerticalComponent implements OnDestroy, AfterViewInit
       (firstLane.clientHeight === 0 && firstLane.clientWidth === 0)
     ) {
       if (this.initRetries++ < 20) {
-        setTimeout(() => this.waitForLanes(), 200);
+        setTimeout(() => this.pollLanes(), 200);
       }
       return;
     }
@@ -192,6 +204,8 @@ export class PortfolioBlockVerticalComponent implements OnDestroy, AfterViewInit
 
     const id = setInterval(() => {
       if (this.pausedLanes.has(index)) return;
+      // skip scroll when element is hidden (e.g. inactive tab) to prevent state corruption
+      if (!el.isConnected || el.offsetParent === null) return;
 
       const pos = el.scrollTop;
       const target = pos + step;
@@ -249,7 +263,18 @@ export class PortfolioBlockVerticalComponent implements OnDestroy, AfterViewInit
     (event.target as HTMLVideoElement).classList.add('loaded');
   }
 
-  protected openDialog(portfolio: PortfolioCategory): void {
+  // use pointerdown+click distance check because drag-to-scroll
+  // would otherwise trigger the dialog open on mouseup
+  private lastPointerDown = { x: 0, y: 0 };
+
+  protected onPointerDown(event: PointerEvent): void {
+    this.lastPointerDown = { x: event.clientX, y: event.clientY };
+  }
+
+  protected openDialog(portfolio: PortfolioCategory, event: MouseEvent): void {
+    const dx = Math.abs(event.clientX - this.lastPointerDown.x);
+    const dy = Math.abs(event.clientY - this.lastPointerDown.y);
+    if (dx > 5 || dy > 5) return;
     this.dialog.open(VideoDialogComponent, {
       panelClass: 'video-dialog',
       data: { ...portfolio },

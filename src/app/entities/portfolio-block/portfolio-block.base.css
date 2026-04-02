@@ -31,6 +31,7 @@
   flex: 1;
   min-height: 0;
   display: flex;
+  display: block;
   flex-direction: column;
   overflow: hidden;
 }
@@ -159,6 +160,7 @@ video:hover {
   overflow: hidden;
   padding: 8px;
   box-sizing: border-box;
+  height: 846px;
 }
 
 .scroll-hint {

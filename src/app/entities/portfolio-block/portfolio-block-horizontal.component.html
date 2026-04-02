@@ -9,7 +9,7 @@
           (mouseenter)="onLaneEnter($index)"
           (mouseleave)="onLaneLeave($index)">
           @for (portfolio of lane; track $index) {
-            <div class="card-wrap" (click)="openDialog(portfolio)">
+            <div class="card-wrap" (pointerdown)="onPointerDown($event)" (click)="openDialog(portfolio, $event)">
               <span class="corner-mark corner-tl"></span>
               <span class="corner-mark corner-tr"></span>
               <span class="corner-mark corner-bl"></span>
@@ -45,7 +45,8 @@
       <div
         class="preview card-wrap"
         [@fadeInUp]
-        (click)="openDialog(portfolio)">
+        (pointerdown)="onPointerDown($event)"
+        (click)="openDialog(portfolio, $event)">
         <span class="corner-mark corner-tl"></span>
         <span class="corner-mark corner-tr"></span>
         <span class="corner-mark corner-bl"></span>
