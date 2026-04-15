@@ -245,8 +245,41 @@ section.grid .card-wrap video {
 }
 
 @media (max-width: 576px) {
+  /* use overflow:visible + height:auto because main is the scroll container on mobile;
+     section.grid must expand to its content height so main can scroll through all cards */
+  :host {
+    flex: unset;
+    min-height: unset;
+    overflow: visible;
+    height: auto;
+  }
+
   section.grid {
+    overflow: visible;
+    height: auto;
+    flex: unset;
+    min-height: unset;
+    scrollbar-gutter: auto;
     padding: 4px;
     gap: 8px;
+  }
+
+  .card-title {
+    font-size: clamp(10px, 2.8vw, 13px);
+    padding: 14px 10px 10px;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Very small screens: tighten spacing */
+@media (max-width: 360px) {
+  section.grid {
+    padding: 2px;
+    gap: 6px;
+  }
+
+  .card-title {
+    font-size: clamp(9px, 2.5vw, 11px);
+    padding: 10px 8px 8px;
   }
 }

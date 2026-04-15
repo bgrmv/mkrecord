@@ -1,15 +1,15 @@
+@if (!isMobile()) {
 <app-header />
+}
 
 <main>
   <router-outlet />
 </main>
 
 <!-- Layers -->
-<app-camera-overlay />
-<app-cursor />
-
-<!-- Mobile -->
-<app-nav-mobile />
+@if (!isMobile()) {
+  <app-camera-overlay />
+}
 
 <div class="video-brackground">
   @if (backgroundVideoSrc()) {
@@ -33,4 +33,12 @@
   }
 </div>
 
-<app-footer />
+@if (!isMobile()) {
+  <app-footer />
+}
+
+<!-- Mobile -->
+@if (isMobile()) {
+  <app-nav-mobile />
+}
+<app-cursor />

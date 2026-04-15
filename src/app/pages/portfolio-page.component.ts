@@ -235,7 +235,72 @@ const fadeIn = trigger('fadeIn', [
 
       @media (max-width: 576px) {
         :host {
-          padding: clamp(4px, 2vw, 10px);
+          height: auto;
+          min-height: 100%;
+          overflow: visible;
+          /* push content below the fixed 56px app-header */
+          padding-top: 56px;
+          /* add bottom clearance for fixed tab-header (~48px) + nav-mobile (~90px) */
+          padding-bottom: calc(48px + 90px);
+          padding-inline: clamp(4px, 2vw, 8px);
+        }
+
+        .portfolio-container {
+          height: auto;
+          min-height: unset;
+          overflow: visible;
+          flex: unset;
+        }
+
+        ::ng-deep .mat-mdc-tab-group {
+          flex: unset;
+          min-height: unset;
+          height: auto;
+          overflow: visible !important;
+        }
+
+        /* use position:fixed + bottom:90px because nav-mobile is ~90px tall and
+           fixed at bottom:0 — the tab bar sits directly above it */
+        ::ng-deep .mat-mdc-tab-header {
+          position: fixed;
+          bottom: 90px;
+          left: 0;
+          right: 0;
+          z-index: 50; /* above cards, below nav-mobile (z-index:1000) */
+          background: rgba(5, 5, 5, 0.95) !important;
+          backdrop-filter: blur(14px);
+          border-top: 1px solid rgba(224, 78, 66, 0.2);
+          border-bottom: 1px solid rgba(224, 78, 66, 0.3);
+        }
+
+        /* shrink tab labels on mobile using clamp — desktop uses 1.3vw which
+           is too large at 390px; vw is now relative to phone width */
+        ::ng-deep .mdc-tab__text-label {
+          font-size: clamp(8px, 2.8vw, 11px);
+          letter-spacing: 0.12em;
+          gap: 5px;
+        }
+
+        ::ng-deep .mat-mdc-tab-body-wrapper,
+        ::ng-deep .mat-mdc-tab-body {
+          flex: unset;
+          min-height: unset;
+          height: auto;
+          overflow: visible !important;
+        }
+
+        ::ng-deep .mat-mdc-tab-body-content {
+          overflow: visible !important;
+          height: auto;
+        }
+      }
+
+      /* Very small phones: further compress tab labels */
+      @media (max-width: 360px) {
+        ::ng-deep .mdc-tab__text-label {
+          font-size: clamp(7px, 2.4vw, 9px);
+          letter-spacing: 0.08em;
+          gap: 3px;
         }
       }
     `,

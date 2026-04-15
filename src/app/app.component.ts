@@ -1,28 +1,28 @@
+import { PlatformModule } from '@angular/cdk/platform';
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
   inject,
-  viewChild,
   OnInit,
-  ChangeDetectionStrategy,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter, skip } from 'rxjs';
-import { HeaderComponent } from '@core/header.component';
-import { SafePipe } from '@shared/pipes/safe.pipe';
-import { PlatformModule } from '@angular/cdk/platform';
-import { NavMobileComponent } from '@core/nav-mobile.component';
-import { IconService } from '@services/icon.service';
 import { YouTubePlayer } from '@angular/youtube-player';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { FooterComponent } from '@core/footer.component';
-import { BackgroundService } from '@services/background-service';
-import { PlatformService } from '@services/platform.service';
+import { HeaderComponent } from '@core/header.component';
+import { NavMobileComponent } from '@core/nav-mobile.component';
 import { CameraOverlayComponent } from '@features/camera-overlay/camera-overlay.component';
 import { CursorComponent } from '@features/cursor/cursor.component';
+import { BackgroundService } from '@services/background-service';
+import { IconService } from '@services/icon.service';
+import { PlatformService } from '@services/platform.service';
+import { SafePipe } from '@shared/pipes/safe.pipe';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { filter, skip } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -57,6 +57,7 @@ export class AppComponent implements OnInit {
   protected readonly nextVideoSrc = this.backgroundService.nextVideoSrc;
 
   private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
+  protected readonly isMobile = this.platformService.isMobile;
 
   constructor() {
     // TODO

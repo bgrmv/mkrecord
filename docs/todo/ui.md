@@ -29,12 +29,14 @@ Reference these items as `// see docs/todo/ui — #<ID>` in source code.
 | # | Status | Item | Area | File(s) | Описание проблемы | Коммит | Проверено |
 |---|--------|------|------|---------|-------------------|--------|-----------|
 | M1 | ❌ | Camera icon — more responsive sizing | Camera overlay | `features/camera-overlay/` | Иконка камеры фиксированного размера — не адаптируется к ширине экрана | — | ❌ |
-| M2 | ❌ | Camera corners — smaller on mobile | Camera corners layer | `features/camera-overlay/` | Уголки камеры `110px` — слишком большие на телефоне | — | ❌ |
+| M2 | ❌ | Camera corners — smaller, thinner, tighter to edges | Camera corners layer | `features/camera-overlay/` | Уголки камеры `110px` — слишком большие; линии слишком толстые; должны быть ближе к краям экрана | — | ❌ |
 | M3 | ❌ | Fonts — size based on page height (dvh), not width (vw) | Global styles | `src/styles/font.css`, `src/styles/core.css` | Размер шрифта в nav `calc(10px + 2vmin)` — привязан к ширине, а не высоте; на ландшафте слишком мелкий | — | ❌ |
 | M4 | ✅ | Info page — disable parallax/hover effect on mobile | Info page | `features/info.component.ts` | На тач-экранах hover-трансформ `.regalia`/`.experience` не срабатывает корректно — нужен `@media (hover: none)` | — | ❌ |
 | M5 | ❌ | Info container padding — match h5-to-p spacing | Info page mobile | `features/info.component.ts` | В мобильной версии `padding`/`gap` не согласованы между блоками | — | ❌ |
 | M6 | ❌ | Logotype — centered in corners layer on mobile | Camera overlay | `features/camera-overlay/` | Логотип смещён в уголках на мобильном — абсолютное позиционирование не учитывает малые экраны | — | ❌ |
 | M7 | ❌ | PRE-FETCH assets (fonts, icons, first-frame images) | PWA | `ngsw-config.json` | Критичные шрифты и иконки не попадают в `prefetch` — видны FOUT/сдвиги при загрузке | — | ❌ |
+| M8 | ❌ | Burger menu — add hamburger nav for mobile | Header / Navigation | `features/camera-overlay/`, `app.component` | На мобиле нет мобильного меню — нужен бургер с анимацией открытия/закрытия | — | ❌ |
+| M9 | ❌ | Footer — move into burger menu, vertical layout | Footer / Navigation | `features/camera-overlay/` | Footer должен отображаться внутри бургер-меню, колонкой (не строкой) | — | ❌ |
 
 ---
 

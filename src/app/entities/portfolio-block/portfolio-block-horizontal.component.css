@@ -1,5 +1,30 @@
 @import './portfolio-block.base.css';
 
+/* ── Mobile: single-column list, 16:9 cards (~3–4 visible per screen) ── */
+@media (max-width: 576px) {
+  section.grid.view-1 .card-wrap {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    /* snap each card to top of main's scroll viewport */
+    scroll-snap-align: start;
+  }
+
+  section.grid.view-1 .card-wrap video {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+}
+
+/* Large phones (≥ 430px): slightly more breathing room between cards */
+@media (min-width: 430px) and (max-width: 576px) {
+  section.grid {
+    gap: 10px;
+    padding: 6px;
+  }
+}
+
 .lanes-container {
   /* use grid rows (mirrors vertical block's grid columns) — grid items have definite heights,
      so height: 100% on .lane and .card-wrap resolves correctly without flex chain issues */

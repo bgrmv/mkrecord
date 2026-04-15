@@ -154,54 +154,6 @@ import { IconService } from '@services/icon.service';
     `,
   ],
   template: `
-    <!-- Compact footer with social links -->
-    <div class="mobile-footer">
-      <a
-        href="https://t.me/mkrec_studio"
-        target="_blank"
-        class="social-link"
-        aria-label="Telegram">
-        <mat-icon svgIcon="telegram" />
-      </a>
-      <a
-        href="https://www.youtube.com/@Marekus21"
-        target="_blank"
-        class="social-link"
-        aria-label="YouTube">
-        <mat-icon svgIcon="youtube" />
-      </a>
-      <a
-        href="https://www.facebook.com/KondratjevM"
-        target="_blank"
-        class="social-link"
-        aria-label="Facebook">
-        <mat-icon svgIcon="facebook" />
-      </a>
-      <a
-        href="https://www.instagram.com/mkrec.studio/"
-        target="_blank"
-        class="social-link"
-        aria-label="Instagram">
-        <mat-icon svgIcon="instagram" />
-      </a>
-      <a
-        href="https://www.linkedin.com/in/marek-kondratjev/"
-        target="_blank"
-        class="social-link"
-        aria-label="LinkedIn">
-        <mat-icon svgIcon="linkedin" />
-      </a>
-      <a
-        href="mailto:mkrecstudioweb@gmail.com"
-        rel="noopener noreferrer"
-        target="_blank"
-        class="social-link"
-        aria-label="Email">
-        <mat-icon svgIcon="gmail" />
-      </a>
-      <span class="copyright">© MK Rec Studio</span>
-    </div>
-
     <!-- Bottom tab bar -->
     <nav>
       <a
