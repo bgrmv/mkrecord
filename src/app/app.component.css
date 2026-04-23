@@ -65,8 +65,7 @@ main {
 /* Mobile: hide desktop footer, keep compact header, show mobile nav */
 @media (max-width: 576px) {
   app-header {
-    display: flex;   /* show on mobile — provides top framing */
-    height: 56px;    /* compact: desktop header is 10vh (~84px) */
+    display: none;
   }
 
   app-footer {
@@ -81,16 +80,12 @@ main {
   main {
     width: 100%;
     max-width: none;
-    /* use fixed height so main is a real scroll container —
-       height:auto grows with content and creates no overflow to scroll */
-       height: calc(100dvh - 56px - 90px); /* viewport - header - nav-mobile */
-    height: 100%;
+    /* exact height: viewport − nav-mobile (~65px + safe-area-bottom)
+       content starts at top; portfolio fills 100%, other pages scroll within */
+    height: calc(100dvh - 65px - env(safe-area-inset-bottom));
     margin: 0;
-    /* margin-top: 56px; */
     padding: 0;
-    padding-bottom: 8px;
-    /* use flex-start so tall content starts at top, not centered (align-items:center
-       would push an overflowing child upward and clip the scroll start) */
+    /* use flex-start so tall content starts at top, not centered */
     align-items: flex-start;
     overflow-y: auto;
     overflow-x: hidden;

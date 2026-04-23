@@ -1,9 +1,4 @@
-import {
-  animate,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -31,7 +26,13 @@ const fadeIn = trigger('fadeIn', [
 @Component({
   selector: 'app-portfolio-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PortfolioBlockHorizontalComponent, PortfolioBlockVerticalComponent, MatTabsModule, MatIconModule],
+  imports: [
+    CommonModule,
+    PortfolioBlockHorizontalComponent,
+    PortfolioBlockVerticalComponent,
+    MatTabsModule,
+    MatIconModule,
+  ],
   animations: [fadeIn],
   styles: [
     `
@@ -94,7 +95,9 @@ const fadeIn = trigger('fadeIn', [
 
         /* active indicator line glow */
         .mdc-tab-indicator__content--underline {
-          box-shadow: 0 0 6px var(--c_red), 0 0 18px rgba(224, 78, 66, 0.5);
+          box-shadow:
+            0 0 6px var(--c_red),
+            0 0 18px rgba(224, 78, 66, 0.5);
         }
 
         .mat-mdc-tab-body-wrapper {
@@ -148,133 +151,42 @@ const fadeIn = trigger('fadeIn', [
         );
       }
 
-      /* ── Corner marks ── */
-
-      .corner-mark {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        z-index: 10;
-        pointer-events: none;
-      }
-
-      .corner-mark::before,
-      .corner-mark::after {
-        content: '';
-        position: absolute;
-        background: var(--c_red_d1);
-      }
-
-      .corner-tl {
-        top: 4px;
-        left: 4px;
-      }
-      .corner-tl::before {
-        width: 16px;
-        height: 1px;
-        top: 0;
-        left: 0;
-      }
-      .corner-tl::after {
-        width: 1px;
-        height: 16px;
-        top: 0;
-        left: 0;
-      }
-
-      .corner-tr {
-        top: 4px;
-        right: 4px;
-      }
-      .corner-tr::before {
-        width: 16px;
-        height: 1px;
-        top: 0;
-        right: 0;
-      }
-      .corner-tr::after {
-        width: 1px;
-        height: 16px;
-        top: 0;
-        right: 0;
-      }
-
-      .corner-bl {
-        bottom: 4px;
-        left: 4px;
-      }
-      .corner-bl::before {
-        width: 16px;
-        height: 1px;
-        bottom: 0;
-        left: 0;
-      }
-      .corner-bl::after {
-        width: 1px;
-        height: 16px;
-        bottom: 0;
-        left: 0;
-      }
-
-      .corner-br {
-        bottom: 4px;
-        right: 4px;
-      }
-      .corner-br::before {
-        width: 16px;
-        height: 1px;
-        bottom: 0;
-        right: 0;
-      }
-      .corner-br::after {
-        width: 1px;
-        height: 16px;
-        bottom: 0;
-        right: 0;
-      }
-
       @media (max-width: 576px) {
+        /* fill the exact height that main provides (100dvh - 5vh - nav)
+           so the tab-header is in normal flow — no fixed positioning needed */
         :host {
-          height: auto;
-          min-height: 100%;
-          overflow: visible;
-          /* push content below the fixed 56px app-header */
-          padding-top: 56px;
-          /* add bottom clearance for fixed tab-header (~48px) + nav-mobile (~90px) */
-          padding-bottom: calc(48px + 90px);
-          padding-inline: clamp(4px, 2vw, 8px);
+          height: 100%;
+          min-height: unset;
+          overflow: hidden;
+          box-sizing: border-box;
         }
 
         .portfolio-container {
-          height: auto;
+          height: 100%;
           min-height: unset;
-          overflow: visible;
+          overflow: hidden;
           flex: unset;
         }
 
         ::ng-deep .mat-mdc-tab-group {
-          flex: unset;
-          min-height: unset;
-          height: auto;
-          overflow: visible !important;
+          height: 100%;
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+          padding-block: 4px;
+          box-sizing: border-box;
         }
 
-        /* use position:fixed + bottom:90px because nav-mobile is ~90px tall and
-           fixed at bottom:0 — the tab bar sits directly above it */
+        /* tab-header sits at the bottom via headerPosition="below" */
         ::ng-deep .mat-mdc-tab-header {
-          position: fixed;
-          bottom: 90px;
-          left: 0;
-          right: 0;
-          z-index: 50; /* above cards, below nav-mobile (z-index:1000) */
+          position: static;
           background: rgba(5, 5, 5, 0.95) !important;
           backdrop-filter: blur(14px);
-          border-top: 1px solid rgba(224, 78, 66, 0.2);
-          border-bottom: 1px solid rgba(224, 78, 66, 0.3);
+          border-top: 1px solid rgba(224, 78, 66, 0.3);
+          border-bottom: none;
         }
 
-        /* shrink tab labels on mobile using clamp — desktop uses 1.3vw which
-           is too large at 390px; vw is now relative to phone width */
+        /* shrink tab labels on mobile — desktop uses 1.3vw which is too wide at 390px */
         ::ng-deep .mdc-tab__text-label {
           font-size: clamp(8px, 2.8vw, 11px);
           letter-spacing: 0.12em;
@@ -283,15 +195,19 @@ const fadeIn = trigger('fadeIn', [
 
         ::ng-deep .mat-mdc-tab-body-wrapper,
         ::ng-deep .mat-mdc-tab-body {
-          flex: unset;
-          min-height: unset;
-          height: auto;
-          overflow: visible !important;
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
         }
 
+        /* use overflow-y: auto + scroll-snap-type so card-wrap snap-align works */
         ::ng-deep .mat-mdc-tab-body-content {
-          overflow: visible !important;
-          height: auto;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          height: 100%;
+          scroll-snap-type: y mandatory;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(224, 78, 66, 0.45) transparent;
         }
       }
 
@@ -307,12 +223,9 @@ const fadeIn = trigger('fadeIn', [
   ],
   template: `
     <div class="portfolio-container" [@fadeIn]>
-      <span class="corner-mark corner-tl"></span>
-      <span class="corner-mark corner-tr"></span>
-      <span class="corner-mark corner-bl"></span>
-      <span class="corner-mark corner-br"></span>
-
-      <mat-tab-group animationDuration="600ms">
+      <mat-tab-group
+        animationDuration="600ms"
+        [headerPosition]="isDesktop() ? 'above' : 'below'">
         <mat-tab>
           <ng-template mat-tab-label>
             <mat-icon>crop_landscape</mat-icon>
