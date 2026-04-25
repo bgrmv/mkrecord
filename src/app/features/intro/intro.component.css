@@ -7,13 +7,14 @@
       all: unset;
     } */
     width: max-content;
-    font-size: 150px;
+    /* use clamp() because 150px breaks on mobile viewports — scales from 56px at ~310px to 150px at 833px+ */
+    font-size: clamp(56px, 18vw, 150px);
     font-weight: 900;
     /* color: var(--c_red); */
     color: transparent;
     /* color: black; */
-    line-height: 144px;
-    text-decoration: 10px underline whitesmoke;
+    line-height: clamp(52px, 17vw, 144px);
+    text-decoration: clamp(4px, 1vw, 10px) underline whitesmoke;
     /* text-shadow: 0 0 2px var(--c_red); */
     -webkit-text-stroke: 1px whitesmoke;
     /* mix-blend-mode: screen; */
@@ -27,15 +28,17 @@
     /* filter: grayscale(1); */
     filter: drop-shadow(1px 1px 0px var(--c_red));
     &.name {
-      margin-left: 97px;
+      /* use clamp() because 97px fixed offset overflows on narrow mobile screens */
+      margin-left: clamp(0px, 14vw, 97px);
     }
   }
 
   p {
     text-align: right;
-    font-size: 30px;
+    /* use clamp() because 30px fixed size is too large on narrow mobile screens */
+    font-size: clamp(14px, 5vw, 30px);
     font-weight: 400;
-    margin: 4px 0 0 50px;
+    margin: 4px 0 0 clamp(0px, 8vw, 50px);
     color: var(--color_whitesmoke);
     text-shadow: 1px 1px whitesmoke;
   }

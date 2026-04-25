@@ -15,6 +15,7 @@ import { IconService } from '@services/icon.service';
       }
 
       footer {
+        position: relative;
         width: 100%;
         height: 100%;
         display: flex;
@@ -22,6 +23,23 @@ import { IconService } from '@services/icon.service';
         justify-content: center;
         gap: clamp(16px, 3vw, 32px);
         padding: 0 clamp(20px, 3vw, 40px);
+        box-sizing: border-box;
+
+        /* divider-style top line — matches header bottom and contacts-me divider */
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(
+            to right,
+            transparent 0%,
+            rgba(224, 32, 32, 0.35) 50%,
+            transparent 100%
+          );
+        }
 
         p {
           margin: 0;
@@ -70,6 +88,25 @@ import { IconService } from '@services/icon.service';
 
         a:hover ::ng-deep mat-icon svg {
           fill: var(--c_red_d1);
+        }
+      }
+
+      @media (max-width: 576px) {
+        footer {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 20px 16px 12px;
+          text-align: center;
+
+          p {
+            white-space: normal;
+          }
+
+          .social {
+            gap: 4px;
+          }
         }
       }
     `,

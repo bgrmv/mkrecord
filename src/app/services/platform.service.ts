@@ -24,10 +24,14 @@ export class PlatformService {
   );
 
   // use user-agent detection on server to provide correct initialValue for SSR hydration
-  // on client, BreakpointObserver will take over immediately and provide accurate value
+  // use matchMedia on client for synchronous detection — avoids layout flip when
+  // BreakpointObserver fires asynchronously after first render
   private getInitialMobileValue(): boolean {
     if (this.isBrowser) {
-      return false; // client will get correct value from BreakpointObserver almost immediately
+      // use matchMedia because BreakpointObserver fires async; without this, mobile gets
+      // desktop layout on first render, afterNextRender() sets up the wrong IntersectionObserver,
+      // then videos never play after the layout flips to mobile
+      return window.matchMedia('(max-width: 959.98px)').matches;
     }
 
     // on server, detect mobile from user-agent header

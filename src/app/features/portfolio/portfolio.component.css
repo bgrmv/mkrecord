@@ -2,13 +2,16 @@
 
 :host {
   position: relative;
+  /* use 100% + max-width instead of bare max-width so the component doesn't overflow on mobile */
+  width: 100%;
   max-width: 800px;
 }
 
 section {
   /* margin: 50px 0; */
   overflow: hidden;
-  width: 800px;
+  /* use min() because 800px fixed width overflows on mobile viewports */
+  width: min(800px, 100%);
   transform: rotate(15eg);
 
   .navigation {
@@ -66,7 +69,8 @@ section {
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    height: 620px;
+    /* use min() because 620px fixed height clips content on small viewports */
+    height: min(620px, 65dvh);
 
     /* &:hover {
     } */
@@ -135,8 +139,9 @@ section {
 
       .portfolio {
         overflow: hidden;
-        height: 600px;
-        width: 800px;
+        /* use min() because fixed 600×800 overflows on mobile viewports */
+        height: min(600px, 62dvh);
+        width: min(800px, 100%);
         clip-path: polygon(5% 0, 100% 5%, 95% 100%, 0% 95%);
         animation: 5s trapezoid-animation ease-in-out alternate infinite;
 
@@ -179,6 +184,38 @@ dialog {
 dialog::backdrop {
   background-image: linear-gradient(45deg, black, gray, var(--c_red), black);
   opacity: 0.75;
+}
+
+@media (max-width: 576px) {
+  :host {
+    max-width: 100%;
+  }
+
+  section {
+    .scroll-container {
+      height: min(380px, 52dvh);
+
+      .content {
+        .portfolio {
+          height: min(360px, 50dvh);
+          width: 100%;
+
+          div.preview {
+            width: 80%;
+            max-width: none;
+
+            &:hover {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    .navigation {
+      margin-top: -20px;
+    }
+  }
 }
 
 @keyframes trapezoid-animation {

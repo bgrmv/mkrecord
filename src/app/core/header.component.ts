@@ -31,7 +31,6 @@ import { NavComponent } from './nav.component';
           rgba(0, 0, 0, 0.5) 50%,
           rgba(0, 0, 0, 0.3) 100%
         );
-        border-bottom: 1px solid rgba(224, 78, 66, 0.15);
         backdrop-filter: blur(8px);
         animation: letterbox-reveal 600ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         transform: perspective(1px) translateZ(0);
@@ -47,11 +46,12 @@ import { NavComponent } from './nav.component';
           background: linear-gradient(
             to right,
             transparent 0%,
-            rgba(224, 78, 66, 0.2) 50%,
+            rgba(224, 32, 32, 0.2) 50%,
             transparent 100%
           );
         }
 
+        /* divider-style bottom line — gradient fades to edges, peaks at center */
         &::after {
           content: '';
           position: absolute;
@@ -62,7 +62,7 @@ import { NavComponent } from './nav.component';
           background: linear-gradient(
             to right,
             transparent 0%,
-            rgba(224, 78, 66, 0.2) 50%,
+            rgba(224, 32, 32, 0.35) 50%,
             transparent 100%
           );
         }

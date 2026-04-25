@@ -102,6 +102,7 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
     }
 
     this.videos().forEach((ref) => {
+      ref.nativeElement.muted = true;
       ref.nativeElement.playbackRate = 0.5;
     });
 

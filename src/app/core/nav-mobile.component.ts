@@ -11,18 +11,22 @@ import { IconService } from '@services/icon.service';
   styles: [
     `
       @keyframes focus-glow {
-        0%,
-        100% {
+        0%, 100% {
           text-shadow:
-            0 0 8px rgba(224, 78, 66, 0.3),
+            0 0 10px rgba(224, 78, 66, 0.5),
             1px 1px 0 rgb(0, 0, 0);
         }
         50% {
           text-shadow:
-            0 0 16px rgba(224, 78, 66, 0.5),
-            0 0 24px rgba(224, 78, 66, 0.2),
+            0 0 22px rgba(224, 78, 66, 0.8),
+            0 0 40px rgba(224, 78, 66, 0.3),
             1px 1px 0 rgb(0, 0, 0);
         }
+      }
+
+      @keyframes icon-pulse {
+        0%, 100% { filter: drop-shadow(0 0 4px rgba(224, 78, 66, 0.4)); }
+        50% { filter: drop-shadow(0 0 10px rgba(224, 78, 66, 0.75)); }
       }
 
       :host {
@@ -35,54 +39,23 @@ import { IconService } from '@services/icon.service';
         flex-direction: column;
       }
 
-      /* --- Compact footer --- */
-      .mobile-footer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 6px 16px;
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(12px);
-        border-top: 1px solid rgba(224, 78, 66, 0.1);
-
-        .social-link {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 4px;
-          color: var(--color_whitesmoke_darken_3);
-          transition: color 200ms ease;
-
-          &:hover,
-          &:active {
-            color: var(--c_red_d1);
-          }
-
-          mat-icon {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-          }
-        }
-
-        .copyright {
-          font-size: 9px;
-          color: var(--color_whitesmoke_darken_4);
-          margin-left: 8px;
-          white-space: nowrap;
-          font-weight: 300;
-        }
-      }
-
       /* --- Bottom tab bar --- */
       nav {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        background: rgba(0, 0, 0, 0.92);
-        backdrop-filter: blur(16px);
-        border-top: 1px solid rgba(224, 78, 66, 0.15);
+        background: linear-gradient(
+          180deg,
+          rgba(8, 3, 3, 0.96) 0%,
+          rgba(13, 5, 5, 0.98) 100%
+        );
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(224, 78, 66, 0.2);
         padding-bottom: env(safe-area-inset-bottom);
+        /* Subtle depth shadow above the nav */
+        box-shadow:
+          0 -1px 0 rgba(224, 78, 66, 0.08),
+          0 -8px 32px rgba(0, 0, 0, 0.85);
       }
 
       .tab-btn {
@@ -90,15 +63,18 @@ import { IconService } from '@services/icon.service';
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 3px;
-        padding: 10px 0;
+        gap: 4px;
+        padding: 12px 0 10px;
         position: relative;
-        color: var(--color_whitesmoke_darken_3);
+        /* use slightly brighter inactive color for legibility on dark background */
+        color: rgba(242, 242, 242, 0.4);
         transition:
-          color 200ms ease,
-          background 200ms ease;
+          color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+          background 250ms ease;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
 
-        /* Top accent line */
+        /* Top accent bar */
         &::before {
           content: '';
           position: absolute;
@@ -108,8 +84,27 @@ import { IconService } from '@services/icon.service';
           width: 0;
           height: 2px;
           background: var(--c_red);
-          border-radius: 0 0 2px 2px;
-          transition: width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+          border-radius: 0 0 3px 3px;
+          transition: width 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Active: radial glow bloom beneath the indicator bar */
+        &::after {
+          content: '';
+          position: absolute;
+          top: 2px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 48px;
+          height: 6px;
+          background: radial-gradient(
+            ellipse at center,
+            rgba(224, 78, 66, 0.45) 0%,
+            transparent 70%
+          );
+          opacity: 0;
+          transition: opacity 300ms ease;
+          pointer-events: none;
         }
 
         .tab-icon {
@@ -117,37 +112,45 @@ import { IconService } from '@services/icon.service';
           width: 22px;
           height: 22px;
           color: inherit;
-          transition: transform 200ms ease;
+          transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .tab-label {
           font-family: 'Orbitron', 'Roboto', sans-serif;
-          font-size: 8px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
+          font-size: 7px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
           color: inherit;
+          transition: color 250ms ease;
         }
 
         &:active {
-          background: rgba(224, 78, 66, 0.06);
+          background: rgba(224, 78, 66, 0.07);
 
           .tab-icon {
-            transform: scale(0.9);
+            transform: scale(0.88) translateY(1px);
           }
         }
 
         &.active {
           color: var(--c_red);
-          animation: focus-glow 1.5s ease-in-out infinite;
+          animation: focus-glow 2s ease-in-out infinite;
 
           &::before {
-            width: 60%;
-            box-shadow: 0 0 8px rgba(224, 78, 66, 0.4);
+            /* use 68% width so the active bar spans most of the tab without touching edges */
+            width: 68%;
+            box-shadow:
+              0 0 12px rgba(224, 78, 66, 0.6),
+              0 0 24px rgba(224, 78, 66, 0.25);
+          }
+
+          &::after {
+            opacity: 1;
           }
 
           .tab-icon {
-            filter: drop-shadow(0 0 4px rgba(224, 78, 66, 0.3));
+            animation: icon-pulse 2s ease-in-out infinite;
           }
         }
       }

@@ -37,152 +37,447 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
   ],
   styles: [
     `
+      /* use focus-glow from mobile-nav because it unifies the Orbitron brand pulse across nav + headings */
+      /* use rgba(224,32,32,...) — hue 0° true red — instead of the global --c_red_d1 (#e04e42, hue 4°, tomato) */
+      @keyframes focus-glow {
+        0%, 100% {
+          text-shadow:
+            0 0 10px rgba(224, 32, 32, 0.5),
+            1px 1px 0 rgb(0, 0, 0);
+        }
+        50% {
+          text-shadow:
+            0 0 22px rgba(224, 32, 32, 0.8),
+            0 0 40px rgba(224, 32, 32, 0.3),
+            1px 1px 0 rgb(0, 0, 0);
+        }
+      }
+
+      @keyframes blink-rec {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0.15; }
+      }
+
+      @keyframes slide-up {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes success-glow {
+        0%, 100% { text-shadow: 0 0 8px rgba(74, 222, 128, 0.3); }
+        50% { text-shadow: 0 0 20px rgba(74, 222, 128, 0.6); }
+      }
+
+      /* ---------- Host & Material token overrides ---------- */
       :host {
-        position: relative;
         display: flex;
         justify-content: center;
-        flex-direction: column;
-        max-width: 600px;
-        text-wrap: balance;
         align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 24px;
+        box-sizing: border-box;
+        overflow-y: auto;
 
-        --filled-input-text-color: red;
+        /* use --_red: #e02020 (hue 0°, same lightness as --c_red_d1 #e04e42)
+           as a single source of truth for all red accents in this component */
+        --_red: #e02020;
 
-        q {
-          text-align: center;
-        }
+        /* use Material MDC design tokens at :host scope because they cascade into
+           all mat-form-field children without needing ::ng-deep */
+        --mdc-outlined-text-field-outline-color: rgba(242, 242, 242, 0.12);
+        --mdc-outlined-text-field-hover-outline-color: rgba(224, 32, 32, 0.45);
+        --mdc-outlined-text-field-focus-outline-color: var(--_red);
+        --mdc-outlined-text-field-label-text-color: rgba(242, 242, 242, 0.45);
+        --mdc-outlined-text-field-focus-label-text-color: var(--_red);
+        --mdc-outlined-text-field-input-text-color: var(--color_whitesmoke);
+        --mdc-outlined-text-field-caret-color: var(--_red);
+        --mdc-outlined-text-field-input-text-placeholder-color: rgba(242, 242, 242, 0.2);
 
-        padding: 60px 20px;
+        /* error state — use --_red for outlines/labels, lighter shade for hint text */
+        --mdc-outlined-text-field-error-outline-color: var(--_red);
+        --mdc-outlined-text-field-error-hover-outline-color: var(--_red);
+        --mdc-outlined-text-field-error-focus-outline-color: var(--_red);
+        --mdc-outlined-text-field-error-label-text-color: var(--_red);
+        --mdc-outlined-text-field-error-focus-label-text-color: var(--_red);
+        --mdc-outlined-text-field-error-hover-label-text-color: var(--_red);
+        --mat-form-field-error-text-color: #ff6060;
 
-        border: 1px solid var(--color_whitesmoke_darken_5);
-        background-color: linear-gradient(
-          to right,
-          rgba(0, 0, 0, 0.1),
-          rgba(0, 0, 0, 0.7)
-        );
-
-        & mat-form-field {
-          width: 100%;
-        }
-
-        app-footer {
-          display: none;
-        }
+        /* button tokens */
+        --mdc-elevated-button-container-color: var(--_red);
+        --mdc-elevated-button-label-text-color: #f2f2f2;
       }
 
-      mat-form-field {
-        color: var(--c_red);
-      }
-
-      /* does not */
-      ::ng-deep.mdc-floating-label--required:not(
+      /* required asterisk — ::ng-deep still needed because the marker
+         is rendered outside the component's encapsulation boundary */
+      ::ng-deep .mdc-floating-label--required:not(
           .mdc-floating-label--hide-required-marker
         )::after {
-        color: red;
+        color: var(--_red);
       }
 
-      .mat-mdc-raised-button:not(:disabled) {
-        background-color: var(--c_red_d1);
-        color: var(--color_whitesmoke);
+      /* ---------- Card ---------- */
+      .card {
+        position: relative;
+        width: 100%;
+        max-width: 580px;
+        padding: 56px 60px 52px;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.035) 2px,
+            rgba(0, 0, 0, 0.035) 4px
+          ),
+          linear-gradient(
+            150deg,
+            rgba(10, 3, 3, 0.98) 0%,
+            rgba(16, 6, 6, 0.96) 60%,
+            rgba(20, 8, 8, 0.97) 100%
+          );
+        border: 1px solid rgba(224, 32, 32, 0.16);
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.9),
+          0 32px 80px rgba(0, 0, 0, 0.85),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03),
+          inset 0 -1px 0 rgba(224, 32, 32, 0.06);
+        animation: slide-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
 
-      @media (max-width: 576px) {
-        :host {
-          padding: 20px 30px;
-          border: none;
+      /* HUD corner brackets */
+      .corner {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-color: var(--_red);
+        border-style: solid;
+        opacity: 0.75;
 
-          app-footer {
-            display: block;
+        &.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+        &.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+        &.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+        &.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+      }
+
+      /* ---------- Header ---------- */
+      .header {
+        text-align: center;
+        margin-bottom: 44px;
+
+        .rec-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          font-family: 'Orbitron', sans-serif;
+          font-size: clamp(7px, 1.5vw, 9px);
+          font-weight: 700;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: rgba(224, 32, 32, 0.65);
+          margin-bottom: 18px;
+
+          .rec-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--_red);
+            box-shadow: 0 0 7px var(--_red);
+            /* use blink-rec because it mirrors a camera REC indicator */
+            animation: blink-rec 1.2s ease-in-out infinite;
           }
         }
 
-        form textarea {
-          max-height: 5vh;
+        h1 {
+          font-family: 'Orbitron', sans-serif;
+          font-size: clamp(20px, 3.8vw, 30px);
+          font-weight: 900;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--_red);
+          margin: 0 0 20px;
+          line-height: 1.15;
+          /* use focus-glow because it's the same Orbitron active-state animation
+             as the mobile nav labels — maintains brand coherence */
+          animation: focus-glow 2.8s ease-in-out infinite;
+        }
+
+        .divider {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          margin-bottom: 18px;
+
+          &::before,
+          &::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(
+              to var(--_dir, right),
+              transparent 0%,
+              rgba(224, 32, 32, 0.35) 100%
+            );
+          }
+
+          &::before { --_dir: right; }
+          &::after  { --_dir: left; }
+
+          mat-icon {
+            font-size: 15px;
+            width: 15px;
+            height: 15px;
+            color: var(--_red);
+            opacity: 0.6;
+          }
+        }
+
+        .tagline {
+          font-family: 'Roboto', sans-serif;
+          font-weight: 300;
+          font-size: 13.5px;
+          line-height: 1.75;
+          color: rgba(242, 242, 242, 0.5);
+          letter-spacing: 0.025em;
+          max-width: 400px;
+          margin: 0 auto;
+
+          strong {
+            color: rgba(242, 242, 242, 0.75);
+            font-weight: 400;
+          }
         }
       }
 
+      /* ---------- Form ---------- */
       form#contacts {
         display: flex;
-        align-items: center;
-        justify-content: center;
         flex-direction: column;
-        gap: 8px; /* see docs/todo/ui — U8 */
+        /* use gap:12px because mat-form-field already has a subscript area (~20px)
+           below the outline — adding 12px makes the total gap ~32px between fields */
+        gap: 12px;
 
-        fieldset {
-          display: grid;
+        mat-form-field {
+          width: 100%;
         }
 
         textarea {
           resize: vertical;
-          max-height: 30vh;
-        }
-
-        button:disabled {
-          cursor: not-allowed;
+          min-height: 80px;
+          max-height: 220px;
         }
 
         button[type='submit'] {
+          width: 100%;
+          height: 50px;
+          margin-top: 16px;
+          /* use Orbitron because the submit is the final "transmission" action —
+             matches the headline energy and feels intentional */
+          font-family: 'Orbitron', sans-serif;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          /* use dark-to-bright red gradient — both stops stay at hue 0° (no orange drift) */
+          background: linear-gradient(
+            160deg,
+            #a81010 0%,
+            var(--_red) 100%
+          ) !important;
+          color: #f2f2f2 !important;
+          box-shadow: 0 2px 16px rgba(224, 32, 32, 0.25) !important;
+          transition:
+            box-shadow 0.25s ease,
+            transform 0.15s ease,
+            opacity 0.2s ease;
+
+          &:not(:disabled):hover {
+            box-shadow:
+              0 0 18px rgba(224, 32, 32, 0.55),
+              0 6px 24px rgba(0, 0, 0, 0.5) !important;
+            transform: translateY(-1px);
+          }
+
+          &:not(:disabled):active {
+            transform: translateY(0);
+          }
+
           &:disabled {
             cursor: not-allowed;
-          }
-          &:hover {
-            border: 1px solid whitesmoke;
+            opacity: 0.38;
           }
         }
       }
 
+      /* ---------- Status feedback ---------- */
       .feedback {
-        margin-top: 12px;
-        font-size: 14px;
+        margin-top: 18px;
+        text-align: center;
+        animation: slide-up 0.35s ease both;
 
         &.success {
-          color: #4caf50;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #4ade80;
+          animation:
+            slide-up 0.35s ease both,
+            success-glow 2.5s ease-in-out infinite;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
         }
+
         &.error {
-          color: var(--c_red);
+          font-family: 'Roboto', sans-serif;
+          font-size: 13px;
+          color: #ff6060;
+        }
+      }
+
+      /* ---------- Footer (mobile only) ---------- */
+      .footer-wrap {
+        display: none;
+      }
+
+      /* ---------- Mobile ---------- */
+      @media (max-width: 576px) {
+        :host {
+          padding: 0;
+          align-items: flex-start;
+        }
+
+        .card {
+          border: none;
+          border-top: 1px solid rgba(224, 32, 32, 0.12);
+          box-shadow: none;
+          /* use larger horizontal padding because 22px feels cramped at 390–430px */
+          padding: 36px 24px 28px;
+          background: rgba(10, 3, 3, 0.98);
+          animation: none;
+        }
+
+        .corner {
+          display: none;
+        }
+
+        .header {
+          margin-bottom: 24px;
+          padding: 0 4px;
+
+          h1 { font-size: 18px; }
+
+          .tagline { font-size: 12.5px; }
+        }
+
+        form#contacts {
+          padding: 0 4px;
+
+          textarea {
+            max-height: 5vh;
+          }
+        }
+
+        .footer-wrap {
+          display: block;
+          margin-top: 24px;
+          padding-top: 20px;
+          border-top: 1px solid rgba(224, 32, 32, 0.1);
         }
       }
     `,
   ],
   template: `
-    <form id="contacts" [formGroup]="formGroup" (submit)="onSubmit($event)">
-      <q>Tell me about your project, and I'll bring it to life.</q><br />
-      <q>Let's film the magic on camera! </q><br />
+    <div class="card">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
 
-      <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Email</mat-label>
-        <input
-          matInput
-          type="email"
-          placeholder="Input your email"
-          formControlName="email" />
-      </mat-form-field>
+      <header class="header">
+        <div class="rec-badge">
+          <span class="rec-dot"></span>
+          Signal Ready
+        </div>
 
-      <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Leave a comment</mat-label>
-        <textarea matInput rows="3" formControlName="text"></textarea>
-      </mat-form-field>
+        <h1>Initiate Contact</h1>
 
-      <button
-        color="primary"
-        mat-raised-button
-        [disabled]="formGroup.invalid || isSubmitting()"
-        type="submit">
-        {{ isSubmitting() ? 'Sending…' : 'Send' }}
-      </button>
+        <div class="divider">
+          <mat-icon fontIcon="videocam" />
+        </div>
+
+        <p class="tagline">
+          Every great film begins with a single conversation.
+          <strong>Tell me about your vision</strong> — the story you need told,
+          the moment too precious to leave unfilmed — and together we'll craft
+          something that outlasts the frame.
+        </p>
+      </header>
+
+      <form id="contacts" [formGroup]="formGroup" (submit)="onSubmit($event)">
+        <mat-form-field appearance="outline">
+          <mat-label>Your Email</mat-label>
+          <input
+            matInput
+            type="email"
+            placeholder="you@studio.com"
+            formControlName="email" />
+          <mat-error>
+            @if (formGroup.get('email')?.hasError('required')) {
+              Email is required
+            } @else if (formGroup.get('email')?.hasError('email')) {
+              Please enter a valid email address
+            }
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Your Message</mat-label>
+          <textarea
+            matInput
+            rows="4"
+            formControlName="text"
+            placeholder="Describe your project, event, or idea — the more detail, the better."></textarea>
+          <mat-error>
+            @if (formGroup.get('text')?.hasError('required')) {
+              Message is required
+            } @else if (formGroup.get('text')?.hasError('minlength')) {
+              Message must be at least 10 characters
+            }
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          type="submit"
+          [disabled]="formGroup.invalid || isSubmitting()">
+          {{ isSubmitting() ? 'Transmitting…' : 'Send Signal' }}
+        </button>
+      </form>
 
       @if (submitSuccess()) {
-        <p class="feedback success">Message sent! I'll get back to you soon.</p>
+        <div class="feedback success">
+          <mat-icon fontIcon="check_circle" />
+          Signal received — I'll be in touch soon
+        </div>
       }
       @if (submitError()) {
         <p class="feedback error">{{ submitError() }}</p>
       }
-    </form>
 
-    <br />
-    <br />
-
-    <app-footer />
+      <div class="footer-wrap">
+        <app-footer />
+      </div>
+    </div>
   `,
 })
 export class ContactsMeComponent {
@@ -198,14 +493,21 @@ export class ContactsMeComponent {
       validators: [Validators.email, Validators.required],
     }),
     text: new FormControl<string | null>('', {
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.minLength(10)],
     }),
   });
 
   async onSubmit(event: Event) {
     event.preventDefault();
 
-    if (this.formGroup.invalid || !this.platformService.isBrowser) return;
+    if (this.formGroup.invalid) {
+      // use markAllAsTouched because mat-error only renders when the control
+      // has been interacted with — this reveals all errors on submit attempt
+      this.formGroup.markAllAsTouched();
+      return;
+    }
+
+    if (!this.platformService.isBrowser) return;
 
     this.isSubmitting.set(true);
     this.submitSuccess.set(false);

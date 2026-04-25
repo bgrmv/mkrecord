@@ -135,8 +135,7 @@ const cinematicFocus = trigger('cinematicFocus', [
 
               &.active {
                 color: var(--c_red);
-                animation: focus-glow 1.5s ease-in-out infinite,
-                           pulse-subtle 2s ease-in-out infinite;
+                animation: focus-glow 1.5s ease-in-out infinite;
 
                 &::before {
                   width: 100%;
