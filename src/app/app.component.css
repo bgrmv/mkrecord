@@ -1,3 +1,13 @@
+/* reveal: main content fades in after splash exits */
+@keyframes app-reveal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+main.ready {
+  animation: app-reveal 0.5s ease both;
+}
+
 app-header {
   height: 10vh;
   position: fixed;

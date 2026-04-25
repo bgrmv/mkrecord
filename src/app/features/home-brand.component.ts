@@ -10,10 +10,10 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
   hostDirectives: [ParallaxItemDirective],
   styles: [
     `
-      @keyframes corner-pulse {
-        0%, 100% { opacity: 0.4; }
-        50% { opacity: 1; }
-      }
+      // @keyframes corner-pulse {
+      //   0%, 100% { opacity: 0.4; }
+      //   50% { opacity: 1; }
+      // }
 
       @keyframes grain-drift {
         0%, 100% { transform: translate(0, 0); }
@@ -71,32 +71,32 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
         }
 
         /* Camera viewfinder: top-left corner */
-        :host::before {
-          content: '';
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          width: 18px;
-          height: 18px;
-          border-top: 1.5px solid var(--c_red);
-          border-left: 1.5px solid var(--c_red);
-          animation: corner-pulse 2.5s ease-in-out infinite;
-          pointer-events: none;
-        }
+        // :host::before {
+        //   content: '';
+        //   position: absolute;
+        //   top: 10px;
+        //   left: 10px;
+        //   width: 18px;
+        //   height: 18px;
+        //   border-top: 1.5px solid var(--c_red);
+        //   border-left: 1.5px solid var(--c_red);
+        //   animation: corner-pulse 2.5s ease-in-out infinite;
+        //   pointer-events: none;
+        // }
 
         /* Camera viewfinder: bottom-right corner */
-        :host::after {
-          content: '';
-          position: absolute;
-          bottom: 10px;
-          right: 10px;
-          width: 18px;
-          height: 18px;
-          border-bottom: 1.5px solid var(--c_red);
-          border-right: 1.5px solid var(--c_red);
-          animation: corner-pulse 2.5s ease-in-out infinite 1.25s;
-          pointer-events: none;
-        }
+        // :host::after {
+        //   content: '';
+        //   position: absolute;
+        //   bottom: 10px;
+        //   right: 10px;
+        //   width: 18px;
+        //   height: 18px;
+        //   border-bottom: 1.5px solid var(--c_red);
+        //   border-right: 1.5px solid var(--c_red);
+        //   animation: corner-pulse 2.5s ease-in-out infinite 1.25s;
+        //   pointer-events: none;
+        // }
 
         .brand {
           width: 100%;

@@ -6,6 +6,7 @@ import {
   ElementRef,
   inject,
   OnInit,
+  signal,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,6 +16,7 @@ import { YouTubePlayer } from '@angular/youtube-player';
 import { FooterComponent } from '@core/footer.component';
 import { HeaderComponent } from '@core/header.component';
 import { NavMobileComponent } from '@core/nav-mobile.component';
+import { SplashScreenComponent } from '@core/splash-screen.component';
 import { CameraOverlayComponent } from '@features/camera-overlay/camera-overlay.component';
 import { CursorComponent } from '@features/cursor/cursor.component';
 import { BackgroundService } from '@services/background-service';
@@ -33,6 +35,7 @@ import { filter, skip } from 'rxjs';
     HeaderComponent,
     FooterComponent,
     NavMobileComponent,
+    SplashScreenComponent,
     CameraOverlayComponent,
     CursorComponent,
     SafePipe,
@@ -55,6 +58,9 @@ export class AppComponent implements OnInit {
 
   protected readonly backgroundVideoSrc = this.backgroundService.videoSrc;
   protected readonly nextVideoSrc = this.backgroundService.nextVideoSrc;
+
+  // use signal(false) so the router-outlet stays hidden until the splash screen emits done()
+  protected readonly appReady = signal(false);
 
   private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
   protected readonly isMobile = this.platformService.isMobile;

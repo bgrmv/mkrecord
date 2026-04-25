@@ -1,14 +1,30 @@
-@if (!isMobile()) {
-<app-header />
+<!-- splash screen — rendered first, hides everything until appReady() -->
+@if (!appReady()) {
+  <app-splash-screen (done)="appReady.set(true)" />
 }
 
-<main>
-  <router-outlet />
-</main>
+@if (appReady()) {
+  @if (!isMobile()) {
+    <app-header />
+  }
 
-<!-- Layers -->
-@if (!isMobile()) {
-  <app-camera-overlay />
+  <main [class.ready]="appReady()">
+    <router-outlet />
+  </main>
+
+  <!-- Layers -->
+  @if (!isMobile()) {
+    <app-camera-overlay />
+  }
+
+  @if (!isMobile()) {
+    <app-footer />
+  }
+
+  <!-- Mobile -->
+  @if (isMobile()) {
+    <app-nav-mobile />
+  }
 }
 
 <div class="video-brackground">
@@ -33,12 +49,4 @@
   }
 </div>
 
-@if (!isMobile()) {
-  <app-footer />
-}
-
-<!-- Mobile -->
-@if (isMobile()) {
-  <app-nav-mobile />
-}
 <app-cursor />
