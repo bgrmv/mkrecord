@@ -21,6 +21,7 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
         66% { transform: translate(1px, -1px); }
       }
 
+
       :host {
         position: relative;
         width: calc(45% - 150px);
@@ -112,17 +113,15 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
             /* film grain overlay on logo */
             filter: drop-shadow(0 0 12px rgba(224, 78, 66, 0.15));
           }
+
         }
       }
     `,
   ],
   template: `
     <div class="brand">
-      
       <img class="mk" src="assets/brand/mk-white.svg" />
     </div>
-    <!-- <img class="mk" src="assets/brand/mk.svg" />
-    <img class="studio" src="assets/brand/studio.svg" /> -->
   `,
 })
 export class HomeBrandComponent {}

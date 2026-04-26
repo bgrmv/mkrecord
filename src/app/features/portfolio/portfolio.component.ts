@@ -19,7 +19,7 @@ const ITEM_WIDTH = 800; // see docs/todo — P2 #14: magic number, extract to na
   standalone: true,
   imports: [CommonModule, MatIconModule, NgOptimizedImage],
   templateUrl: './portfolio.component.html',
-  styleUrl: './portfolio.component.css',
+  styleUrl: './portfolio.component.scss',
   providers: [],
 })
 export class PortfolioComponent {

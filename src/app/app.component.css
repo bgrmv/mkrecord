@@ -103,7 +103,7 @@ main {
     scroll-snap-type: y mandatory;
     /* use scrollbar-width thin + accent color to match red camera aesthetic */
     scrollbar-width: thin;
-    scrollbar-color: rgba(224, 78, 66, 0.45) transparent;
+    scrollbar-color: color-mix(in srgb, var(--c_red_true) 45%, transparent) transparent;
 
     &::-webkit-scrollbar {
       width: 2px;
@@ -114,12 +114,12 @@ main {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: rgba(224, 78, 66, 0.45);
+      background: color-mix(in srgb, var(--c_red_true) 45%, transparent);
       border-radius: 2px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: rgba(224, 78, 66, 0.85);
+      background: color-mix(in srgb, var(--c_red_true) 85%, transparent);
     }
   }
 }

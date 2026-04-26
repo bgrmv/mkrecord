@@ -1,0 +1,9 @@
+// SCSS variables — mirror the CSS custom properties in variables.css
+// use hue-0° pure reds (#e02020 family) for brand consistency across components
+
+$red:       #e02020; // hue 0°, same lightness as --c_red_d1; used wherever a pure red is needed
+$red-dark:  #a81010; // darker stop for gradients
+$red-muted: rgba(224, 32, 32, 0.45); // hover states, borders
+
+$black:     #0d0d0d; // matches --c_black in variables.css
+$black-bg:  rgba(10, 3, 3, 0.98); // deep card background used in contacts-me

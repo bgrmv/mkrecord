@@ -206,8 +206,10 @@ const fadeIn = trigger('fadeIn', [
           overflow-x: hidden !important;
           height: 100%;
           scroll-snap-type: y mandatory;
-          scrollbar-width: thin;
-          scrollbar-color: rgba(224, 78, 66, 0.45) transparent;
+          // scrollbar-width: thin;
+          // scrollbar-color: color-mix(in srgb, var(--c_red_true) 45%, transparent) transparent;
+           scrollbar-color: var(--c_red) rgba(0, 0, 0, 0.3);
+    scrollbar-width: thin;
         }
       }
 

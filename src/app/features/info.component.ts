@@ -1,3 +1,11 @@
+import {
+  animate,
+  query,
+  stagger,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -6,14 +14,6 @@ import {
   signal,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import {
-  trigger,
-  transition,
-  style,
-  animate,
-  stagger,
-  query,
-} from '@angular/animations';
 
 const fadeInUp = trigger('fadeInUp', [
   transition(':enter', [
@@ -62,13 +62,13 @@ const staggerList = trigger('staggerList', [
       @keyframes card-glow {
         0%, 100% {
           box-shadow:
-            0 0 8px rgba(224, 78, 66, 0.15),
-            inset 0 0 20px rgba(224, 78, 66, 0.03);
+            0 0 8px rgba(224, 32, 32, 0.15),
+            inset 0 0 20px rgba(224, 32, 32, 0.03);
         }
         50% {
           box-shadow:
-            0 0 16px rgba(224, 78, 66, 0.25),
-            inset 0 0 30px rgba(224, 78, 66, 0.06);
+            0 0 16px rgba(224, 32, 32, 0.25),
+            inset 0 0 30px rgba(224, 32, 32, 0.06);
         }
       }
 
@@ -93,6 +93,10 @@ const staggerList = trigger('staggerList', [
         padding: clamp(8px, 1.5vw, 20px);
         box-sizing: border-box;
         overflow: hidden;
+
+        /* use --_red: #e02020 (hue 0°, same as contacts-me) — aligns all red
+           accents to true red instead of --c_red_d1 (#e04e42, hue 4°, tomato) */
+        --_red: #e02020;
       }
 
       section {
@@ -116,21 +120,21 @@ const staggerList = trigger('staggerList', [
 
       .stroke {
         display: inline;
-        color: var(--c_red_d1);
+        color: var(--_red);
         font-weight: 700;
         letter-spacing: 0.3px;
-        border-bottom: 1.5px solid var(--c_red_d1);
+        border-bottom: 1.5px solid var(--_red);
         padding-bottom: 1px;
         transition: color 0.3s ease, border-color 0.3s ease;
 
         &:hover {
-          color: var(--c_red_l1);
-          border-color: var(--c_red_l1);
+          color: #ff4040;
+          border-color: #ff4040;
         }
       }
 
       strong {
-        color: var(--c_red_d1);
+        color: var(--_red);
         font-weight: 800;
         letter-spacing: 0.5px;
       }
@@ -143,10 +147,10 @@ const staggerList = trigger('staggerList', [
         flex-direction: column;
         gap: clamp(6px, 1vh, 14px);
         padding: clamp(10px, 1.5vw, 20px);
-        border-left: 3px solid var(--c_red_d1);
+        border-left: 3px solid var(--_red);
         background: linear-gradient(
           90deg,
-          rgba(224, 78, 66, 0.05) 0%,
+          rgba(224, 32, 32, 0.05) 0%,
           transparent 40%
         );
 
@@ -221,7 +225,7 @@ const staggerList = trigger('staggerList', [
         flex-direction: column;
         overflow: hidden;
         padding: clamp(12px, 1.5vw, 20px);
-        border: 1px solid var(--c_red_d1);
+        border: 1px solid var(--_red);
         background: linear-gradient(
           145deg,
           rgba(13, 13, 13, 0.92),
@@ -276,7 +280,7 @@ const staggerList = trigger('staggerList', [
         font-family: 'Space Grotesk', Roboto, sans-serif;
         font-weight: 700;
         font-size: clamp(14px, 2.2vw, 22px);
-        color: var(--c_red_d1);
+        color: var(--_red);
         margin: 0;
         letter-spacing: 0.08em;
         text-transform: uppercase;
@@ -306,10 +310,10 @@ const staggerList = trigger('staggerList', [
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: var(--c_red_d1);
+        background: var(--_red);
         margin-right: 6px;
         vertical-align: middle;
-        box-shadow: 0 0 6px var(--c_red_d1);
+        box-shadow: 0 0 6px var(--_red);
         animation: card-glow 2s ease-in-out infinite;
       }
 
@@ -352,7 +356,7 @@ const staggerList = trigger('staggerList', [
       .corner-mark::after {
         content: '';
         position: absolute;
-        background: var(--c_red_d1);
+        background: var(--_red);
       }
 
       .corner-tl { top: 6px; left: 6px; }
@@ -411,10 +415,33 @@ const staggerList = trigger('staggerList', [
         }
 
         .card-flip {
-          min-height: 180px;
+          aspect-ratio: 2 / 1;
+          /* use interpolate-size so height: max-content is animatable;
+             overflow: hidden is intentionally NOT set here — it would flatten
+             preserve-3d on card-inner and break the 3D flip */
+          interpolate-size: allow-keywords;
+          transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        .card-flip.flipped {
+          height: max-content;
+          aspect-ratio: auto;
+        }
+
+        /* use display:grid so both faces share one cell and the cell
+           auto-sizes to max(front, back) — no position changes ever needed */
+        .card-inner {
+          display: grid;
+          height: 100%;
+        }
+
+        /* both faces stack in the same grid cell via grid-row/col: 1;
+           position stays relative always — no layout jumps on flip */
         .card-face {
+          grid-row: 1;
+          grid-column: 1;
+          position: relative;
+          inset: auto;
           padding: clamp(14px, 3vw, 20px);
         }
 
@@ -593,8 +620,7 @@ export class InfoComponent {
   readonly read = signal([false, false, false]);
 
   toggleCard(index: number): void {
-    const current = this.flipped();
-    const next = [...current];
+    const next = [...this.flipped()];
     next[index] = !next[index];
     this.flipped.set(next);
 

@@ -1,4 +1,4 @@
-@import url('../../../styles/colors.css');
+@use '../../../styles/colors' as c;
 
 :host {
   position: relative;
@@ -65,7 +65,7 @@ section {
   .scroll-container {
     display: flex;
     /* slides */
-    overflow-x: hidden;
+    overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
@@ -75,18 +75,24 @@ section {
     /* &:hover {
     } */
 
+    scrollbar-width: thin;
+    scrollbar-color: rgba(c.$red, 0.45) transparent;
+
     &::-webkit-scrollbar {
-      width: 1em;
+      width: 2px;
     }
 
     &::-webkit-scrollbar-track {
-      background-color: var(--color_black_1);
-      background-color: color-mix(in srgb, whitesmoke 20%, black);
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: color-mix(in srgb, whitesmoke 30%, black);
-      outline: 1px solid black;
+      background: rgba(c.$red, 0.45);
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(c.$red, 0.85);
     }
 
     .content {
