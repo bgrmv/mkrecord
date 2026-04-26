@@ -108,7 +108,8 @@ import { HomeBrandComponent } from '@features/home-brand.component';
         .cam {
           color: #fff;
           background: var(--_red);
-          padding: 4px 10px;
+          /* use extra padding-left = letter-spacing (0.14em) to compensate trailing glyph spacing that shifts text visually left */
+          padding: 4px 10px 4px calc(10px + 0.14em);
           border-radius: 2px;
         }
 
@@ -122,7 +123,8 @@ import { HomeBrandComponent } from '@features/home-brand.component';
         .red {
           color: #fff;
           background: var(--_red);
-          padding: 4px 10px;
+          /* use extra padding-left = letter-spacing (0.14em) to compensate trailing glyph spacing that shifts text visually left */
+          padding: 4px 10px 4px calc(10px + 0.14em);
           border-radius: 2px;
         }
 
@@ -168,7 +170,7 @@ import { HomeBrandComponent } from '@features/home-brand.component';
       <h1>
         <span class="word-lights">LIGHTS</span>
         <span class="word-divider">×</span>
-        <span class="word-camera"><b class="cam">CAM</b><b class="era">ERA</b></span>
+        <span class="word-camera"><b class="cam">CAM</b>ERA</span>
         <span class="word-divider">×</span>
         <span class="word-action">
           ACTI<b class="red">ON</b>
