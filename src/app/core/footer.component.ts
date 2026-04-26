@@ -24,6 +24,7 @@ import { IconService } from '@services/icon.service';
         gap: clamp(16px, 3vw, 32px);
         padding: 0 clamp(20px, 3vw, 40px);
         box-sizing: border-box;
+         font-family: 'Orbitron', sans-serif;
 
         /* divider-style top line — matches header bottom and contacts-me divider */
         &::before {
@@ -45,15 +46,18 @@ import { IconService } from '@services/icon.service';
           margin: 0;
           padding: 0;
           font-size: 11px;
+           font-family: 'Orbitron', sans-serif;
           color: var(--color_whitesmoke_darken_2);
           white-space: nowrap;
 
           .brand {
-            color: var(--c_red_d1);
+            font-family: 'Orbitron', sans-serif;
+            color: var(--c_red);
             font-weight: 500;
           }
 
           &.fullname {
+            font-family: 'Orbitron', sans-serif;
             text-transform: uppercase;
             font-weight: 900;
             font-size: 12px;
@@ -134,7 +138,7 @@ import { IconService } from '@services/icon.service';
           <mat-icon svgIcon="gmail"></mat-icon>
         </a>
       </div>
-      <p>© <span class="brand">MK Rec Studio</span> | {{ year }}</p>
+      <p> <span class="brand">© MK Rec Studio</span> | {{ year }}</p>
     </footer>
   `,
 })

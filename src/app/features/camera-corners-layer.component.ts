@@ -24,6 +24,7 @@ import { MouseHeatService } from '@services/mouse-heat.service';
       :host {
         position: absolute;
         padding: 25px;
+        font-family: 'Orbitron', sans-serif;
         width: 100%;
         height: 100%;
         pointer-events: none;
