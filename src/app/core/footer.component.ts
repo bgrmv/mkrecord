@@ -52,6 +52,7 @@ import { IconService } from '@services/icon.service';
           .brand {
             color: var(--c_red);
             font-weight: 500;
+             font-family: var(--font-display);
           }
 
           &.fullname {
@@ -135,7 +136,7 @@ import { IconService } from '@services/icon.service';
           <mat-icon svgIcon="gmail"></mat-icon>
         </a>
       </div>
-      <p> <span class="brand">© MK Rec Studio</span> | {{ year }}</p>
+      <p> <span  class="brand">© MK Rec Studio</span> | {{ year }}</p>
     </footer>
   `,
 })

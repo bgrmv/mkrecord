@@ -44,6 +44,7 @@ const fadeIn = trigger('fadeIn', [
     :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
       font-family: var(--font-display);
       font-weight: 700;
+          text-transform: uppercase;
     }
 
       /* ── Tab overrides ── */
