@@ -25,8 +25,9 @@ import { IconService } from '@services/icon.service';
       }
 
       @keyframes icon-pulse {
-        0%, 100% { filter: drop-shadow(0 0 4px rgba(224, 78, 66, 0.4)); }
-        50% { filter: drop-shadow(0 0 10px rgba(224, 78, 66, 0.75)); }
+        // use text-shadow because mat-icon fontIcon renders as font glyph — text-shadow follows glyph outline, filter: drop-shadow wraps the rectangular element box
+        0%, 100% { text-shadow: 0 0 4px rgba(224, 78, 66, 0.4); }
+        50%       { text-shadow: 0 0 10px rgba(224, 78, 66, 0.75); }
       }
 
       :host {
@@ -116,7 +117,7 @@ import { IconService } from '@services/icon.service';
         }
 
         .tab-label {
-          font-family: 'Orbitron', 'Roboto', sans-serif;
+          font-family: var(--font-display);
           font-size: 7px;
           font-weight: 700;
           letter-spacing: 0.14em;
@@ -140,9 +141,10 @@ import { IconService } from '@services/icon.service';
           &::before {
             /* use 68% width so the active bar spans most of the tab without touching edges */
             width: 68%;
+            // use negative y-offset so glow bleeds upward above the bar, not downward onto the icon
             box-shadow:
-              0 0 12px rgba(224, 78, 66, 0.6),
-              0 0 24px rgba(224, 78, 66, 0.25);
+              0 -4px 10px rgba(224, 78, 66, 0.6),
+              0 -2px 20px rgba(224, 78, 66, 0.25);
           }
 
           &::after {

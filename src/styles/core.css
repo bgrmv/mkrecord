@@ -1,7 +1,7 @@
 @layer base {
   * {
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-body);
     color: var(--color_whitesmoke);
   }
 
@@ -35,9 +35,13 @@
     color: var(--color_whitesmoke);
     text-decoration: none;
 
-    &:focus,
     &:visited {
-      all: unset;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    &:focus {
+      outline: none;
     }
 
     &:hover {
@@ -51,6 +55,7 @@
   h4,
   h5,
   h6 {
+    font-family: var(--font-display);
     color: var(--color_whitesmoke);
   }
 
@@ -77,6 +82,11 @@
     color: var(--color_whitesmoke);
     font-weight: 300;
     text-wrap: balance;
+  }
+
+  input,
+  textarea {
+    font-family: var(--font-display);
   }
 
   /* use media query to hide native cursor on pointer devices (desktop) — custom cursor handles this */

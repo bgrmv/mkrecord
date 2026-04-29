@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { map, startWith } from 'rxjs';
 import { PlatformService } from '@services/platform.service';
 import { browserInterval } from '@shared/utils/ssr-rxjs';
+import { map, startWith } from 'rxjs';
 
 const cameraQualities = ['FHD', 'QHD 2K', 'UHD 4K', '8K UHD'];
 
@@ -17,7 +17,8 @@ function randomChoice(arr: string[]): string {
 
   styles: [
     `
-      p {
+      div {
+        font-family: var(--font-display);
         padding: 2px;
         font-weight: 400;
         color: var(--color_whitesmoke_darken_4);
@@ -27,7 +28,7 @@ function randomChoice(arr: string[]): string {
     `,
   ],
   // see docs/todo/angular-modern-api.md — A1: use toSignal() because async pipe adds CommonModule dependency and doesn't integrate with zoneless change detection
-  template: `<p>{{ quality$ | async }}</p>`,
+  template: `<div>{{ quality$ | async }}</div>`,
 })
 export class CameraQualityResolutionComponent {
   // use browserInterval because bare interval() creates an uncleanable timer leak during SSR

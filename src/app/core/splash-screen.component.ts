@@ -3,14 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   output,
   signal,
 } from '@angular/core';
-import { PlatformService } from '@services/platform.service';
-
-// r=68 → circumference = 2·π·68 ≈ 427.26 — used in CSS stroke-dasharray and ringOffset()
-const CIRC = 427.26;
 
 @Component({
   selector: 'app-splash-screen',
@@ -40,32 +35,11 @@ const CIRC = 427.26;
         100% { transform: translate(0, 0); }
       }
 
-      /* overshoot-then-settle for the countdown digit — matches the springy nav tab animation */
-      @keyframes number-pop {
-        from { transform: scale(1.5); opacity: 0; }
-        60%  { transform: scale(0.92); opacity: 1; }
-        to   { transform: scale(1); opacity: 1; }
-      }
-
-      /* use focus-glow name from contacts-me.component for brand coherence across the codebase */
-      @keyframes glow-pulse {
-        0%, 100% {
-          text-shadow:
-            0 0 12px rgba(224, 32, 32, 0.55),
-            1px 1px 0 #000;
-        }
-        50% {
-          text-shadow:
-            0 0 28px rgba(224, 32, 32, 0.85),
-            0 0 50px rgba(224, 32, 32, 0.25),
-            1px 1px 0 #000;
-        }
-      }
-
       @keyframes locked-in {
         from { opacity: 0; transform: translateY(8px) scale(0.94); }
         to   { opacity: 1; transform: translateY(0) scale(1); }
       }
+
 
       /* ── Host ──────────────────────────────────────────────────── */
 
@@ -91,6 +65,7 @@ const CIRC = 427.26;
 
         /* use --_red: #e02020 (hue 0°) — same convention as contacts-me.component */
         --_red: #e02020;
+        --_green: #00e87c;
       }
 
       /* ── Atmospheric effects ──────────────────────────────────── */
@@ -150,7 +125,7 @@ const CIRC = 427.26;
         justify-content: center;
         z-index: 10;
 
-        &.exit { opacity: 0; }
+        &.exit { display: none; }
       }
 
       /* HUD corner brackets — same pattern as contacts-me.component for brand consistency */
@@ -168,100 +143,6 @@ const CIRC = 427.26;
         &.br { bottom: 18px; right: 18px; border-width: 0 2px 2px 0; }
       }
 
-      /* film sprocket holes — purely decorative, reinforce the celluloid metaphor */
-      .sprockets {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        padding: 20px 14px;
-
-        &.left  { left: 0; }
-        &.right { right: 0; }
-      }
-
-      .hole {
-        width: 13px;
-        height: 9px;
-        border: 1.5px solid rgba(224, 32, 32, 0.2);
-        border-radius: 2px;
-        background: rgba(0, 0, 0, 0.5);
-        flex-shrink: 0;
-      }
-
-
-      /* ── Countdown ring ───────────────────────────────────────── */
-
-      .ring-wrap {
-        position: relative;
-        width: clamp(130px, 20vw, 170px);
-        height: clamp(130px, 20vw, 170px);
-        margin-bottom: 44px;
-      }
-
-      svg.ring {
-        width: 100%;
-        height: 100%;
-        /* rotate -90° so stroke starts at 12 o'clock */
-        transform: rotate(-90deg);
-        overflow: visible;
-
-        .ring-bg {
-          fill: none;
-          stroke: rgba(224, 32, 32, 0.1);
-          stroke-width: 1.5;
-        }
-
-        .ring-fill {
-          fill: none;
-          stroke: var(--_red);
-          stroke-width: 2;
-          /* use pre-computed CIRC constant — interpolated by TypeScript before Angular sees this string */
-          stroke-dasharray: 427.26;
-          stroke-linecap: round;
-          filter: drop-shadow(0 0 5px rgba(224, 32, 32, 0.65));
-          transition: stroke-dashoffset 0.08s linear;
-        }
-      }
-
-      .ring-inner {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-      }
-
-      /* use @if with three separate <span> elements so Angular destroys and recreates
-         the DOM node on each countdown change, which re-triggers the CSS animations */
-      .count-num {
-        font-family: 'Orbitron', sans-serif;
-        font-size: clamp(44px, 9vw, 64px);
-        font-weight: 900;
-        line-height: 1;
-        letter-spacing: 0;
-        /* text-align + width:100% ensure the digit is centred inside ring-inner */
-        width: 100%;
-        text-align: center;
-        color: var(--_red);
-        animation:
-          number-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both,
-          glow-pulse 2.5s ease-in-out 0.4s infinite;
-      }
-
-      .count-label {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 7px;
-        font-weight: 700;
-        letter-spacing: 0.4em;
-        text-transform: uppercase;
-        color: rgba(242, 242, 242, 0.18);
-      }
-
       /* ── Status area ──────────────────────────────────────────── */
 
       .status {
@@ -271,45 +152,9 @@ const CIRC = 427.26;
         gap: 14px;
       }
 
-      .rec-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-family: 'Orbitron', sans-serif;
-        font-size: clamp(9px, 1.5vw, 11px);
-        font-weight: 700;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        /* grey until done — same muted tone as --c_gray */
-        color: #8c8c8c;
-        transition: color 0.4s ease;
-
-        &.active {
-          color: rgba(224, 32, 32, 0.85);
-          animation: blink-rec 1.2s ease-in-out infinite;
-        }
-
-        .rec-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          /* grey dot until done */
-          background: #8c8c8c;
-          box-shadow: none;
-          flex-shrink: 0;
-          transition: background 0.4s ease, box-shadow 0.4s ease;
-
-          &.active {
-            background: var(--_red);
-            box-shadow: 0 0 7px var(--_red);
-            animation: blink-rec 1.2s ease-in-out infinite;
-          }
-        }
-      }
-
       .status-text {
-        font-family: 'Orbitron', sans-serif;
-        font-size: clamp(9px, 1.4vw, 11px);
+        font-family: var(--font-display);
+        font-size: clamp(13px, 2.2vw, 18px);
         font-weight: 700;
         letter-spacing: 0.28em;
         text-transform: uppercase;
@@ -338,8 +183,8 @@ const CIRC = 427.26;
       }
 
       .progress-pct {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 8px;
+        font-family: var(--font-display);
+        font-size: clamp(13px, 2.2vw, 18px);
         font-weight: 700;
         letter-spacing: 0.15em;
         color: rgba(224, 32, 32, 0.38);
@@ -348,22 +193,35 @@ const CIRC = 427.26;
         &.done { opacity: 0.12; }
       }
 
-      /* ── Signal locked overlay ────────────────────────────────── */
+      /* ── Signal locked / unlocked overlays ───────────────────── */
 
-      .locked {
+      .locked,
+      .unlocked {
         position: absolute;
         inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 14px;
         background: rgba(5, 1, 1, 0.6);
         z-index: 20;
         animation: locked-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .lock-icon {
+        width: 44px;
+        height: 44px;
+        /* currentColor inherits from parent .locked / .unlocked color */
+        fill: currentColor;
+        filter: drop-shadow(0 0 10px currentColor);
+      }
+
+      .locked {
+        color: var(--_red);
 
         .locked-title {
-          font-family: 'Orbitron', sans-serif;
+          font-family: var(--font-display);
           font-size: clamp(13px, 2.8vw, 20px);
           font-weight: 900;
           letter-spacing: 0.28em;
@@ -372,17 +230,26 @@ const CIRC = 427.26;
           text-shadow:
             0 0 28px rgba(224, 32, 32, 0.65),
             0 0 60px rgba(224, 32, 32, 0.2);
-          /* blink until done.emit() — same rhythm as the REC dot */
+          /* blink until loading begins — same rhythm as the REC dot */
           animation: blink-rec 1.1s ease-in-out infinite;
         }
+      }
 
-        .locked-sub {
-          font-family: 'Orbitron', sans-serif;
-          font-size: 8px;
-          font-weight: 400;
-          letter-spacing: 0.35em;
+      .unlocked {
+        color: var(--_red);
+
+        .unlocked-title {
+          font-family: var(--font-display);
+          font-size: clamp(13px, 2.8vw, 20px);
+          font-weight: 900;
+          letter-spacing: 0.28em;
           text-transform: uppercase;
-          color: rgba(242, 242, 242, 0.3);
+          color: var(--_red);
+          text-shadow:
+            0 0 20px rgba(0, 232, 124, 0.7),
+            0 0 50px rgba(0, 232, 124, 0.2);
+          /* reuse blink-rec so unlocked blinks with the same rhythm as locked */
+          animation: blink-rec 1.1s ease-in-out infinite;
         }
       }
     `,
@@ -401,31 +268,36 @@ const CIRC = 427.26;
       <span class="corner bl"></span>
       <span class="corner br"></span>
 
-      <!-- countdown ring with SVG progress circle -->
-      
-
-       @if (phase() === 'loading') {
-      <!-- status: REC badge → status text → progress bar -->
-      <div class="status">
-        <!-- <div class="rec-badge" [class.active]="progressDone()">
-          <span class="rec-dot" [class.active]="progressDone()"></span>
-          Signal Ready
-        </div> -->
-
-        <p class="status-text">{{ statusText() }}</p>
-
-        <div class="progress-track" [class.done]="progressDone()">
-          <div class="progress-fill" [style.width.%]="progress()"></div>
-        </div>
-
-        <span class="progress-pct" [class.done]="progressDone()">{{ progress() }}&nbsp;%</span>
-      </div>
-       }
-
-      <!-- signal-locked overlay appears briefly before exit -->
-      @if (phase() === 'ready') {
+      <!-- signal-locked overlay: shown first for 300 ms before loading begins -->
+      @if (phase() === 'locked') {
         <div class="locked">
+          <!-- Material "lock" path — shackle closed on both sides -->
+          <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
           <span class="locked-title">Signal Locked</span>
+        </div>
+      }
+
+      <!-- loading phase: progress bar and status text -->
+      @if (phase() === 'loading') {
+        <div class="status">
+          <div class="status-text">{{ statusText() }}</div>
+          <div class="progress-track" [class.done]="progressDone()">
+            <div class="progress-fill" [style.width.%]="progress()"></div>
+          </div>
+          <span class="progress-pct" [class.done]="progressDone()">{{ progress() }}&nbsp;%</span>
+        </div>
+      }
+
+      <!-- signal-unlocked overlay: shown after loading completes, before exit -->
+      @if (phase() === 'unlocked') {
+        <div class="unlocked">
+          <!-- lock_open_right: shackle connects on the left, free end lifts to the right -->
+          <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 8h1V6c0-2.76 2.24-5 5-5S17 3.24 17 6h-2c0-1.66-1.34-3-3-3s-3 1.34-3 3v2H18c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V10c0-1.1.9-2 2-2zm6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+          </svg>
+          <span class="unlocked-title">Signal Unlocked</span>
         </div>
       }
 
@@ -433,24 +305,15 @@ const CIRC = 427.26;
   `,
 })
 export class SplashScreenComponent {
-  private readonly platform = inject(PlatformService);
-
   // use output() because it is the modern Angular signal-based alternative to EventEmitter
   readonly done = output<void>();
 
-  readonly phase = signal<'loading' | 'ready' | 'exit'>('loading');
-  readonly countdown = signal<3 | 2 | 1>(3);
+  readonly phase = signal<'locked' | 'loading' | 'unlocked' | 'exit'>('locked');
   readonly statusText = signal('INITIALIZING SIGNAL');
   readonly progress = signal(0);
 
-  // use computed() so ringOffset stays in sync with progress without manual subscriptions
-  readonly ringOffset = computed(() => CIRC * (1 - this.progress() / 100));
-
-  // true once the bar hits 100 — drives CSS class changes in the template
+  // use computed() so progressDone stays in sync with progress without manual subscriptions
   readonly progressDone = computed(() => this.progress() >= 100);
-
-
-  readonly holes = Array(10).fill(0);
 
   constructor() {
     // use afterNextRender because document.fonts, requestAnimationFrame, and
@@ -461,30 +324,31 @@ export class SplashScreenComponent {
   }
 
   private async runSequence(): Promise<void> {
+    // hold Signal Locked long enough for the user to read the text
+    await new Promise<void>((r) => setTimeout(r, 1200));
+
+    this.phase.set('loading');
     this.animateProgress();
 
-    // status text cycling — each label is visible ~1.2–1.5s before the next
-    setTimeout(() => this.statusText.set('LOADING ASSETS'),    800);
-    setTimeout(() => this.countdown.set(2),                   1600);
-    setTimeout(() => this.statusText.set('CALIBRATING OPTICS'), 2000);
-    setTimeout(() => this.countdown.set(1),                   3200);
-    setTimeout(() => this.statusText.set('CAMERA READY'),     3600);
+    // status text cycling — three labels spread evenly across the loading window
+    setTimeout(() => this.statusText.set('LOADING ASSETS'),      400);
+    setTimeout(() => this.statusText.set('CALIBRATING OPTICS'), 1000);
+    setTimeout(() => this.statusText.set('CAMERA READY'),        1700);
 
     // use Promise.all to wait for BOTH the minimum display window AND font readiness —
     // fonts.ready resolves fast when cached, so the min-delay is the real gatekeeper
-    const minDelay = new Promise<void>((r) => setTimeout(r, 4400));
+    const minDelay = new Promise<void>((r) => setTimeout(r, 2200));
     await Promise.all([minDelay, document.fonts.ready]);
 
-    this.phase.set('ready');
-    // use 2500ms so "Signal Locked" blinks visibly before fade-out
-    await new Promise<void>((r) => setTimeout(r, 2500));
-    this.phase.set('exit'); // triggers opacity:0 CSS transition (0.65s)
-    await new Promise<void>((r) => setTimeout(r, 680)); // outlast the transition
+    this.phase.set('unlocked');
+    // hold Signal Unlocked long enough for the user to register it before exit
+    await new Promise<void>((r) => setTimeout(r, 1500));
+    this.phase.set('exit');
     this.done.emit();
   }
 
   private animateProgress(): void {
-    const duration = 4200;
+    const duration = 2000;
     const start = performance.now();
 
     // use requestAnimationFrame because it syncs with the display refresh rate,

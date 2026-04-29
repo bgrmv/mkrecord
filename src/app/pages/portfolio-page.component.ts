@@ -35,7 +35,17 @@ const fadeIn = trigger('fadeIn', [
   ],
   animations: [fadeIn],
   styles: [
+    
     `
+    :host {
+      font-family: var(--font-display);
+    }
+
+    :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
       /* ── Tab overrides ── */
       /* use ::ng-deep because Material tab wrappers are outside component scope */
       ::ng-deep {
@@ -59,9 +69,14 @@ const fadeIn = trigger('fadeIn', [
           filter: drop-shadow(0 0 6px rgba(242, 93, 80, 0.8));
         }
 
-        /* use Orbitron because it matches the camera/tech aesthetic of the site */
-        .mdc-tab__text-label {
-          font-family: 'Orbitron', sans-serif;
+        /* use --mat-tab-header-label-text-font token because Material resolves font-family
+           through its own CSS custom property, bypassing direct font-family overrides */
+        .mat-mdc-tab-group {
+          --mat-tab-header-label-text-font: var(--font-display);
+        }
+
+        .mat-mdc-tab .mdc-tab__text-label {
+          font-family: var(--font-display);
           letter-spacing: 0.18em;
           text-transform: uppercase;
           font-weight: 900;
@@ -187,7 +202,7 @@ const fadeIn = trigger('fadeIn', [
         }
 
         /* shrink tab labels on mobile — desktop uses 1.3vw which is too wide at 390px */
-        ::ng-deep .mdc-tab__text-label {
+        ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
           font-size: clamp(8px, 2.8vw, 11px);
           letter-spacing: 0.12em;
           gap: 5px;
@@ -215,7 +230,7 @@ const fadeIn = trigger('fadeIn', [
 
       /* Very small phones: further compress tab labels */
       @media (max-width: 360px) {
-        ::ng-deep .mdc-tab__text-label {
+        ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
           font-size: clamp(7px, 2.4vw, 9px);
           letter-spacing: 0.08em;
           gap: 3px;

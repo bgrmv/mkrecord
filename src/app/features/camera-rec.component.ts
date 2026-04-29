@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     `
       :host {
         position: relative;
-
+        font-family: var(--font-display);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -23,7 +23,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         }
 
         .rec-word {
-          font-weight: 400;
+          font-weight: 100;
+          font-family: var(--font-display);
           color: var(--c_red);
         }
       }

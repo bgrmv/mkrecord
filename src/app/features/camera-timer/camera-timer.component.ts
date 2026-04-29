@@ -8,20 +8,22 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map, scan } from 'rxjs';
 import { PlatformService } from '@services/platform.service';
 import { browserInterval } from '@shared/utils/ssr-rxjs';
+import { map, scan } from 'rxjs';
 
 @Component({
   selector: 'app-camera-timer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
-  template: `<p [textContent]="timerSignal() | date: 'HH:mm:ss'"></p> `,
+  template: `<div [textContent]="timerSignal() | date: 'HH:mm:ss'"></div> `,
   styles: `
     :host {
-      p {
+      div {
+        font-family: var(--font-display);
         font-weight: 100;
         color: rgba(245, 245, 245, 0.5);
+
       }
     }
   `,

@@ -51,12 +51,12 @@ import { HomeBrandComponent } from '@features/home-brand.component';
     .header {
       text-align: center;
       animation: slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+      font-family: var(--font-display);  
 
       .rec-badge {
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        font-family: 'Orbitron', sans-serif;
         font-size: clamp(14px, 1.5vw, 24px);
         font-weight: 700;
         letter-spacing: 0.22em;
@@ -75,7 +75,6 @@ import { HomeBrandComponent } from '@features/home-brand.component';
       }
 
       h1 {
-        font-family: 'Orbitron', sans-serif;
         font-size: clamp(22px, 5vw, 62px);
         font-weight: 900;
         letter-spacing: 0.14em;
@@ -142,6 +141,7 @@ import { HomeBrandComponent } from '@features/home-brand.component';
       .header {
         animation: none;
         text-align: left;
+        font-family: var(--font-display);
 
         wrap: balance;
 

@@ -163,13 +163,13 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
       /* ---------- Header ---------- */
       .header {
         text-align: center;
+        font-family: var(--font-display);
         margin-bottom: 44px;
 
         .rec-badge {
           display: inline-flex;
           align-items: center;
           gap: 7px;
-          font-family: 'Orbitron', sans-serif;
           font-size: clamp(7px, 1.5vw, 9px);
           font-weight: 700;
           letter-spacing: 0.22em;
@@ -189,7 +189,6 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
         }
 
         h1 {
-          font-family: 'Orbitron', sans-serif;
           font-size: clamp(20px, 3.8vw, 30px);
           font-weight: 900;
           letter-spacing: 0.14em;
@@ -233,7 +232,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
         }
 
         .tagline {
-          font-family: 'Roboto', sans-serif;
+          font-family: var(--font-body);
           font-weight: 300;
           font-size: 13.5px;
           line-height: 1.75;
@@ -271,9 +270,6 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
           width: 100%;
           height: 50px;
           margin-top: 16px;
-          /* use Orbitron because the submit is the final "transmission" action —
-             matches the headline energy and feels intentional */
-          font-family: 'Orbitron', sans-serif;
           font-size: 10px;
           font-weight: 700;
           letter-spacing: 0.22em;
@@ -320,7 +316,6 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
           align-items: center;
           justify-content: center;
           gap: 8px;
-          font-family: 'Orbitron', sans-serif;
           font-size: 9px;
           font-weight: 700;
           letter-spacing: 0.2em;
@@ -338,7 +333,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
         }
 
         &.error {
-          font-family: 'Roboto', sans-serif;
+          font-family: var(--font-display);
           font-size: 13px;
           color: #ff6060;
         }

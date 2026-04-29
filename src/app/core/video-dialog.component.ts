@@ -100,6 +100,7 @@ export interface DialogData {
         top: 5px;
         z-index: 9999;
         text-shadow: 1px 1px 1px black;
+        font-weight: 700;
 
         &:hover {
           color: var(--c_red);
@@ -108,7 +109,7 @@ export interface DialogData {
     `,
   ],
   template: `
-    <button class="close-button" mat-dialog-close mat-icon-button>✖</button>
+    
 
     <!-- <h1 mat-dialog-title>{{ data.title | uppercase }}</h1> -->
 
@@ -131,6 +132,15 @@ export interface DialogData {
         <div class="video-overlay"></div>
       </div>
     }
+<!-- 
+    <div class="close-button">
+      <button mat-dialog-close mat-raised-button color="primary">CLOSE</button>
+      <button mat-dialog-close mat-raised-button color="primary">Fullscreen</button>
+    </div> -->
+
+    <button class="close-button" mat-dialog-close mat-icon-button>
+      ESC
+    </button>
   `,
   providers: [
     {

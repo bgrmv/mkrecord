@@ -24,7 +24,6 @@ import { IconService } from '@services/icon.service';
         gap: clamp(16px, 3vw, 32px);
         padding: 0 clamp(20px, 3vw, 40px);
         box-sizing: border-box;
-         font-family: 'Orbitron', sans-serif;
 
         /* divider-style top line — matches header bottom and contacts-me divider */
         &::before {
@@ -45,19 +44,17 @@ import { IconService } from '@services/icon.service';
         p {
           margin: 0;
           padding: 0;
+          font-family: var(--font-display);
           font-size: 11px;
-           font-family: 'Orbitron', sans-serif;
           color: var(--color_whitesmoke_darken_2);
           white-space: nowrap;
 
           .brand {
-            font-family: 'Orbitron', sans-serif;
             color: var(--c_red);
             font-weight: 500;
           }
 
           &.fullname {
-            font-family: 'Orbitron', sans-serif;
             text-transform: uppercase;
             font-weight: 900;
             font-size: 12px;

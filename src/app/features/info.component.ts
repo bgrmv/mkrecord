@@ -277,7 +277,7 @@ const staggerList = trigger('staggerList', [
       /* ── Card header ── */
 
       .card-title {
-        font-family: 'Space Grotesk', Roboto, sans-serif;
+        font-family: var(--font-accent);
         font-weight: 700;
         font-size: clamp(14px, 2.2vw, 22px);
         color: var(--_red);
@@ -337,10 +337,6 @@ const staggerList = trigger('staggerList', [
         letter-spacing: 0.2px;
         color: #e8e8e8;
         transition: transform 0.3s ease;
-
-        &:hover {
-          transform: translateX(4px);
-        }
       }
 
       /* ── Corner marks (camera viewfinder) ── */
@@ -420,12 +416,58 @@ const staggerList = trigger('staggerList', [
              overflow: hidden is intentionally NOT set here — it would flatten
              preserve-3d on card-inner and break the 3D flip */
           interpolate-size: allow-keywords;
-          transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+          transition:
+            height 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+            aspect-ratio 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+          /*
+           * transition-behavior: allow-discrete unlocks two things at once:
+           *
+           * 1. Discrete-property transitions — 'aspect-ratio: 2/1' and
+           *    'aspect-ratio: auto' cannot be numerically interpolated (one
+           *    side is the keyword 'auto'), so by default the browser would
+           *    flip it instantly at 50% of the transition. allow-discrete
+           *    instead holds the "from" value for the full duration of the
+           *    first half, then snaps — giving a coordinated snap rather than
+           *    an unrelated instant jump mid-animation.
+           *
+           * 2. @starting-style support for transitions — @starting-style is
+           *    normally only used with CSS animations (@keyframes). With
+           *    allow-discrete the browser also consults @starting-style at
+           *    the START of a transition, i.e., the very first tick after a
+           *    class is added. This lets us declare "where does the expansion
+           *    begin" explicitly instead of relying on the browser's snapshot
+           *    of the previous computed value (which can be stale on fast
+           *    double-taps or during the 3-D rotation).
+           */
+          transition-behavior: allow-discrete;
         }
 
         .card-flip.flipped {
           height: max-content;
           aspect-ratio: auto;
+
+          /*
+           * @starting-style — the "enter from" state of this rule.
+           *
+           * When .flipped is first applied the browser would normally grab
+           * the element's already-computed height as the transition origin.
+           * That's usually fine, but during the 3-D flip the card-inner is
+           * mid-rotation, so the snapshot can be unreliable.
+           *
+           * By restating the collapsed geometry here we guarantee the height
+           * transition always departs from the natural front-face size
+           * (width × (1/2) from aspect-ratio 2/1) and grows smoothly up to
+           * max-content — regardless of when in the flip the class lands.
+           *
+           * The aspect-ratio reset mirrors the allow-discrete snap trick
+           * above: it keeps the card in its narrow proportion during @starting
+           * evaluation so the height baseline is computed identically to the
+           * unflipped state.
+           */
+          @starting-style {
+            height: auto;
+            aspect-ratio: 2 / 1;
+          }
         }
 
         /* use display:grid so both faces share one cell and the cell

@@ -107,7 +107,7 @@ const cinematicFocus = trigger('cinematicFocus', [
             a {
               position: relative;
               display: block;
-              font-family: 'Orbitron', 'Roboto', sans-serif;
+              font-family: var(--font-display);
               font-weight: 700;
               letter-spacing: 0.05em;
               text-transform: uppercase;

@@ -66,13 +66,13 @@ import { InfoComponent } from '@features/info.component';
         width: 100%;
         text-align: center;
         padding: 20px 24px 0;
+        font-family: var(--font-display);
         animation: slide-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 
         .rec-badge {
           display: inline-flex;
           align-items: center;
           gap: 7px;
-          font-family: 'Orbitron', sans-serif;
           font-size: clamp(7px, 1.5vw, 9px);
           font-weight: 700;
           letter-spacing: 0.22em;
@@ -91,7 +91,6 @@ import { InfoComponent } from '@features/info.component';
         }
 
         h1 {
-          font-family: 'Orbitron', sans-serif;
           font-size: clamp(18px, 3.5vw, 28px);
           font-weight: 900;
           letter-spacing: 0.14em;

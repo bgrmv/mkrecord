@@ -1,5 +1,10 @@
 @layer base {
   :root {
+    /* ── Typography ─────────────────────────────────────────────── */
+    --font-display: 'Orbitron', sans-serif;
+    --font-body:    'Roboto', sans-serif;
+    --font-accent:  'Space Grotesk', 'Roboto', sans-serif;
+
     --c_primary: tomato;
 
     --c_red: red;

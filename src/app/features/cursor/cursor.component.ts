@@ -1,18 +1,14 @@
 import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
-  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
   ElementRef,
   inject,
-  Injector,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DomPortal, DomPortalOutlet } from '@angular/cdk/portal';
-import { OverlayContainer } from '@angular/cdk/overlay';
 import { MatDialog } from '@angular/material/dialog';
 import { MouseHeatService } from '@services/mouse-heat.service';
 import { PlatformService } from '@services/platform.service';
@@ -23,12 +19,28 @@ import { PlatformService } from '@services/platform.service';
   standalone: true,
   styles: [
     `
+      /* use popover API to put cursor in the top layer because Angular CDK 21+
+         renders dialogs/menus via popover="manual" + showPopover(); the top layer
+         is rendered above all z-index, so plain z-index can't beat it */
       :host {
         position: fixed;
         top: 0;
         left: 0;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: inherit;
+        overflow: visible;
         pointer-events: none;
+        inset: auto;
         z-index: 2147483647;
+      }
+
+      :host::backdrop {
+        display: none;
       }
 
       .cursor-container {
@@ -45,6 +57,8 @@ import { PlatformService } from '@services/platform.service';
         /* center point is handled by transform binding in template */
         pointer-events: none;
         z-index: 10001;
+        /* crisp 1px black ring keeps dot visible on red surfaces */
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 1);
       }
 
       /* use transition for smooth lag effect on bracket position */
@@ -52,7 +66,7 @@ import { PlatformService } from '@services/platform.service';
         position: fixed;
         width: 14px;
         height: 14px;
-        border: 1px solid color-mix(
+        border: 3px solid color-mix(
           in srgb,
           var(--c_red_l1) calc(var(--cursor-heat, 0%) * 0.4),
           var(--color_whitesmoke_darken_4)
@@ -62,11 +76,17 @@ import { PlatformService } from '@services/platform.service';
           filter 60ms ease-out;
         pointer-events: none;
         z-index: 10000;
-        /* use filter for heat-reactive glow */
-        filter: drop-shadow(
-          0 0 calc(2px * var(--cursor-heat-val, 0))
-          rgba(226, 74, 66, calc(var(--cursor-heat-val, 0) * 0.5))
-        );
+        /* use chained drop-shadow: stacked 0-blur black silhouettes give a
+           crisp 1px outline on every side; last shadow is the heat-reactive glow */
+        filter:
+          drop-shadow(1px 0 0 rgba(0, 0, 0, 1))
+          drop-shadow(-1px 0 0 rgba(0, 0, 0, 1))
+          drop-shadow(0 1px 0 rgba(0, 0, 0, 1))
+          drop-shadow(0 -1px 0 rgba(0, 0, 0, 1))
+          drop-shadow(
+            0 0 calc(2px * var(--cursor-heat-val, 0))
+            rgba(226, 74, 66, calc(var(--cursor-heat-val, 0) * 0.5))
+          );
       }
 
       /* draw L-shaped brackets by removing opposite borders */
@@ -123,43 +143,39 @@ export class CursorComponent {
   constructor() {
     const doc = inject(DOCUMENT);
     const el = inject(ElementRef<HTMLElement>);
-    const appRef = inject(ApplicationRef);
-    const injector = inject(Injector);
-    const overlayContainer = inject(OverlayContainer);
     const matDialog = inject(MatDialog);
     const destroyRef = inject(DestroyRef);
 
-    // use DomPortal + DomPortalOutlet (Angular CDK) instead of raw appendChild;
-    // use MatDialog observables instead of mousemove + composedPath heuristics —
-    // afterAllClosed fires reliably on dialog close regardless of mouse movement,
-    // fixing the cursor-disappear-after-close bug
     afterNextRender(() => {
-      const host = el.nativeElement;
-      const homeEl = doc.getElementById('cursor-portal') ?? doc.body;
-      const cursorPortal = new DomPortal(host);
+      const host = el.nativeElement as HTMLElement & {
+        showPopover?: () => void;
+        hidePopover?: () => void;
+      };
 
-      const homeOutlet = new DomPortalOutlet(homeEl, appRef, injector);
-      const overlayOutlet = new DomPortalOutlet(
-        overlayContainer.getContainerElement(),
-        appRef,
-        injector,
-      );
+      // feature-detect popover API; CDK 21 only uses it when supported
+      const supportsPopover = 'showPopover' in doc.body;
+      if (!supportsPopover) return;
 
-      homeOutlet.attach(cursorPortal);
+      host.setAttribute('popover', 'manual');
+      try { host.showPopover?.(); } catch {}
 
-      matDialog.afterOpened.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
-        if (homeOutlet.hasAttached()) homeOutlet.detach();
-        if (!overlayOutlet.hasAttached()) overlayOutlet.attach(cursorPortal);
-      });
-
-      matDialog.afterAllClosed.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => {
-        if (overlayOutlet.hasAttached()) overlayOutlet.detach();
-        if (!homeOutlet.hasAttached()) homeOutlet.attach(cursorPortal);
-      });
+      // re-promote cursor to the top of the top layer whenever a dialog opens
+      // (top-layer stacking is insertion order: last-shown wins)
+      matDialog.afterOpened
+        .pipe(takeUntilDestroyed(destroyRef))
+        .subscribe(() => {
+          // defer to next frame so the dialog's popover is shown first,
+          // then we hide+show the cursor to re-stack it on top
+          requestAnimationFrame(() => {
+            try {
+              host.hidePopover?.();
+              host.showPopover?.();
+            } catch {}
+          });
+        });
 
       destroyRef.onDestroy(() => {
-        if (homeOutlet.hasAttached()) homeOutlet.detach();
-        if (overlayOutlet.hasAttached()) overlayOutlet.detach();
+        try { host.hidePopover?.(); } catch {}
       });
     });
   }

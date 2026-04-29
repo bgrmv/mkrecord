@@ -10,7 +10,7 @@ $theme: mat.define-theme(
     ),
     typography: (
       plain-family: Roboto,
-      brand-family: Open Sans,
+      brand-family: Orbitron,
       bold-weight: 900,
       medium-weight: 500,
       regular-weight: 300,
@@ -51,8 +51,14 @@ html {
       divider-color: rgba(224, 78, 66, 0.3),
       active-label-text-color: var(--c_red_l1),
       active-focus-label-text-color: var(--c_red_l1),
+      // use unquote() because a quoted SCSS string emits CSS string literals
+      // which browsers reject as font-family values and fall back to inherited
+      label-text-font: unquote("Orbitron, sans-serif"),
     )
   );
+  // these must come AFTER tabs-overrides, which would otherwise overwrite them
+  --mat-tab-header-label-text-font: Orbitron, sans-serif;
+  --mdc-secondary-navigation-tab-label-text-font: Orbitron, sans-serif;
   @include mat.divider-overrides(
     (
       color: var(--color_whitesmoke_darken_4),
