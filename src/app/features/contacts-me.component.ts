@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,13 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FooterComponent } from '@core/footer.component';
 import { PlatformService } from '@services/platform.service';
-import emailjs from '@emailjs/browser';
-
-// Replace these with your EmailJS account credentials:
-// https://www.emailjs.com/docs/introduction/how-does-emailjs-work/
-const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+import { firstValueFrom } from 'rxjs';
+import { ContactsCaptchaComponent } from './contacts-captcha.component';
 
 @Component({
   selector: 'app-contacts-me',
@@ -34,6 +30,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
     MatIconModule,
     MatButtonModule,
     FooterComponent,
+    ContactsCaptchaComponent,
   ],
   styles: [
     `
@@ -256,6 +253,20 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
            below the outline — adding 12px makes the total gap ~32px between fields */
         gap: 12px;
 
+        /* Honeypot — visually removed without display:none (bots detect that and skip).
+           Off-screen + 0×0 + clip-path means it occupies no layout space and no
+           pixels render, but the field is still present in the DOM for naive bots. */
+        .hp-trap {
+          position: absolute;
+          left: -10000px;
+          top: auto;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          opacity: 0;
+          pointer-events: none;
+        }
+
         mat-form-field {
           width: 100%;
         }
@@ -266,7 +277,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
           max-height: 220px;
         }
 
-        button[type='submit'] {
+        button[type='button'] {
           width: 100%;
           height: 50px;
           margin-top: 16px;
@@ -419,6 +430,22 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
       </header>
 
       <form id="contacts" [formGroup]="formGroup" (submit)="onSubmit($event)">
+        <!--
+          Honeypot field — invisible to real users via off-screen positioning
+          (NOT display:none, which sophisticated bots detect and skip). Naive
+          bots fill any input named "website"/"url" by default.
+          Use position:absolute + clip + tabindex=-1 + aria-hidden + autocomplete=off
+          so screen readers, keyboard users, and password managers all skip it.
+        -->
+        <input
+          class="hp-trap"
+          type="text"
+          name="website"
+          formControlName="website"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true" />
+
         <mat-form-field appearance="outline">
           <mat-label>Your Email</mat-label>
           <input
@@ -451,6 +478,8 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
           </mat-error>
         </mat-form-field>
 
+        <app-contacts-captcha formControlName="captcha" />
+
         <button
           mat-raised-button
           type="submit"
@@ -477,6 +506,7 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
 })
 export class ContactsMeComponent {
   private readonly platformService = inject(PlatformService);
+  private readonly http = inject(HttpClient);
 
   readonly isSubmitting = signal(false);
   readonly submitSuccess = signal(false);
@@ -490,6 +520,19 @@ export class ContactsMeComponent {
     text: new FormControl<string | null>('', {
       validators: [Validators.required, Validators.minLength(10)],
     }),
+    // use Validators.requiredTrue because the form must stay invalid until the
+    // user verifies humanity — propagates into formGroup.invalid automatically,
+    // so the existing [disabled]="formGroup.invalid" on the submit button picks it up
+    captcha: new FormControl<boolean>(false, {
+      nonNullable: true,
+      validators: [Validators.requiredTrue],
+    }),
+    // Honeypot — invisible to humans (positioned off-screen, tabindex=-1, aria-hidden).
+    // Naive bots fill every field they find; if this is non-empty, we silently drop the
+    // submission so the bot thinks it succeeded and doesn't retry.
+    // Field name "website" is intentionally a common bot-keyword target.
+    // No validators here: validators would reject the form *before* we can detect the bot.
+    website: new FormControl<string>('', { nonNullable: true }),
   });
 
   async onSubmit(event: Event) {
@@ -502,6 +545,16 @@ export class ContactsMeComponent {
       return;
     }
 
+    // Honeypot trap — if the hidden field has any value, a bot filled it.
+    // Fake the success state so the bot's heuristic ("got 200 OK / saw success UI")
+    // marks this target as done and moves on. Do NOT throw or show an error —
+    // that would teach the bot to skip honeypot fields next time.
+    if (this.formGroup.value.website) {
+      this.submitSuccess.set(true);
+      this.formGroup.reset();
+      return;
+    }
+
     if (!this.platformService.isBrowser) return;
 
     this.isSubmitting.set(true);
@@ -509,14 +562,11 @@ export class ContactsMeComponent {
     this.submitError.set(null);
 
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_email: this.formGroup.value.email,
-          message: this.formGroup.value.text,
-        },
-        { publicKey: EMAILJS_PUBLIC_KEY },
+      await firstValueFrom(
+        this.http.post('/api/contact', {
+          email: this.formGroup.value.email,
+          text: this.formGroup.value.text,
+        }),
       );
       this.submitSuccess.set(true);
       this.formGroup.reset();

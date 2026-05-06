@@ -12,6 +12,7 @@ import { CategoryEnum, portfolios } from '@app/constants';
 import { PortfolioBlockHorizontalComponent } from '@entities/portfolio-block/portfolio-block-horizontal.component';
 import { PortfolioBlockVerticalComponent } from '@entities/portfolio-block/portfolio-block-vertical.component';
 import { PlatformService } from '@services/platform.service';
+import { SeoService } from '@services/seo.service';
 
 const fadeIn = trigger('fadeIn', [
   transition(':enter', [
@@ -278,6 +279,15 @@ const fadeIn = trigger('fadeIn', [
 })
 export class PortfolioPageComponent {
   private readonly platformService = inject(PlatformService);
+
+  constructor() {
+    inject(SeoService).set({
+      title: 'Portfolio',
+      description: 'Browse cinematic video work by Marek Kondratjev — brands, events, music videos, social media reels and short films.',
+      keywords: 'video portfolio, cinematic portfolio, commercial video portfolio, reels portfolio, event videos, brand video, short film',
+      path: '/portfolio',
+    });
+  }
 
   public readonly isDesktop = computed(() => !this.platformService.isMobile());
 

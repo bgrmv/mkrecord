@@ -41,3 +41,16 @@ export const toggleFullscreen = async (target: HTMLVideoElement) => {
     await playAndShowVideo(target);
   }
 };
+
+// use document.documentElement so top-layer elements (custom cursor, popovers) stay
+// visible in fullscreen; targeting a child element would exclude them from the
+// fullscreen subtree and make them disappear
+export const toggleElementFullscreen = async () => {
+  if (!isBrowser()) return;
+
+  if (document.fullscreenElement) {
+    await document.exitFullscreen();
+  } else {
+    await document.documentElement.requestFullscreen();
+  }
+};

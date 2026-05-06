@@ -2,12 +2,38 @@
 <html lang="en">
   <head>
     <!-- Main -->
-    <title>Mkrecord</title>
+    <title>MK Rec Studio — Filmmaker &amp; Videographer | Marek Kondratjev</title>
     <base href="/" />
 
     <!-- Meta -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Professional filmmaker and videographer Marek Kondratjev. 10+ years in cinematic video production — commercials, events, corporate content, music videos and social media reels." />
+    <meta name="keywords" content="filmmaker, videographer, video production, cinematic video, commercial video, event videography, corporate video, music video, reels, short film, Marek Kondratjev, MK Rec Studio, drone operator" />
+    <meta name="author" content="Marek Kondratjev" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical (overridden per-page by SeoService) -->
+    <link rel="canonical" href="https://mkrecord.azurewebsites.net/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MK Rec Studio" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="MK Rec Studio — Filmmaker &amp; Videographer | Marek Kondratjev" />
+    <meta property="og:description" content="Professional filmmaker and videographer Marek Kondratjev. 10+ years in cinematic video production — commercials, events, corporate content, music videos and social media reels." />
+    <meta property="og:url" content="https://mkrecord.azurewebsites.net/" />
+    <meta property="og:image" content="https://mkrecord.azurewebsites.net/assets/brand/mk-white.png" />
+    <meta property="og:image:alt" content="MK Rec Studio — cinematic video production by Marek Kondratjev" />
+
+    <!-- Twitter / X Card -->
+    <!-- WhatsApp and Telegram use og:* tags above — no extra meta needed -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@mkrec_studio" />
+    <meta name="twitter:title" content="MK Rec Studio — Filmmaker &amp; Videographer" />
+    <meta name="twitter:description" content="Professional filmmaker Marek Kondratjev. Cinematic commercials, events, reels and short films." />
+    <meta name="twitter:image" content="https://mkrecord.azurewebsites.net/assets/brand/mk-white.png" />
+    <meta name="twitter:image:alt" content="MK Rec Studio — cinematic video production by Marek Kondratjev" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,11 +65,55 @@
 
     <!-- Web Manifest -->
     <link rel="manifest" href="manifest.webmanifest" />
+
+    <!-- Structured Data: Organization + Person -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://mkrecord.azurewebsites.net/#organization",
+          "name": "MK Rec Studio",
+          "url": "https://mkrecord.azurewebsites.net/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://mkrecord.azurewebsites.net/assets/brand/mk-white.svg"
+          },
+          "sameAs": [
+            "https://t.me/mkrec_studio",
+            "https://www.youtube.com/@Marekus21",
+            "https://www.facebook.com/KondratjevM",
+            "https://www.instagram.com/mkrec.studio/",
+            "https://www.linkedin.com/in/marek-kondratjev/"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://mkrecord.azurewebsites.net/#person",
+          "name": "Marek Kondratjev",
+          "jobTitle": "Filmmaker & Videographer",
+          "description": "Professional filmmaker with 10+ years of experience in cinematic video production, commercials, events, broadcast camera operation and licensed drone piloting.",
+          "url": "https://mkrecord.azurewebsites.net/info",
+          "worksFor": {
+            "@id": "https://mkrecord.azurewebsites.net/#organization"
+          },
+          "sameAs": [
+            "https://www.linkedin.com/in/marek-kondratjev/",
+            "https://www.youtube.com/@Marekus21",
+            "https://www.instagram.com/mkrec.studio/"
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body style="overflow: hidden">
     <app-root></app-root>
     <!-- cursor-portal renders above cdk-overlay-container which is appended lazily -->
     <div id="cursor-portal"></div>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <p>MK Rec Studio — filmmaker and videographer Marek Kondratjev. Cinematic video production: commercials, events, corporate content, reels and short films. Please enable JavaScript to view the full portfolio.</p>
+    </noscript>
   </body>
 </html>

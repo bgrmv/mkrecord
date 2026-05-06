@@ -23,6 +23,7 @@
                 [src]="portfolio.preview"
                 [poster]="portfolio.preview"
                 (canplay)="onVideoReady($event)"></video>
+              <span class="video-tap-hint"><span class="rec-dot"></span>Tap to open</span>
               <p class="card-title">{{ portfolio.title }}</p>
             </div>
           }
@@ -64,6 +65,7 @@
           [poster]="portfolio.preview"
           width="540"
           (canplay)="onVideoReady($event)"></video>
+        <span class="video-tap-hint"><span class="rec-dot"></span>Tap to open</span>
         <p class="card-title">{{ portfolio.title }}</p>
       </div>
     }

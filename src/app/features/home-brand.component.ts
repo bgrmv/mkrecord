@@ -120,7 +120,7 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
   ],
   template: `
     <div class="brand">
-      <img class="mk" src="assets/brand/mk-white.svg" />
+      <img class="mk" src="assets/brand/mk-white.svg" alt="MK Rec Studio logo" />
     </div>
   `,
 })

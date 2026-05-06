@@ -41,7 +41,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     `,
   ],
   template: `
-    <img class="rec-dot" src="assets/brand/dot.svg" />
+    <img class="rec-dot" src="assets/brand/dot.svg" alt="" />
     <span class="rec-word">REC</span>
   `,
 })

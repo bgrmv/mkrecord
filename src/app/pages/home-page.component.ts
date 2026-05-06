@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { HomeBrandComponent } from '@features/home-brand.component';
+import { SeoService } from '@services/seo.service';
 
 @Component({
   selector: 'app-home-page',
@@ -179,4 +180,13 @@ import { HomeBrandComponent } from '@features/home-brand.component';
     </div>
   `,
 })
-export class HomePageComponent {}
+export class HomePageComponent {
+  constructor() {
+    inject(SeoService).set({
+      title: 'LIGHTS × CAMERA × ACTION',
+      description: 'Cinematic filmmaker Marek Kondratjev for hire. Mood videos, commercials, events, corporate content and social media reels.',
+      keywords: 'filmmaker for hire, videographer, cinematic video, commercial video, event videography, reels, MK Rec Studio',
+      path: '/',
+    });
+  }
+}

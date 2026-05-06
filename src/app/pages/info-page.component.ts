@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { InfoComponent } from '@features/info.component';
+import { SeoService } from '@services/seo.service';
 
 @Component({
   selector: 'app-info-page',
@@ -135,4 +136,13 @@ import { InfoComponent } from '@features/info.component';
     `,
   ],
 })
-export class InfoPageComponent {}
+export class InfoPageComponent {
+  constructor() {
+    inject(SeoService).set({
+      title: 'About Marek Kondratjev',
+      description: '10+ years in videography and film production. Broadcast camera operator and licensed drone pilot. Clients include LMT, H&M, LOBODA and major productions.',
+      keywords: 'Marek Kondratjev, filmmaker biography, videographer experience, broadcast camera operator, drone operator, film production',
+      path: '/info',
+    });
+  }
+}

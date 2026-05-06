@@ -18,6 +18,11 @@
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
 }
 
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--_red); }
+  50% { opacity: 0.6; box-shadow: 0 0 10px var(--_red); }
+}
+
 :host {
   width: 100%;
   flex: 1;
@@ -143,6 +148,41 @@ video:hover {
     0 0 8px rgba(224, 78, 66, 0.8),
     0 0 20px rgba(224, 78, 66, 0.4),
     0 0 40px rgba(224, 78, 66, 0.2);
+}
+
+.video-tap-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color_whitesmoke_darken_3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  opacity: 0.45;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.card-wrap:hover .video-tap-hint {
+  opacity: 1;
+  color: var(--c_red_d1);
+}
+
+.video-tap-hint .rec-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--_red);
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px var(--_red);
+  animation: dot-pulse 2s ease-in-out infinite;
 }
 
 .lane-wrapper {
