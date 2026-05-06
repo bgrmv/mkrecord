@@ -21,11 +21,13 @@ jobs:
         with:
           node-version: '22.x'
 
-      # see docs/todo — P1 #13: uses npm instead of pnpm; lockfile is ignored; see docs/todo/tech-debt.md#cicd
-      - name: npm install, build, and test
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies and build
         run: |
-          npm install
-          npm run build:prod --if-present
+          pnpm install --frozen-lockfile
+          pnpm run build:prod
 
       - name: Zip artifact for deployment
         run: zip release.zip ./dist -r
@@ -67,3 +69,4 @@ jobs:
         with:
           app-name: 'mkrecord'
           package: .
+          startup-command: 'NODE_ENV=production node dist/mkrecord/server/server.mjs'

@@ -17,7 +17,8 @@
       "Bash(git commit:*)",
       "Bash(git reset:*)",
       "Bash(grep -E \"\\\\.\\(css|scss\\)$\")",
-      "Bash(grep -E \"server\\\\.\\(mjs|js\\)$\")"
+      "Bash(grep -E \"server\\\\.\\(mjs|js\\)$\")",
+      "Bash(pnpm --version)"
     ]
   }
 }
