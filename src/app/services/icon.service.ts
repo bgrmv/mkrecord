@@ -27,7 +27,7 @@ export class IconService {
       },
       // {
       //   name: 'mkWhite',
-      //   path: 'brand/mk-white.svg',
+      //   path: 'brand/mk-dark.svg',
       // },
       // {
       //   name: 'mkBlack',
