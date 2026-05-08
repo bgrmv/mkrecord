@@ -12,7 +12,7 @@ export interface SeoConfig {
 
 const SITE_NAME = 'MK Rec Studio';
 const { siteUrl } = environment;
-const OG_IMAGE = `${siteUrl}/assets/brand/mk-dark.png`;
+const OG_IMAGE = `${siteUrl}/assets/brand/mk-bg.png`;
 // WhatsApp and Telegram both read og:* tags — no platform-specific meta needed.
 // Twitter/X reads twitter:* tags with og:* as fallback.
 const OG_IMAGE_ALT = 'MK Rec Studio — cinematic video production by Marek Kondratjev';
