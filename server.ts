@@ -1,5 +1,6 @@
 import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine } from '@angular/ssr/node';
+import { CommonEngine, isMainModule } from '@angular/ssr/node';
+import { render } from '@netlify/angular-runtime/common-engine.js';
 import { config } from 'dotenv';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
@@ -9,7 +10,7 @@ import nodemailer from 'nodemailer';
 import { z } from 'zod';
 import bootstrap from './src/main.server';
 
-// load .env in development; Azure App Settings injects vars into process.env in production
+// load .env in development; Azure App Settings / Netlify env vars inject vars into process.env in production
 config();
 
 const ContactSchema = z.object({
@@ -36,6 +37,33 @@ const contactLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// shared between the Express (Azure) and fetch-based (Netlify Function) handlers below
+async function sendContactMail(body: unknown): Promise<{ status: number; payload: object }> {
+  const parsed = ContactSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return { status: 400, payload: { error: 'invalid' } };
+  }
+
+  if (!process.env['SMTP_USER'] || !process.env['SMTP_PASS'] || !process.env['MAIL_TO']) {
+    return { status: 503, payload: { error: 'email_not_configured' } };
+  }
+
+  try {
+    await transporter.sendMail({
+      from: process.env['SMTP_USER'],
+      to: process.env['MAIL_TO'],
+      // use replyTo (not From) for user's address — nodemailer escapes it, prevents header injection
+      replyTo: parsed.data.email,
+      subject: 'mkrecord — new signal',
+      text: parsed.data.text,
+    });
+    return { status: 200, payload: { ok: true } };
+  } catch {
+    return { status: 500, payload: { error: 'send_failed' } };
+  }
+}
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -70,31 +98,8 @@ export function app(): express.Express {
 
   // POST /api/contact — server-side SMTP relay; keeps credentials out of the browser bundle
   server.post('/api/contact', contactLimiter, async (req, res) => {
-    const parsed = ContactSchema.safeParse(req.body);
-
-    if (!parsed.success) {
-      res.status(400).json({ error: 'invalid' });
-      return;
-    }
-
-    if (!process.env['SMTP_USER'] || !process.env['SMTP_PASS'] || !process.env['MAIL_TO']) {
-      res.status(503).json({ error: 'email_not_configured' });
-      return;
-    }
-
-    try {
-      await transporter.sendMail({
-        from: process.env['SMTP_USER'],
-        to: process.env['MAIL_TO'],
-        // use replyTo (not From) for user's address — nodemailer escapes it, prevents header injection
-        replyTo: parsed.data.email,
-        subject: 'mkrecord — new signal',
-        text: parsed.data.text,
-      });
-      res.json({ ok: true });
-    } catch {
-      res.status(500).json({ error: 'send_failed' });
-    }
+    const { status, payload } = await sendContactMail(req.body);
+    res.status(status).json(payload);
   });
 
   // All regular routes use the Angular engine
@@ -130,4 +135,45 @@ function run(): void {
   });
 }
 
-run();
+// Netlify Angular Runtime entry point — fetch-based handler, no Express here (edge/serverless runtime)
+const commonEngine = new CommonEngine();
+
+// in-memory per-instance limiter mirrors the Express contactLimiter above; Netlify Functions are
+// stateless across cold starts, so this is best-effort rather than a hard guarantee like Azure's
+const contactHits = new Map<string, number[]>();
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000;
+  const hits = (contactHits.get(ip) ?? []).filter(timestamp => now - timestamp < windowMs);
+  hits.push(now);
+  contactHits.set(ip, hits);
+  return hits.length > 5;
+}
+
+export async function netlifyCommonEngineHandler(request: Request): Promise<Response> {
+  const { pathname } = new URL(request.url);
+
+  if (pathname === '/api/contact' && request.method === 'POST') {
+    const ip = request.headers.get('x-nf-client-connection-ip') ?? 'unknown';
+    if (isRateLimited(ip)) {
+      return Response.json({ error: 'rate_limited' }, { status: 429 });
+    }
+    const body: unknown = await request.json().catch(() => ({}));
+    const { status, payload } = await sendContactMail(body);
+    return Response.json(payload, { status });
+  }
+
+  const response = await render(commonEngine);
+  // Security headers on every response — mirrors the Express middleware above
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return response;
+}
+
+// only start the Express listener when this file is run directly (Azure's `node server.mjs`);
+// Netlify's build imports this module solely for `netlifyCommonEngineHandler`, and must not
+// have a side effect of opening a port
+if (isMainModule(import.meta.url)) {
+  run();
+}

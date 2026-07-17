@@ -4,9 +4,10 @@
 name: Build and deploy Node.js app to Azure Web App - mkrecord
 
 on:
-  push:
-    branches:
-      - main
+  # push trigger paused during Netlify migration — deploy manually via workflow_dispatch if needed
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:

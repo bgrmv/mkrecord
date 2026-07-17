@@ -52,6 +52,7 @@
     "@angular/build": "^21.2.3",
     "@angular/cli": "^21.2.3",
     "@angular/compiler-cli": "^21.2.5",
+    "@netlify/angular-runtime": "^4.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.0",
     "@types/nodemailer": "^8.0.0",
