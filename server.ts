@@ -60,7 +60,9 @@ async function sendContactMail(body: unknown): Promise<{ status: number; payload
       text: parsed.data.text,
     });
     return { status: 200, payload: { ok: true } };
-  } catch {
+  } catch (err) {
+    // log server-side only — response body stays generic so we don't leak SMTP internals to the client
+    console.error('sendContactMail failed:', err instanceof Error ? err.message : err);
     return { status: 500, payload: { error: 'send_failed' } };
   }
 }
