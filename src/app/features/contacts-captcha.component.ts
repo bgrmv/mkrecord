@@ -22,6 +22,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   // bindings with the component shell and plays nicer with strictPropertyInitialization
   host: {
     role: 'checkbox',
+    'aria-label': 'Verify you are human',
     '[attr.aria-checked]': 'verified()',
     '[attr.aria-disabled]': 'disabled() || null',
     '[attr.aria-busy]': 'animating() || null',
@@ -385,15 +386,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     <div class="label">
       @if (verified()) {
         <span class="primary">
-          <span class="rec-badge">REC</span>Shutter Locked
+          <span class="rec-badge">REC</span>You're verified
         </span>
-        <span class="secondary">Signal armed · click to release</span>
+        <span class="secondary">Human confirmed · click to reset</span>
       } @else if (animating()) {
-        <span class="primary">Locking shutter…</span>
-        <span class="secondary">Calibrating aperture</span>
+        <span class="primary">Verifying…</span>
+        <span class="secondary">Hold on a moment</span>
       } @else {
-        <span class="primary">Lock the shutter</span>
-        <span class="secondary">Click to verify human</span>
+        <span class="primary">Click to verify you're human</span>
+        <span class="secondary">Locks the shutter to confirm</span>
       }
     </div>
   `,
