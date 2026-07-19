@@ -13,6 +13,13 @@ import bootstrap from './src/main.server';
 // load .env in development; Azure App Settings / Netlify env vars inject vars into process.env in production
 config();
 
+// Netlify Edge Functions run on Deno, which has no global setImmediate — nodemailer uses it
+// internally, so without this polyfill every send fails with "setImmediate is not defined".
+if (typeof (globalThis as { setImmediate?: unknown }).setImmediate === 'undefined') {
+  (globalThis as { setImmediate?: (fn: (...args: unknown[]) => void, ...args: unknown[]) => unknown }).setImmediate =
+    (fn: (...args: unknown[]) => void, ...args: unknown[]) => setTimeout(fn, 0, ...args);
+}
+
 const ContactSchema = z.object({
   // refine rejects \r\n to prevent SMTP header injection if the value ever reaches a header
   email: z.string().email().max(254).refine(v => !/[\r\n]/.test(v)),
@@ -61,12 +68,9 @@ async function sendContactMail(body: unknown): Promise<{ status: number; payload
     });
     return { status: 200, payload: { ok: true } };
   } catch (err) {
+    // log server-side only — response body stays generic so we don't leak SMTP internals to the client
     console.error('sendContactMail failed:', err instanceof Error ? err.message : err);
-    // TEMP diagnostic: surface the SMTP error message in the response — revert once the Netlify SMTP_PASS issue is confirmed
-    return {
-      status: 500,
-      payload: { error: 'send_failed', debug: err instanceof Error ? err.message : String(err) },
-    };
+    return { status: 500, payload: { error: 'send_failed' } };
   }
 }
 
