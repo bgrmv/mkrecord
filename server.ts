@@ -63,7 +63,7 @@ async function sendContactMail(body: unknown): Promise<{ status: number; payload
       to: process.env['MAIL_TO'],
       // use replyTo (not From) for user's address — nodemailer escapes it, prevents header injection
       replyTo: parsed.data.email,
-      subject: 'mkrecord — new inquiry',
+      subject: 'New request from mkrecstudio.com',
       text: parsed.data.text,
     });
     return { status: 200, payload: { ok: true } };
