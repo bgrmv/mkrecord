@@ -412,7 +412,7 @@ import { ContactsCaptchaComponent } from './contacts-captcha.component';
       <header class="header">
         <div class="rec-badge">
           <span class="rec-dot"></span>
-          Signal Ready
+          Ready to Roll
         </div>
 
         <h1>Initiate Contact</h1>
@@ -484,14 +484,14 @@ import { ContactsCaptchaComponent } from './contacts-captcha.component';
           mat-raised-button
           type="submit"
           [disabled]="formGroup.invalid || isSubmitting()">
-          {{ isSubmitting() ? 'Transmitting…' : 'Send Signal' }}
+          {{ isSubmitting() ? 'Rolling…' : 'Action' }}
         </button>
       </form>
 
       @if (submitSuccess()) {
         <div class="feedback success">
           <mat-icon fontIcon="check_circle" />
-          Signal received — I'll be in touch soon
+          It's a wrap — I'll be in touch soon
         </div>
       }
       @if (submitError()) {
