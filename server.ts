@@ -61,9 +61,12 @@ async function sendContactMail(body: unknown): Promise<{ status: number; payload
     });
     return { status: 200, payload: { ok: true } };
   } catch (err) {
-    // log server-side only — response body stays generic so we don't leak SMTP internals to the client
     console.error('sendContactMail failed:', err instanceof Error ? err.message : err);
-    return { status: 500, payload: { error: 'send_failed' } };
+    // TEMP diagnostic: surface the SMTP error message in the response — revert once the Netlify SMTP_PASS issue is confirmed
+    return {
+      status: 500,
+      payload: { error: 'send_failed', debug: err instanceof Error ? err.message : String(err) },
+    };
   }
 }
 
