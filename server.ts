@@ -55,7 +55,7 @@ async function sendContactMail(body: unknown): Promise<{ status: number; payload
 
   try {
     await transporter.sendMail({
-      from: process.env['SMTP_USER'],
+      from: `"mkrecstudio" <${process.env['SMTP_USER']}>`,
       to: process.env['MAIL_TO'],
       // use replyTo (not From) for user's address — nodemailer escapes it, prevents header injection
       replyTo: parsed.data.email,
