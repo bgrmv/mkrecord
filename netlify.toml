@@ -1,6 +1,16 @@
 [build]
   command = "pnpm run build:prod"
   publish = "dist/mkrecord/browser"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "22"
+
+# /api/contact runs on the Node.js Lambda runtime (nodemailer needs real net/tls
+# sockets), so it must be routed to its own function before it ever reaches the
+# Deno-based Edge Function that serves SSR
+[[redirects]]
+  from = "/api/contact"
+  to = "/.netlify/functions/contact"
+  status = 200
+  force = true

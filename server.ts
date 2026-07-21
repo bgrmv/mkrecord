@@ -13,13 +13,9 @@ import bootstrap from './src/main.server';
 // load .env in development; Azure App Settings / Netlify env vars inject vars into process.env in production
 config();
 
-// Netlify Edge Functions run on Deno, which has no global setImmediate — nodemailer uses it
-// internally, so without this polyfill every send fails with "setImmediate is not defined".
-if (typeof (globalThis as { setImmediate?: unknown }).setImmediate === 'undefined') {
-  (globalThis as { setImmediate?: (fn: (...args: unknown[]) => void, ...args: unknown[]) => unknown }).setImmediate =
-    (fn: (...args: unknown[]) => void, ...args: unknown[]) => setTimeout(fn, 0, ...args);
-}
-
+// use by the Express (Azure) contact route below — Netlify routes /api/contact to its own
+// Node.js function (netlify/functions/contact.ts) instead, since nodemailer needs real
+// net/tls sockets that the Deno-based Edge Function serving SSR doesn't fully support
 const ContactSchema = z.object({
   // refine rejects \r\n to prevent SMTP header injection if the value ever reaches a header
   email: z.string().email().max(254).refine(v => !/[\r\n]/.test(v)),
@@ -144,34 +140,12 @@ function run(): void {
   });
 }
 
-// Netlify Angular Runtime entry point — fetch-based handler, no Express here (edge/serverless runtime)
+// Netlify Angular Runtime entry point — fetch-based handler, no Express here (edge/serverless runtime).
+// /api/contact never reaches this handler — netlify.toml redirects it to
+// netlify/functions/contact.ts (Node.js runtime) before it hits this Deno-based Edge Function.
 const commonEngine = new CommonEngine();
 
-// in-memory per-instance limiter mirrors the Express contactLimiter above; Netlify Functions are
-// stateless across cold starts, so this is best-effort rather than a hard guarantee like Azure's
-const contactHits = new Map<string, number[]>();
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const windowMs = 15 * 60 * 1000;
-  const hits = (contactHits.get(ip) ?? []).filter(timestamp => now - timestamp < windowMs);
-  hits.push(now);
-  contactHits.set(ip, hits);
-  return hits.length > 5;
-}
-
-export async function netlifyCommonEngineHandler(request: Request): Promise<Response> {
-  const { pathname } = new URL(request.url);
-
-  if (pathname === '/api/contact' && request.method === 'POST') {
-    const ip = request.headers.get('x-nf-client-connection-ip') ?? 'unknown';
-    if (isRateLimited(ip)) {
-      return Response.json({ error: 'rate_limited' }, { status: 429 });
-    }
-    const body: unknown = await request.json().catch(() => ({}));
-    const { status, payload } = await sendContactMail(body);
-    return Response.json(payload, { status });
-  }
-
+export async function netlifyCommonEngineHandler(_request: Request): Promise<Response> {
   const response = await render(commonEngine);
   // Security headers on every response — mirrors the Express middleware above
   response.headers.set('X-Content-Type-Options', 'nosniff');
