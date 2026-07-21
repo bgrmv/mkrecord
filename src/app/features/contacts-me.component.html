@@ -1,0 +1,126 @@
+<div class="card">
+  <span class="corner tl"></span>
+  <span class="corner tr"></span>
+  <span class="corner bl"></span>
+  <span class="corner br"></span>
+
+  @if (contactResource.isLoading()) {
+    <div class="progress-bar" role="progressbar" aria-label="Sending message">
+      <div class="progress-bar-fill"></div>
+    </div>
+  }
+
+  <header class="header">
+    <div class="rec-badge">
+      <span class="rec-dot"></span>
+      Ready
+    </div>
+
+    <h1>Get In Touch</h1>
+
+    <div class="divider">
+      <mat-icon fontIcon="videocam" />
+    </div>
+
+    <p class="tagline">
+      Every great film begins with a single conversation.
+      <strong>Tell me about your vision</strong> — the story you need told,
+      the moment too precious to leave unfilmed — and together we'll craft
+      something that outlasts the frame.
+    </p>
+  </header>
+
+  @if (sent()) {
+    <div class="sent-panel">
+      <mat-icon fontIcon="check_circle" />
+      @if (restoredFromSession()) {
+        <h2>You've already sent a message</h2>
+        <p>I'll get back to you soon. Need to say more?</p>
+      } @else {
+        <h2>Message sent</h2>
+        <p>Thanks for reaching out — I'll be in touch soon.</p>
+      }
+      <button
+        mat-stroked-button
+        type="button"
+        class="send-another"
+        (click)="sendAnother()">
+        Send another message
+      </button>
+    </div>
+  } @else {
+    <form id="contacts" [formGroup]="formGroup" #formDirective="ngForm" (submit)="onSubmit($event)">
+      <!--
+        Honeypot field — invisible to real users via off-screen positioning
+        (NOT display:none, which sophisticated bots detect and skip). Naive
+        bots fill any input named "website"/"url" by default.
+        Use position:absolute + clip + tabindex=-1 + aria-hidden + autocomplete=off
+        so screen readers, keyboard users, and password managers all skip it.
+      -->
+      <input
+        class="hp-trap"
+        type="text"
+        name="website"
+        formControlName="website"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true" />
+
+      <mat-form-field appearance="outline">
+        <mat-label>Your Email</mat-label>
+        <input
+          matInput
+          type="email"
+          placeholder="you@studio.com"
+          formControlName="email" />
+        <mat-error>
+          @if (formGroup.get('email')?.hasError('required')) {
+            Email is required
+          } @else if (formGroup.get('email')?.hasError('email')) {
+            Please enter a valid email address
+          }
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Your Message</mat-label>
+        <textarea
+          matInput
+          rows="4"
+          formControlName="text"
+          placeholder="Describe your project, event, or idea — the more detail, the better."></textarea>
+        <mat-error>
+          @if (formGroup.get('text')?.hasError('required')) {
+            Message is required
+          } @else if (formGroup.get('text')?.hasError('minlength')) {
+            Message must be at least 10 characters
+          }
+        </mat-error>
+      </mat-form-field>
+
+      <app-contacts-captcha formControlName="captcha" />
+
+      <button
+        mat-raised-button
+        type="submit"
+        class="submit-btn"
+        [class.is-ready]="formGroup.valid && !contactResource.isLoading()"
+        [disabled]="formGroup.invalid || contactResource.isLoading()">
+        @if (contactResource.isLoading()) {
+          <span class="btn-spinner" aria-hidden="true"></span>
+          Sending…
+        } @else {
+          Send Message
+        }
+      </button>
+
+      @if (contactResource.status() === 'error') {
+        <p class="feedback error">Failed to send. Please try again later.</p>
+      }
+    </form>
+  }
+
+  <div class="footer-wrap">
+    <app-footer />
+  </div>
+</div>
