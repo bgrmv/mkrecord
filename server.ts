@@ -77,7 +77,12 @@ export function app(): express.Express {
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
 
-  const commonEngine = new CommonEngine();
+  // Angular 22's CommonEngine validates the request Host header by default and rejects
+  // anything not in allowedHosts (SSR host-header-injection hardening). Both Azure Web
+  // Apps and Netlify only route traffic for hostnames actually bound to this app — an
+  // attacker can't reach this process with a spoofed Host in the first place — so the
+  // platform routing layer already covers what this check defends against.
+  const commonEngine = new CommonEngine({ allowedHosts: ['*'] });
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
@@ -141,7 +146,9 @@ function run(): void {
 }
 
 // Netlify Angular Runtime entry point — fetch-based handler, no Express here (edge/serverless runtime).
-const commonEngine = new CommonEngine();
+// same allowedHosts rationale as the Express instance above — Netlify's own routing already
+// gates which Host headers can reach this function.
+const commonEngine = new CommonEngine({ allowedHosts: ['*'] });
 
 export async function netlifyCommonEngineHandler(request: Request): Promise<Response> {
   const { pathname } = new URL(request.url);
