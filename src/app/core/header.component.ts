@@ -32,7 +32,8 @@ import { NavComponent } from './nav.component';
           rgba(0, 0, 0, 0.3) 100%
         );
         backdrop-filter: blur(8px);
-        animation: letterbox-reveal 600ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        animation: letterbox-reveal 600ms cubic-bezier(0.34, 1.56, 0.64, 1)
+          forwards;
         transform: perspective(1px) translateZ(0);
         will-change: backdrop-filter;
 

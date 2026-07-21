@@ -10,7 +10,7 @@ const cinematicFocus = trigger('cinematicFocus', [
     style({ opacity: 0, transform: 'scale(0.95) translateZ(0)' }),
     animate(
       '400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-      style({ opacity: 1, transform: 'scale(1) translateZ(0)' })
+      style({ opacity: 1, transform: 'scale(1) translateZ(0)' }),
     ),
   ]),
 ]);
@@ -34,21 +34,25 @@ const cinematicFocus = trigger('cinematicFocus', [
       }
 
       @keyframes focus-glow {
-        0%, 100% {
-          text-shadow: 0 0 10px rgba(224, 78, 66, 0.4),
-                       1px 1px 0 rgb(0, 0, 0);
+        0%,
+        100% {
+          text-shadow:
+            0 0 10px rgba(224, 78, 66, 0.4),
+            1px 1px 0 rgb(0, 0, 0);
           filter: brightness(1);
         }
         50% {
-          text-shadow: 0 0 20px rgba(224, 78, 66, 0.6),
-                       0 0 30px rgba(224, 78, 66, 0.3),
-                       1px 1px 0 rgb(0, 0, 0);
+          text-shadow:
+            0 0 20px rgba(224, 78, 66, 0.6),
+            0 0 30px rgba(224, 78, 66, 0.3),
+            1px 1px 0 rgb(0, 0, 0);
           filter: brightness(1.1);
         }
       }
 
       @keyframes pulse-subtle {
-        0%, 100% {
+        0%,
+        100% {
           letter-spacing: 0.05em;
         }
         50% {
@@ -113,7 +117,9 @@ const cinematicFocus = trigger('cinematicFocus', [
               text-transform: uppercase;
               font-size: 0.95em;
               padding: 8px 12px;
-              transition: color 200ms ease, letter-spacing 300ms ease;
+              transition:
+                color 200ms ease,
+                letter-spacing 300ms ease;
               will-change: color, letter-spacing, text-shadow;
 
               &::before {
@@ -145,8 +151,9 @@ const cinematicFocus = trigger('cinematicFocus', [
                     var(--c_red_l1) 50%,
                     var(--c_red) 100%
                   );
-                  box-shadow: 0 0 10px rgba(224, 78, 66, 0.6),
-                              0 0 20px rgba(224, 78, 66, 0.3);
+                  box-shadow:
+                    0 0 10px rgba(224, 78, 66, 0.6),
+                    0 0 20px rgba(224, 78, 66, 0.3);
                   animation: line-reveal 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
               }

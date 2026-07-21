@@ -8,7 +8,9 @@
 @import './styles/view-transition.css';
 
 /* use cursor:none globally so the custom cursor component is the only visible cursor */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   cursor: none !important;
 }
 
@@ -54,7 +56,6 @@ app-root {
   backdrop-filter: blur(2px);
   z-index: 9989;
 }
-
 
 .video-dialog {
   z-index: 9990;

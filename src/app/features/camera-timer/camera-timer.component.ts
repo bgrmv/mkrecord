@@ -23,7 +23,6 @@ import { map, scan } from 'rxjs';
         font-family: var(--font-display);
         font-weight: 100;
         color: rgba(245, 245, 245, 0.5);
-
       }
     }
   `,

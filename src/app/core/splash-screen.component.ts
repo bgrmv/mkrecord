@@ -15,31 +15,58 @@ import {
       /* ── Keyframes ─────────────────────────────────────────────── */
 
       @keyframes blink-rec {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0.15; }
+        0%,
+        49% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0.15;
+        }
       }
 
       /* horizontal bar sweeping top → bottom — simulates a camera light meter scan */
       @keyframes sweep {
-        from { top: -120px; }
-        to   { top: 110%; }
+        from {
+          top: -120px;
+        }
+        to {
+          top: 110%;
+        }
       }
 
       /* random translate shifts create film-grain jitter without a real noise texture */
       @keyframes grain {
-        0%   { transform: translate(0, 0); }
-        20%  { transform: translate(-2%, -1%); }
-        40%  { transform: translate(1%, 2%); }
-        60%  { transform: translate(-1%, 1%); }
-        80%  { transform: translate(2%, -2%); }
-        100% { transform: translate(0, 0); }
+        0% {
+          transform: translate(0, 0);
+        }
+        20% {
+          transform: translate(-2%, -1%);
+        }
+        40% {
+          transform: translate(1%, 2%);
+        }
+        60% {
+          transform: translate(-1%, 1%);
+        }
+        80% {
+          transform: translate(2%, -2%);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
       }
 
       @keyframes locked-in {
-        from { opacity: 0; transform: translateY(8px) scale(0.94); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
+        from {
+          opacity: 0;
+          transform: translateY(8px) scale(0.94);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
-
 
       /* ── Host ──────────────────────────────────────────────────── */
 
@@ -125,7 +152,9 @@ import {
         justify-content: center;
         z-index: 10;
 
-        &.exit { display: none; }
+        &.exit {
+          display: none;
+        }
       }
 
       /* HUD corner brackets — same pattern as contacts-me.component for brand consistency */
@@ -137,10 +166,26 @@ import {
         border-style: solid;
         opacity: 0.45;
 
-        &.tl { top: 18px; left: 18px; border-width: 2px 0 0 2px; }
-        &.tr { top: 18px; right: 18px; border-width: 2px 2px 0 0; }
-        &.bl { bottom: 18px; left: 18px; border-width: 0 0 2px 2px; }
-        &.br { bottom: 18px; right: 18px; border-width: 0 2px 2px 0; }
+        &.tl {
+          top: 18px;
+          left: 18px;
+          border-width: 2px 0 0 2px;
+        }
+        &.tr {
+          top: 18px;
+          right: 18px;
+          border-width: 2px 2px 0 0;
+        }
+        &.bl {
+          bottom: 18px;
+          left: 18px;
+          border-width: 0 0 2px 2px;
+        }
+        &.br {
+          bottom: 18px;
+          right: 18px;
+          border-width: 0 2px 2px 0;
+        }
       }
 
       /* ── Status area ──────────────────────────────────────────── */
@@ -171,7 +216,9 @@ import {
         overflow: hidden;
         transition: opacity 0.6s ease;
 
-        &.done { opacity: 0.12; }
+        &.done {
+          opacity: 0.12;
+        }
       }
 
       .progress-fill {
@@ -190,7 +237,9 @@ import {
         color: rgba(224, 32, 32, 0.38);
         transition: opacity 0.6s ease;
 
-        &.done { opacity: 0.12; }
+        &.done {
+          opacity: 0.12;
+        }
       }
 
       /* ── Signal locked / unlocked overlays ───────────────────── */
@@ -261,7 +310,6 @@ import {
     <div class="sweep" aria-hidden="true"></div>
 
     <div class="splash" [class.exit]="phase() === 'exit'">
-
       <!-- HUD corner brackets -->
       <span class="corner tl"></span>
       <span class="corner tr"></span>
@@ -273,7 +321,8 @@ import {
         <div class="locked">
           <!-- Material "lock" path — shackle closed on both sides -->
           <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            <path
+              d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
           </svg>
           <span class="locked-title">Signal Locked</span>
         </div>
@@ -286,7 +335,9 @@ import {
           <div class="progress-track" [class.done]="progressDone()">
             <div class="progress-fill" [style.width.%]="progress()"></div>
           </div>
-          <span class="progress-pct" [class.done]="progressDone()">{{ progress() }}&nbsp;%</span>
+          <span class="progress-pct" [class.done]="progressDone()"
+            >{{ progress() }}&nbsp;%</span
+          >
         </div>
       }
 
@@ -295,12 +346,12 @@ import {
         <div class="unlocked">
           <!-- lock_open_right: shackle connects on the left, free end lifts to the right -->
           <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 8h1V6c0-2.76 2.24-5 5-5S17 3.24 17 6h-2c0-1.66-1.34-3-3-3s-3 1.34-3 3v2H18c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V10c0-1.1.9-2 2-2zm6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+            <path
+              d="M6 8h1V6c0-2.76 2.24-5 5-5S17 3.24 17 6h-2c0-1.66-1.34-3-3-3s-3 1.34-3 3v2H18c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V10c0-1.1.9-2 2-2zm6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
           </svg>
           <span class="unlocked-title">Signal Unlocked</span>
         </div>
       }
-
     </div>
   `,
 })
@@ -331,9 +382,9 @@ export class SplashScreenComponent {
     this.animateProgress();
 
     // status text cycling — three labels spread evenly across the loading window
-    setTimeout(() => this.statusText.set('LOADING ASSETS'),      400);
+    setTimeout(() => this.statusText.set('LOADING ASSETS'), 400);
     setTimeout(() => this.statusText.set('CALIBRATING OPTICS'), 1000);
-    setTimeout(() => this.statusText.set('CAMERA READY'),        1700);
+    setTimeout(() => this.statusText.set('CAMERA READY'), 1700);
 
     // use Promise.all to wait for BOTH the minimum display window AND font readiness —
     // fonts.ready resolves fast when cached, so the min-delay is the real gatekeeper

@@ -66,26 +66,27 @@ import { PlatformService } from '@services/platform.service';
         position: fixed;
         width: 14px;
         height: 14px;
-        border: 3px solid color-mix(
-          in srgb,
-          var(--c_red_l1) calc(var(--cursor-heat, 0%) * 0.4),
-          var(--color_whitesmoke_darken_4)
-        );
-        transition: transform 85ms ease-out,
+        border: 3px solid
+          color-mix(
+            in srgb,
+            var(--c_red_l1) calc(var(--cursor-heat, 0%) * 0.4),
+            var(--color_whitesmoke_darken_4)
+          );
+        transition:
+          transform 85ms ease-out,
           border-color 60ms ease-out,
           filter 60ms ease-out;
         pointer-events: none;
         z-index: 10000;
         /* use chained drop-shadow: stacked 0-blur black silhouettes give a
            crisp 1px outline on every side; last shadow is the heat-reactive glow */
-        filter:
-          drop-shadow(1px 0 0 rgba(0, 0, 0, 1))
+        filter: drop-shadow(1px 0 0 rgba(0, 0, 0, 1))
           drop-shadow(-1px 0 0 rgba(0, 0, 0, 1))
           drop-shadow(0 1px 0 rgba(0, 0, 0, 1))
           drop-shadow(0 -1px 0 rgba(0, 0, 0, 1))
           drop-shadow(
             0 0 calc(2px * var(--cursor-heat-val, 0))
-            rgba(226, 74, 66, calc(var(--cursor-heat-val, 0) * 0.5))
+              rgba(226, 74, 66, calc(var(--cursor-heat-val, 0) * 0.5))
           );
       }
 
@@ -117,9 +118,7 @@ import { PlatformService } from '@services/platform.service';
         class="cursor-container"
         [style.--cursor-heat]="cursorHeatPercent()"
         [style.--cursor-heat-val]="cursorHeatVal()">
-        <span
-          class="cursor-dot"
-          [style.transform]="dotTransform()"></span>
+        <span class="cursor-dot" [style.transform]="dotTransform()"></span>
         <span
           class="cursor-bracket tl"
           [style.transform]="bracketTlTransform()"></span>
@@ -157,7 +156,9 @@ export class CursorComponent {
       if (!supportsPopover) return;
 
       host.setAttribute('popover', 'manual');
-      try { host.showPopover?.(); } catch {}
+      try {
+        host.showPopover?.();
+      } catch {}
 
       // re-promote cursor to the top of the top layer whenever a dialog opens
       // (top-layer stacking is insertion order: last-shown wins)
@@ -175,7 +176,9 @@ export class CursorComponent {
         });
 
       destroyRef.onDestroy(() => {
-        try { host.hidePopover?.(); } catch {}
+        try {
+          host.hidePopover?.();
+        } catch {}
       });
     });
   }

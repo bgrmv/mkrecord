@@ -23,7 +23,8 @@ import { SeoService } from '@services/seo.service';
   styles: [
     `
       @keyframes focus-glow {
-        0%, 100% {
+        0%,
+        100% {
           text-shadow:
             0 0 10px rgba(224, 32, 32, 0.5),
             1px 1px 0 rgb(0, 0, 0);
@@ -37,13 +38,25 @@ import { SeoService } from '@services/seo.service';
       }
 
       @keyframes blink-rec {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0.15; }
+        0%,
+        49% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0.15;
+        }
       }
 
       @keyframes slide-up {
-        from { opacity: 0; transform: translateY(14px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       :host {
@@ -121,8 +134,12 @@ import { SeoService } from '@services/seo.service';
             );
           }
 
-          &::before { --_dir: right; }
-          &::after  { --_dir: left; }
+          &::before {
+            --_dir: right;
+          }
+          &::after {
+            --_dir: left;
+          }
 
           mat-icon {
             font-size: 15px;
@@ -140,8 +157,10 @@ export class InfoPageComponent {
   constructor() {
     inject(SeoService).set({
       title: 'About Marek Kondratjev',
-      description: '10+ years in videography and film production. Broadcast camera operator and licensed drone pilot. Clients include LMT, H&M, LOBODA and major productions.',
-      keywords: 'Marek Kondratjev, filmmaker biography, videographer experience, broadcast camera operator, drone operator, film production',
+      description:
+        '10+ years in videography and film production. Broadcast camera operator and licensed drone pilot. Clients include LMT, H&M, LOBODA and major productions.',
+      keywords:
+        'Marek Kondratjev, filmmaker biography, videographer experience, broadcast camera operator, drone operator, film production',
       path: '/info',
     });
   }

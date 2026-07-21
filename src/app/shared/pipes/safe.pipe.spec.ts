@@ -35,7 +35,10 @@ describe('SafePipe', () => {
   });
 
   it('should transform resourceUrl type', () => {
-    const result = pipe.transform('https://example.com/video.mp4', 'resourceUrl');
+    const result = pipe.transform(
+      'https://example.com/video.mp4',
+      'resourceUrl',
+    );
     expect(result).toBeTruthy();
   });
 

@@ -1,6 +1,7 @@
 /* use keyframes for cursor levitate animation — subtle vertical float */
 @keyframes cursor-levitate {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -10,7 +11,8 @@
 
 /* use keyframes for cursor pulse animation on interactive hover */
 @keyframes cursor-pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.9;
   }

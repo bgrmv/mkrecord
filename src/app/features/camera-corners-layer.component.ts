@@ -33,7 +33,9 @@ import { MouseHeatService } from '@services/mouse-heat.service';
         z-index: 9999;
         filter: brightness(var(--corner-brightness, 1));
         opacity: var(--corner-opacity, 0.6);
-        transition: opacity 0.3s ease-out, filter 0.3s ease-out;
+        transition:
+          opacity 0.3s ease-out,
+          filter 0.3s ease-out;
       }
 
       .corners-container {
@@ -48,27 +50,31 @@ import { MouseHeatService } from '@services/mouse-heat.service';
           padding: 20px;
           display: flex;
           /* use transition for smooth color, glow, and width animations */
-          transition: border-color 0.05s ease-out, filter 0.05s ease-out,
+          transition:
+            border-color 0.05s ease-out,
+            filter 0.05s ease-out,
             width 0.05s ease-out;
         }
 
         #top-left {
           top: 0;
           left: 0;
-          border-top: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
-          border-left: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
+          border-top: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
+          border-left: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
           /* use drop-shadow for glow only on borders, not entire element */
           filter: drop-shadow(
             0 0 calc(5px * var(--corner-heat-val, 0))
-            rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
+              rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
           );
           /* use scale + scaleX for pulse/stretch effect on heat */
         }
@@ -76,62 +82,68 @@ import { MouseHeatService } from '@services/mouse-heat.service';
         #top-right {
           top: 0;
           right: 0;
-          border-top: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
-          border-right: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
+          border-top: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
+          border-right: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
           align-items: start;
           justify-content: end;
           filter: drop-shadow(
             0 0 calc(5px * var(--corner-heat-val, 0))
-            rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
+              rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
           );
         }
 
         #bottom-left {
           bottom: 0;
           left: 0;
-          border-bottom: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
-          border-left: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
+          border-bottom: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
+          border-left: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
           filter: drop-shadow(
             0 0 calc(5px * var(--corner-heat-val, 0))
-            rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
+              rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
           );
         }
 
         #bottom-right {
           bottom: 0;
           right: 0;
-          border-bottom: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
-          border-right: 1px solid color-mix(
-            in srgb,
-            var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
-            var(--color_whitesmoke_darken_4)
-          );
+          border-bottom: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
+          border-right: 1px solid
+            color-mix(
+              in srgb,
+              var(--c_red_l1) calc(var(--corner-heat, 0%) * 0.5),
+              var(--color_whitesmoke_darken_4)
+            );
           display: flex;
           align-items: end;
           justify-content: end;
           filter: drop-shadow(
             0 0 calc(5px * var(--corner-heat-val, 0))
-            rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
+              rgba(226, 74, 66, calc(var(--corner-heat-val, 0) * 0.7))
           );
         }
       }

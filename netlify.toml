@@ -1,0 +1,11 @@
+[build]
+  command = "pnpm run build:prod"
+  publish = "dist/mkrecord/browser"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# note: a [[redirects]] rule for /api/contact -> /.netlify/functions/contact was tried here
+# and never fired — the Angular SSR Edge Function's own routing wins over netlify.toml
+# redirects. Proxying is done in code instead, see netlifyCommonEngineHandler in server.ts.

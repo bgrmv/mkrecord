@@ -11,7 +11,8 @@ import { IconService } from '@services/icon.service';
   styles: [
     `
       @keyframes focus-glow {
-        0%, 100% {
+        0%,
+        100% {
           text-shadow:
             0 0 10px rgba(224, 78, 66, 0.5),
             1px 1px 0 rgb(0, 0, 0);
@@ -26,8 +27,13 @@ import { IconService } from '@services/icon.service';
 
       @keyframes icon-pulse {
         // use text-shadow because mat-icon fontIcon renders as font glyph — text-shadow follows glyph outline, filter: drop-shadow wraps the rectangular element box
-        0%, 100% { text-shadow: 0 0 4px rgba(224, 78, 66, 0.4); }
-        50%       { text-shadow: 0 0 10px rgba(224, 78, 66, 0.75); }
+        0%,
+        100% {
+          text-shadow: 0 0 4px rgba(224, 78, 66, 0.4);
+        }
+        50% {
+          text-shadow: 0 0 10px rgba(224, 78, 66, 0.75);
+        }
       }
 
       :host {

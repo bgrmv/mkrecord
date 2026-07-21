@@ -15,7 +15,8 @@ const { siteUrl } = environment;
 const OG_IMAGE = `${siteUrl}/assets/brand/mk-bg.png`;
 // WhatsApp and Telegram both read og:* tags — no platform-specific meta needed.
 // Twitter/X reads twitter:* tags with og:* as fallback.
-const OG_IMAGE_ALT = 'MK Rec Studio — cinematic video production by Marek Kondratjev';
+const OG_IMAGE_ALT =
+  'MK Rec Studio — cinematic video production by Marek Kondratjev';
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -36,13 +37,19 @@ export class SeoService {
     }
 
     this.meta.updateTag({ property: 'og:title', content: fullTitle });
-    this.meta.updateTag({ property: 'og:description', content: config.description });
+    this.meta.updateTag({
+      property: 'og:description',
+      content: config.description,
+    });
     this.meta.updateTag({ property: 'og:url', content: url });
     this.meta.updateTag({ property: 'og:image', content: OG_IMAGE });
     this.meta.updateTag({ property: 'og:image:alt', content: OG_IMAGE_ALT });
 
     this.meta.updateTag({ name: 'twitter:title', content: fullTitle });
-    this.meta.updateTag({ name: 'twitter:description', content: config.description });
+    this.meta.updateTag({
+      name: 'twitter:description',
+      content: config.description,
+    });
     this.meta.updateTag({ name: 'twitter:image', content: OG_IMAGE });
     this.meta.updateTag({ name: 'twitter:image:alt', content: OG_IMAGE_ALT });
 

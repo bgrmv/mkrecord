@@ -1,6 +1,11 @@
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ApplicationConfig, mergeApplicationConfig } from '@angular/core';
-import { provideServerRendering, RenderMode, ServerRoute, withRoutes } from '@angular/ssr';
+import {
+  provideServerRendering,
+  RenderMode,
+  ServerRoute,
+  withRoutes,
+} from '@angular/ssr';
 import { appConfig } from './app.config';
 
 const serverRoutes: ServerRoute[] = [

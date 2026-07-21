@@ -16,11 +16,17 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
       // }
 
       @keyframes grain-drift {
-        0%, 100% { transform: translate(0, 0); }
-        33% { transform: translate(-1px, 1px); }
-        66% { transform: translate(1px, -1px); }
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        33% {
+          transform: translate(-1px, 1px);
+        }
+        66% {
+          transform: translate(1px, -1px);
+        }
       }
-
 
       :host {
         position: relative;
@@ -43,7 +49,10 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
         width: calc(100vh - 60%);
 
         // use CSS custom property for glitch effect from parallax directive; applies micro-offset to brand images
-        transform: translate(var(--glitch-offset-x, 0), var(--glitch-offset-y, 0));
+        transform: translate(
+          var(--glitch-offset-x, 0),
+          var(--glitch-offset-y, 0)
+        );
         transition: transform 0.05s linear;
 
         img {
@@ -113,14 +122,16 @@ import { ParallaxItemDirective } from '@shared/directives/parrallax-item.directi
             /* film grain overlay on logo */
             filter: drop-shadow(0 0 12px rgba(224, 78, 66, 0.15));
           }
-
         }
       }
     `,
   ],
   template: `
     <div class="brand">
-      <img class="mk" src="assets/brand/mk-white.svg" alt="MK Rec Studio logo" />
+      <img
+        class="mk"
+        src="assets/brand/mk-white.svg"
+        alt="MK Rec Studio logo" />
     </div>
   `,
 })

@@ -52,7 +52,7 @@ import { IconService } from '@services/icon.service';
           .brand {
             color: var(--c_red);
             font-weight: 500;
-             font-family: var(--font-display);
+            font-family: var(--font-display);
           }
 
           &.fullname {
@@ -117,26 +117,55 @@ import { IconService } from '@services/icon.service';
     <footer>
       <p class="fullname">Marek Kondratjev</p>
       <div class="social">
-        <a href="https://t.me/mkrec_studio" target="_blank" rel="noopener noreferrer" aria-label="Telegram — MK Rec Studio" class="social-group">
+        <a
+          href="https://t.me/mkrec_studio"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Telegram — MK Rec Studio"
+          class="social-group">
           <mat-icon svgIcon="telegram"></mat-icon>
         </a>
-        <a href="https://www.youtube.com/@Marekus21" target="_blank" rel="noopener noreferrer" aria-label="YouTube — Marek Kondratjev" class="social-group">
+        <a
+          href="https://www.youtube.com/@Marekus21"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube — Marek Kondratjev"
+          class="social-group">
           <mat-icon svgIcon="youtube"></mat-icon>
         </a>
-        <a href="https://www.facebook.com/KondratjevM" target="_blank" rel="noopener noreferrer" aria-label="Facebook — Marek Kondratjev" class="social-group">
+        <a
+          href="https://www.facebook.com/KondratjevM"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook — Marek Kondratjev"
+          class="social-group">
           <mat-icon svgIcon="facebook"></mat-icon>
         </a>
-        <a href="https://www.instagram.com/mkrec.studio/" target="_blank" rel="noopener noreferrer" aria-label="Instagram — MK Rec Studio" class="social-group">
+        <a
+          href="https://www.instagram.com/mkrec.studio/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram — MK Rec Studio"
+          class="social-group">
           <mat-icon svgIcon="instagram"></mat-icon>
         </a>
-        <a href="https://www.linkedin.com/in/marek-kondratjev/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn — Marek Kondratjev" class="social-group">
+        <a
+          href="https://www.linkedin.com/in/marek-kondratjev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn — Marek Kondratjev"
+          class="social-group">
           <mat-icon svgIcon="linkedin"></mat-icon>
         </a>
-        <a href="mailto:mkrecstudioweb@gmail.com" rel="noopener noreferrer" aria-label="Email — mkrecstudioweb@gmail.com" class="social-group">
+        <a
+          href="mailto:mkrecstudioweb@gmail.com"
+          rel="noopener noreferrer"
+          aria-label="Email — mkrecstudioweb@gmail.com"
+          class="social-group">
           <mat-icon svgIcon="gmail"></mat-icon>
         </a>
       </div>
-      <p> <span  class="brand">© MK Rec Studio</span> | {{ year }}</p>
+      <p><span class="brand">© MK Rec Studio</span> | {{ year }}</p>
     </footer>
   `,
 })

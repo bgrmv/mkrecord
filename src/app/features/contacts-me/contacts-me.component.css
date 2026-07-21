@@ -1,0 +1,488 @@
+/* use focus-glow from mobile-nav because it unifies the Orbitron brand pulse across nav + headings */
+/* use rgba(224,32,32,...) — hue 0° true red — instead of the global --c_red_d1 (#e04e42, hue 4°, tomato) */
+@keyframes focus-glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px rgba(224, 32, 32, 0.5),
+      1px 1px 0 rgb(0, 0, 0);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(224, 32, 32, 0.8),
+      0 0 40px rgba(224, 32, 32, 0.3),
+      1px 1px 0 rgb(0, 0, 0);
+  }
+}
+
+@keyframes blink-rec {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ready-pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 16px rgba(224, 32, 32, 0.25);
+  }
+  50% {
+    box-shadow: 0 4px 26px rgba(224, 32, 32, 0.5);
+  }
+}
+
+@keyframes progress-scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Host & Material token overrides ---------- */
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  /* use --_red: #e02020 (hue 0°, same lightness as --c_red_d1 #e04e42)
+     as a single source of truth for all red accents in this component */
+  --_red: #e02020;
+
+  /* use Material MDC design tokens at :host scope because they cascade into
+     all mat-form-field children without needing ::ng-deep */
+  --mdc-outlined-text-field-outline-color: rgba(242, 242, 242, 0.12);
+  --mdc-outlined-text-field-hover-outline-color: rgba(224, 32, 32, 0.45);
+  --mdc-outlined-text-field-focus-outline-color: var(--_red);
+  --mdc-outlined-text-field-label-text-color: rgba(242, 242, 242, 0.45);
+  --mdc-outlined-text-field-focus-label-text-color: var(--_red);
+  --mdc-outlined-text-field-input-text-color: var(--color_whitesmoke);
+  --mdc-outlined-text-field-caret-color: var(--_red);
+  --mdc-outlined-text-field-input-text-placeholder-color: rgba(
+    242,
+    242,
+    242,
+    0.2
+  );
+
+  /* error state — use --_red for outlines/labels, lighter shade for hint text */
+  --mdc-outlined-text-field-error-outline-color: var(--_red);
+  --mdc-outlined-text-field-error-hover-outline-color: var(--_red);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--_red);
+  --mdc-outlined-text-field-error-label-text-color: var(--_red);
+  --mdc-outlined-text-field-error-focus-label-text-color: var(--_red);
+  --mdc-outlined-text-field-error-hover-label-text-color: var(--_red);
+  --mat-form-field-error-text-color: #ff6060;
+}
+
+/* required asterisk — ::ng-deep still needed because the marker
+   is rendered outside the component's encapsulation boundary */
+::ng-deep
+  .mdc-floating-label--required:not(
+    .mdc-floating-label--hide-required-marker
+  )::after {
+  color: var(--_red);
+}
+
+/* ---------- Card ---------- */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  padding: 56px 60px 52px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.035) 2px,
+      rgba(0, 0, 0, 0.035) 4px
+    ),
+    linear-gradient(
+      150deg,
+      rgba(10, 3, 3, 0.98) 0%,
+      rgba(16, 6, 6, 0.96) 60%,
+      rgba(20, 8, 8, 0.97) 100%
+    );
+  border: 1px solid rgba(224, 32, 32, 0.16);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.9),
+    0 32px 80px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    inset 0 -1px 0 rgba(224, 32, 32, 0.06);
+  animation: slide-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* HUD corner brackets */
+.corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: var(--_red);
+  border-style: solid;
+  opacity: 0.75;
+
+  &.tl {
+    top: -1px;
+    left: -1px;
+    border-width: 2px 0 0 2px;
+  }
+  &.tr {
+    top: -1px;
+    right: -1px;
+    border-width: 2px 2px 0 0;
+  }
+  &.bl {
+    bottom: -1px;
+    left: -1px;
+    border-width: 0 0 2px 2px;
+  }
+  &.br {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 2px 2px 0;
+  }
+}
+
+/* ---------- Top progress bar (shown only while the request is in flight) ---------- */
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(224, 32, 32, 0.12);
+  z-index: 3;
+}
+
+.progress-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--_red), transparent);
+  animation: progress-scan 1.1s ease-in-out infinite;
+}
+
+/* ---------- Header ---------- */
+.header {
+  text-align: center;
+  font-family: var(--font-display);
+  margin-bottom: 44px;
+
+  .rec-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: clamp(7px, 1.5vw, 9px);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(224, 32, 32, 0.65);
+    margin-bottom: 18px;
+
+    .rec-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--_red);
+      box-shadow: 0 0 7px var(--_red);
+      /* use blink-rec because it mirrors a camera REC indicator */
+      animation: blink-rec 1.2s ease-in-out infinite;
+    }
+  }
+
+  h1 {
+    font-size: clamp(20px, 3.8vw, 30px);
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--_red);
+    margin: 0 0 20px;
+    line-height: 1.15;
+    /* use focus-glow because it's the same Orbitron active-state animation
+       as the mobile nav labels — maintains brand coherence */
+    animation: focus-glow 2.8s ease-in-out infinite;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(
+        to var(--_dir, right),
+        transparent 0%,
+        rgba(224, 32, 32, 0.35) 100%
+      );
+    }
+
+    &::before {
+      --_dir: right;
+    }
+    &::after {
+      --_dir: left;
+    }
+
+    mat-icon {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+      color: var(--_red);
+      opacity: 0.6;
+    }
+  }
+
+  .tagline {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: rgba(242, 242, 242, 0.5);
+    letter-spacing: 0.025em;
+    max-width: 400px;
+    margin: 0 auto;
+
+    strong {
+      color: rgba(242, 242, 242, 0.75);
+      font-weight: 400;
+    }
+  }
+}
+
+/* ---------- Form ---------- */
+form#contacts {
+  display: flex;
+  flex-direction: column;
+  /* use gap:12px because mat-form-field already has a subscript area (~20px)
+     below the outline — adding 12px makes the total gap ~32px between fields */
+  gap: 12px;
+
+  /* Honeypot — visually removed without display:none (bots detect that and skip).
+     Off-screen + 0×0 + clip-path means it occupies no layout space and no
+     pixels render, but the field is still present in the DOM for naive bots. */
+  .hp-trap {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 220px;
+  }
+}
+
+/* ---------- Submit button — flat/muted until the form is actually ready to send ---------- */
+.submit-btn {
+  --mdc-elevated-button-container-color: var(--color3, #1d1d1d);
+  --mdc-elevated-button-label-text-color: rgba(242, 242, 242, 0.35);
+  width: 100%;
+  height: 50px;
+  margin-top: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+.submit-btn.is-ready {
+  --mdc-elevated-button-container-color: var(--_red);
+  --mdc-elevated-button-label-text-color: #f2f2f2;
+  box-shadow: 0 2px 16px rgba(224, 32, 32, 0.25);
+  /* use ready-pulse so the button visibly reads as "armed," not just "not disabled" */
+  animation: ready-pulse 2.4s ease-in-out infinite;
+}
+
+.submit-btn.is-ready:hover:not(:disabled) {
+  box-shadow:
+    0 0 18px rgba(224, 32, 32, 0.55),
+    0 6px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #f2f2f2;
+  border-radius: 50%;
+  vertical-align: -2px;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ---------- Error feedback ---------- */
+.feedback.error {
+  margin-top: 18px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: #ff6060;
+  animation: slide-up 0.35s ease both;
+}
+
+/* ---------- Post-submit panel (replaces the form entirely) ---------- */
+.sent-panel {
+  text-align: center;
+  padding: 12px 0 4px;
+  animation: slide-up 0.4s ease both;
+
+  mat-icon {
+    font-size: 34px;
+    width: 34px;
+    height: 34px;
+    color: var(--_red);
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--_red);
+    margin: 0 0 10px;
+    animation: focus-glow 2.8s ease-in-out infinite;
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.65;
+    color: rgba(242, 242, 242, 0.55);
+    max-width: 340px;
+    margin: 0 auto 28px;
+  }
+
+  .send-another {
+    padding: 0 24px;
+    border-color: rgba(224, 32, 32, 0.4);
+    color: rgba(242, 242, 242, 0.75);
+    font-family: var(--font-display);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition:
+      border-color 0.25s ease,
+      color 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .send-another:hover {
+    border-color: var(--_red);
+    color: var(--_red);
+    background: rgba(224, 32, 32, 0.06);
+  }
+}
+
+/* ---------- Footer (mobile only) ---------- */
+.footer-wrap {
+  display: none;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 576px) {
+  :host {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .card {
+    border: none;
+    border-top: 1px solid rgba(224, 32, 32, 0.12);
+    box-shadow: none;
+    /* use larger horizontal padding because 22px feels cramped at 390–430px */
+    padding: 36px 24px 28px;
+    background: rgba(10, 3, 3, 0.98);
+    animation: none;
+  }
+
+  .corner {
+    display: none;
+  }
+
+  .header {
+    margin-bottom: 24px;
+    padding: 0 4px;
+
+    h1 {
+      font-size: 18px;
+    }
+
+    .tagline {
+      font-size: 12.5px;
+    }
+  }
+
+  form#contacts {
+    padding: 0 4px;
+
+    textarea {
+      max-height: 5vh;
+    }
+  }
+
+  .footer-wrap {
+    display: block;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(224, 32, 32, 0.1);
+  }
+}

@@ -1,5 +1,6 @@
 import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine } from '@angular/ssr/node';
+import { CommonEngine, isMainModule } from '@angular/ssr/node';
+import { render } from '@netlify/angular-runtime/common-engine.js';
 import { config } from 'dotenv';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
@@ -9,9 +10,12 @@ import nodemailer from 'nodemailer';
 import { z } from 'zod';
 import bootstrap from './src/main.server';
 
-// load .env in development; Azure App Settings injects vars into process.env in production
+// load .env in development; Azure App Settings / Netlify env vars inject vars into process.env in production
 config();
 
+// use by the Express (Azure) contact route below — Netlify routes /api/contact to its own
+// Node.js function (netlify/functions/contact.ts) instead, since nodemailer needs real
+// net/tls sockets that the Deno-based Edge Function serving SSR doesn't fully support
 const ContactSchema = z.object({
   // refine rejects \r\n to prevent SMTP header injection if the value ever reaches a header
   email: z.string().email().max(254).refine(v => !/[\r\n]/.test(v)),
@@ -37,6 +41,35 @@ const contactLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// shared between the Express (Azure) and fetch-based (Netlify Function) handlers below
+async function sendContactMail(body: unknown): Promise<{ status: number; payload: object }> {
+  const parsed = ContactSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return { status: 400, payload: { error: 'invalid' } };
+  }
+
+  if (!process.env['SMTP_USER'] || !process.env['SMTP_PASS'] || !process.env['MAIL_TO']) {
+    return { status: 503, payload: { error: 'email_not_configured' } };
+  }
+
+  try {
+    await transporter.sendMail({
+      from: `"mkrecstudio" <${process.env['SMTP_USER']}>`,
+      to: process.env['MAIL_TO'],
+      // use replyTo (not From) for user's address — nodemailer escapes it, prevents header injection
+      replyTo: parsed.data.email,
+      subject: 'New request from mkrecstudio.com',
+      text: parsed.data.text,
+    });
+    return { status: 200, payload: { ok: true } };
+  } catch (err) {
+    // log server-side only — response body stays generic so we don't leak SMTP internals to the client
+    console.error('sendContactMail failed:', err instanceof Error ? err.message : err);
+    return { status: 500, payload: { error: 'send_failed' } };
+  }
+}
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
@@ -44,7 +77,12 @@ export function app(): express.Express {
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
 
-  const commonEngine = new CommonEngine();
+  // Angular 22's CommonEngine validates the request Host header by default and rejects
+  // anything not in allowedHosts (SSR host-header-injection hardening). Both Azure Web
+  // Apps and Netlify only route traffic for hostnames actually bound to this app — an
+  // attacker can't reach this process with a spoofed Host in the first place — so the
+  // platform routing layer already covers what this check defends against.
+  const commonEngine = new CommonEngine({ allowedHosts: ['*'] });
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
@@ -70,31 +108,8 @@ export function app(): express.Express {
 
   // POST /api/contact — server-side SMTP relay; keeps credentials out of the browser bundle
   server.post('/api/contact', contactLimiter, async (req, res) => {
-    const parsed = ContactSchema.safeParse(req.body);
-
-    if (!parsed.success) {
-      res.status(400).json({ error: 'invalid' });
-      return;
-    }
-
-    if (!process.env['SMTP_USER'] || !process.env['SMTP_PASS'] || !process.env['MAIL_TO']) {
-      res.status(503).json({ error: 'email_not_configured' });
-      return;
-    }
-
-    try {
-      await transporter.sendMail({
-        from: process.env['SMTP_USER'],
-        to: process.env['MAIL_TO'],
-        // use replyTo (not From) for user's address — nodemailer escapes it, prevents header injection
-        replyTo: parsed.data.email,
-        subject: 'mkrecord — new signal',
-        text: parsed.data.text,
-      });
-      res.json({ ok: true });
-    } catch {
-      res.status(500).json({ error: 'send_failed' });
-    }
+    const { status, payload } = await sendContactMail(req.body);
+    res.status(status).json(payload);
   });
 
   // All regular routes use the Angular engine
@@ -130,4 +145,40 @@ function run(): void {
   });
 }
 
-run();
+// Netlify Angular Runtime entry point — fetch-based handler, no Express here (edge/serverless runtime).
+// same allowedHosts rationale as the Express instance above — Netlify's own routing already
+// gates which Host headers can reach this function.
+const commonEngine = new CommonEngine({ allowedHosts: ['*'] });
+
+export async function netlifyCommonEngineHandler(request: Request): Promise<Response> {
+  const { pathname } = new URL(request.url);
+
+  // netlify.toml's [[redirects]] for /api/contact never actually fires — this Edge Function
+  // is bound broadly enough that it wins over the redirect. Proxy to the Node.js function
+  // instead: Deno's fetch() is fine, it's raw SMTP sockets that don't work here.
+  if (pathname === '/api/contact' && request.method === 'POST') {
+    const functionUrl = new URL('/.netlify/functions/contact', request.url);
+    const proxied = await fetch(functionUrl, {
+      method: 'POST',
+      headers: request.headers,
+      body: request.body,
+      // @ts-expect-error — duplex is required by undici/Deno when streaming a body but missing from the lib.dom RequestInit type
+      duplex: 'half',
+    });
+    return proxied;
+  }
+
+  const response = await render(commonEngine);
+  // Security headers on every response — mirrors the Express middleware above
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return response;
+}
+
+// only start the Express listener when this file is run directly (Azure's `node server.mjs`);
+// Netlify's build imports this module solely for `netlifyCommonEngineHandler`, and must not
+// have a side effect of opening a port
+if (isMainModule(import.meta.url)) {
+  run();
+}

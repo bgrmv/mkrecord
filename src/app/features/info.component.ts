@@ -20,7 +20,7 @@ const fadeInUp = trigger('fadeInUp', [
     style({ opacity: 0, transform: 'translateY(14px)' }),
     animate(
       '550ms cubic-bezier(0.16, 0.84, 0.3, 1)',
-      style({ opacity: 1, transform: 'translateY(0)' })
+      style({ opacity: 1, transform: 'translateY(0)' }),
     ),
   ]),
 ]);
@@ -34,11 +34,11 @@ const staggerList = trigger('staggerList', [
         stagger(90, [
           animate(
             '450ms cubic-bezier(0.16, 0.84, 0.3, 1)',
-            style({ opacity: 1, transform: 'translateY(0)' })
+            style({ opacity: 1, transform: 'translateY(0)' }),
           ),
         ]),
       ],
-      { optional: true }
+      { optional: true },
     ),
   ]),
 ]);
@@ -51,7 +51,8 @@ const staggerList = trigger('staggerList', [
   styles: [
     `
       @keyframes levitate {
-        0%, 100% {
+        0%,
+        100% {
           transform: translateY(0);
         }
         50% {
@@ -60,7 +61,8 @@ const staggerList = trigger('staggerList', [
       }
 
       @keyframes card-glow {
-        0%, 100% {
+        0%,
+        100% {
           box-shadow:
             0 0 8px rgba(224, 32, 32, 0.15),
             inset 0 0 20px rgba(224, 32, 32, 0.03);
@@ -73,15 +75,28 @@ const staggerList = trigger('staggerList', [
       }
 
       @keyframes scanline {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100%); }
+        0% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(100%);
+        }
       }
 
       @keyframes grain-drift {
-        0%, 100% { transform: translate(0, 0); }
-        25% { transform: translate(-2px, 1px); }
-        50% { transform: translate(1px, -1px); }
-        75% { transform: translate(-1px, 2px); }
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        25% {
+          transform: translate(-2px, 1px);
+        }
+        50% {
+          transform: translate(1px, -1px);
+        }
+        75% {
+          transform: translate(-1px, 2px);
+        }
       }
 
       :host {
@@ -125,7 +140,9 @@ const staggerList = trigger('staggerList', [
         letter-spacing: 0.3px;
         border-bottom: 1.5px solid var(--_red);
         padding-bottom: 1px;
-        transition: color 0.3s ease, border-color 0.3s ease;
+        transition:
+          color 0.3s ease,
+          border-color 0.3s ease;
 
         &:hover {
           color: #ff4040;
@@ -160,7 +177,9 @@ const staggerList = trigger('staggerList', [
           letter-spacing: 0.025em;
           margin: 0;
           color: #e8e8e8;
-          font-feature-settings: 'kern' 1, 'liga' 1;
+          font-feature-settings:
+            'kern' 1,
+            'liga' 1;
         }
 
         p:first-child {
@@ -196,8 +215,12 @@ const staggerList = trigger('staggerList', [
         cursor: pointer;
         animation: levitate 3.5s ease-in-out infinite;
 
-        &:nth-child(2) { animation-delay: 0.4s; }
-        &:nth-child(3) { animation-delay: 0.8s; }
+        &:nth-child(2) {
+          animation-delay: 0.4s;
+        }
+        &:nth-child(3) {
+          animation-delay: 0.8s;
+        }
       }
 
       .card-flip.read {
@@ -355,21 +378,73 @@ const staggerList = trigger('staggerList', [
         background: var(--_red);
       }
 
-      .corner-tl { top: 6px; left: 6px; }
-      .corner-tl::before { width: 14px; height: 1px; top: 0; left: 0; }
-      .corner-tl::after { width: 1px; height: 14px; top: 0; left: 0; }
+      .corner-tl {
+        top: 6px;
+        left: 6px;
+      }
+      .corner-tl::before {
+        width: 14px;
+        height: 1px;
+        top: 0;
+        left: 0;
+      }
+      .corner-tl::after {
+        width: 1px;
+        height: 14px;
+        top: 0;
+        left: 0;
+      }
 
-      .corner-tr { top: 6px; right: 6px; }
-      .corner-tr::before { width: 14px; height: 1px; top: 0; right: 0; }
-      .corner-tr::after { width: 1px; height: 14px; top: 0; right: 0; }
+      .corner-tr {
+        top: 6px;
+        right: 6px;
+      }
+      .corner-tr::before {
+        width: 14px;
+        height: 1px;
+        top: 0;
+        right: 0;
+      }
+      .corner-tr::after {
+        width: 1px;
+        height: 14px;
+        top: 0;
+        right: 0;
+      }
 
-      .corner-bl { bottom: 6px; left: 6px; }
-      .corner-bl::before { width: 14px; height: 1px; bottom: 0; left: 0; }
-      .corner-bl::after { width: 1px; height: 14px; bottom: 0; left: 0; }
+      .corner-bl {
+        bottom: 6px;
+        left: 6px;
+      }
+      .corner-bl::before {
+        width: 14px;
+        height: 1px;
+        bottom: 0;
+        left: 0;
+      }
+      .corner-bl::after {
+        width: 1px;
+        height: 14px;
+        bottom: 0;
+        left: 0;
+      }
 
-      .corner-br { bottom: 6px; right: 6px; }
-      .corner-br::before { width: 14px; height: 1px; bottom: 0; right: 0; }
-      .corner-br::after { width: 1px; height: 14px; bottom: 0; right: 0; }
+      .corner-br {
+        bottom: 6px;
+        right: 6px;
+      }
+      .corner-br::before {
+        width: 14px;
+        height: 1px;
+        bottom: 0;
+        right: 0;
+      }
+      .corner-br::after {
+        width: 1px;
+        height: 14px;
+        bottom: 0;
+        right: 0;
+      }
 
       @media (hover: none) {
         .card-back li {
@@ -518,19 +593,24 @@ const staggerList = trigger('staggerList', [
           What's up! I'm <strong>Marek</strong> - the guy who turns video into
           something <span class="stroke">modern, slick, and cinematic</span> as
           hell. I don't just shoot pretty stuff, I know how
-          <span class="stroke">video actually works for business</span>. And yeah,
-          I'm <strong>solid with targeting</strong> too. If you landed on this
-          page, it means <span class="stroke">the ads hit the mark</span> and
-          you're here for
-          <span class="stroke">content that looks fire and actually brings results</span>.
+          <span class="stroke">video actually works for business</span>. And
+          yeah, I'm <strong>solid with targeting</strong> too. If you landed on
+          this page, it means
+          <span class="stroke">the ads hit the mark</span> and you're here for
+          <span class="stroke"
+            >content that looks fire and actually brings results</span
+          >.
         </p>
         <p [@fadeInUp]>
           You'll only see a small slice of my work here, but trust me, it's
           <strong>more than enough to know you're in the right place</strong>. I
           shoot
-          <strong>mood videos, commercials, corporate stuff, interviews, events
-          and even films</strong>. No idea yet? No problem.
-          <span class="stroke">We'll build it together</span>. I've got your back
+          <strong
+            >mood videos, commercials, corporate stuff, interviews, events and
+            even films</strong
+          >. No idea yet? No problem.
+          <span class="stroke">We'll build it together</span>. I've got your
+          back
           <span class="stroke">from the first spark to the final cut</span>.
         </p>
         <p [@fadeInUp]>
@@ -553,7 +633,9 @@ const staggerList = trigger('staggerList', [
               <span class="corner-mark corner-bl"></span>
               <span class="corner-mark corner-br"></span>
               <h3 class="card-title">Experience</h3>
-              <span class="card-hint"><span class="rec-dot"></span>Tap to flip</span>
+              <span class="card-hint"
+                ><span class="rec-dot"></span>Tap to flip</span
+              >
             </div>
             <div class="card-face card-back">
               <span class="corner-mark corner-tl"></span>
@@ -594,7 +676,9 @@ const staggerList = trigger('staggerList', [
               <span class="corner-mark corner-bl"></span>
               <span class="corner-mark corner-br"></span>
               <h3 class="card-title">Clients & Projects</h3>
-              <span class="card-hint"><span class="rec-dot"></span>Tap to flip</span>
+              <span class="card-hint"
+                ><span class="rec-dot"></span>Tap to flip</span
+              >
             </div>
             <div class="card-face card-back">
               <span class="corner-mark corner-tl"></span>
@@ -631,7 +715,9 @@ const staggerList = trigger('staggerList', [
               <span class="corner-mark corner-bl"></span>
               <span class="corner-mark corner-br"></span>
               <h3 class="card-title">Specialization</h3>
-              <span class="card-hint"><span class="rec-dot"></span>Tap to flip</span>
+              <span class="card-hint"
+                ><span class="rec-dot"></span>Tap to flip</span
+              >
             </div>
             <div class="card-face card-back">
               <span class="corner-mark corner-tl"></span>
