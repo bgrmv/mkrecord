@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ContactsMeComponent } from '@features/contacts-me.component';
+import { ContactsMeComponent } from '@features/contacts-me/contacts-me.component';
 import { SeoService } from '@services/seo.service';
 
 @Component({
