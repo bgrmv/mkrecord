@@ -23,7 +23,6 @@ import { MatIcon } from '@angular/material/icon';
 import { PortfolioCategory } from '@app/types';
 import { VideoDialogComponent } from '@core/video-dialog.component';
 
-
 const fadeInUp = trigger('fadeInUp', [
   transition(':enter', [
     style({ opacity: 0, transform: 'translateY(14px)' }),

@@ -22,8 +22,10 @@ export class ContactsPageComponent {
   constructor() {
     inject(SeoService).set({
       title: 'Hire a Filmmaker',
-      description: 'Ready to create? Contact filmmaker Marek Kondratjev for your next commercial, corporate video, event coverage or social media project.',
-      keywords: 'hire filmmaker, hire videographer, video production contact, commission video, book videographer',
+      description:
+        'Ready to create? Contact filmmaker Marek Kondratjev for your next commercial, corporate video, event coverage or social media project.',
+      keywords:
+        'hire filmmaker, hire videographer, video production contact, commission video, book videographer',
       path: '/contacts',
     });
   }

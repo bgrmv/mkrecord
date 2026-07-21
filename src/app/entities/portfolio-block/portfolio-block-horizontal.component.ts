@@ -22,7 +22,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { PortfolioCategory } from '@app/types';
 import { VideoDialogComponent } from '@core/video-dialog.component';
 
-
 const fadeInUp = trigger('fadeInUp', [
   transition(':enter', [
     style({ opacity: 0, transform: 'translateY(14px)' }),
@@ -185,17 +184,19 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
       const onWheel = (e: WheelEvent) => {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
           e.preventDefault();
-          const cardWidth = (el.firstElementChild as HTMLElement)?.offsetWidth ?? 0;
+          const cardWidth =
+            (el.firstElementChild as HTMLElement)?.offsetWidth ?? 0;
           const snapUnit = (cardWidth + 8) * 1.5;
           const direction = e.deltaY > 0 ? 1 : -1;
           const nearest = Math.round(el.scrollLeft / snapUnit) * snapUnit;
-          el.scrollTo({ left: nearest + direction * snapUnit, behavior: 'smooth' });
+          el.scrollTo({
+            left: nearest + direction * snapUnit,
+            behavior: 'smooth',
+          });
         }
       };
       el.addEventListener('wheel', onWheel, { passive: false });
-      this.scrollListeners.push(() =>
-        el.removeEventListener('wheel', onWheel),
-      );
+      this.scrollListeners.push(() => el.removeEventListener('wheel', onWheel));
 
       const hasOverflow = el.scrollWidth > el.clientWidth + 10;
 

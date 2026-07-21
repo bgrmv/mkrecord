@@ -24,9 +24,9 @@
 
     <p class="tagline">
       Every great film begins with a single conversation.
-      <strong>Tell me about your vision</strong> — the story you need told,
-      the moment too precious to leave unfilmed — and together we'll craft
-      something that outlasts the frame.
+      <strong>Tell me about your vision</strong> — the story you need told, the
+      moment too precious to leave unfilmed — and together we'll craft something
+      that outlasts the frame.
     </p>
   </header>
 
@@ -49,7 +49,11 @@
       </button>
     </div>
   } @else {
-    <form id="contacts" [formGroup]="formGroup" #formDirective="ngForm" (submit)="onSubmit($event)">
+    <form
+      id="contacts"
+      [formGroup]="formGroup"
+      #formDirective="ngForm"
+      (submit)="onSubmit($event)">
       <!--
         Honeypot field — invisible to real users via off-screen positioning
         (NOT display:none, which sophisticated bots detect and skip). Naive

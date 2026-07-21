@@ -1,7 +1,11 @@
 /* reveal: main content fades in after splash exits */
 @keyframes app-reveal {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 main.ready {
@@ -103,7 +107,8 @@ main {
     scroll-snap-type: y mandatory;
     /* use scrollbar-width thin + accent color to match red camera aesthetic */
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--c_red_true) 45%, transparent) transparent;
+    scrollbar-color: color-mix(in srgb, var(--c_red_true) 45%, transparent)
+      transparent;
 
     &::-webkit-scrollbar {
       width: 2px;

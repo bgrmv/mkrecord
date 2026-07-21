@@ -42,12 +42,19 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       /* mirror keyframe names from contacts-me.component because Angular's
          component-scoped styles don't share @keyframes across components */
       @keyframes blink-rec {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0.15; }
+        0%,
+        49% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0.15;
+        }
       }
 
       @keyframes focus-glow {
-        0%, 100% {
+        0%,
+        100% {
           text-shadow:
             0 0 8px rgba(224, 32, 32, 0.5),
             1px 1px 0 rgb(0, 0, 0);
@@ -61,9 +68,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       }
 
       @keyframes shutter-flash {
-        0%   { opacity: 0; }
-        50%  { opacity: 0.8; }
-        100% { opacity: 0; }
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.8;
+        }
+        100% {
+          opacity: 0;
+        }
       }
 
       :host {
@@ -133,12 +146,30 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         pointer-events: none;
         transition: opacity 0.3s ease;
       }
-      .corner.tl { top: -1px; left: -1px;  border-width: 1px 0 0 1px; }
-      .corner.tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
-      .corner.bl { bottom: -1px; left: -1px;  border-width: 0 0 1px 1px; }
-      .corner.br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+      .corner.tl {
+        top: -1px;
+        left: -1px;
+        border-width: 1px 0 0 1px;
+      }
+      .corner.tr {
+        top: -1px;
+        right: -1px;
+        border-width: 1px 1px 0 0;
+      }
+      .corner.bl {
+        bottom: -1px;
+        left: -1px;
+        border-width: 0 0 1px 1px;
+      }
+      .corner.br {
+        bottom: -1px;
+        right: -1px;
+        border-width: 0 1px 1px 0;
+      }
 
-      :host(.is-verified) .corner { opacity: 1; }
+      :host(.is-verified) .corner {
+        opacity: 1;
+      }
 
       /* ---------- Iris ---------- */
       .iris {
@@ -147,13 +178,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         width: var(--_iris-size);
         height: var(--_iris-size);
         border-radius: 50%;
-        background:
-          radial-gradient(
-            circle at 50% 50%,
-            #1a0606 0%,
-            #050202 70%,
-            #000 100%
-          );
+        background: radial-gradient(
+          circle at 50% 50%,
+          #1a0606 0%,
+          #050202 70%,
+          #000 100%
+        );
         border: 1px solid rgba(224, 32, 32, 0.3);
         box-shadow:
           inset 0 0 8px rgba(0, 0, 0, 0.9),
@@ -202,26 +232,50 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       }
 
       /* idle (open): blades pulled outward, iris is fully transparent */
-      .b1 { transform: rotate(0deg)   translateY(-65%); }
-      .b2 { transform: rotate(60deg)  translateY(-65%); }
-      .b3 { transform: rotate(120deg) translateY(-65%); }
-      .b4 { transform: rotate(180deg) translateY(-65%); }
-      .b5 { transform: rotate(240deg) translateY(-65%); }
-      .b6 { transform: rotate(300deg) translateY(-65%); }
+      .b1 {
+        transform: rotate(0deg) translateY(-65%);
+      }
+      .b2 {
+        transform: rotate(60deg) translateY(-65%);
+      }
+      .b3 {
+        transform: rotate(120deg) translateY(-65%);
+      }
+      .b4 {
+        transform: rotate(180deg) translateY(-65%);
+      }
+      .b5 {
+        transform: rotate(240deg) translateY(-65%);
+      }
+      .b6 {
+        transform: rotate(300deg) translateY(-65%);
+      }
 
       /* closed: blades meet at center */
       :host(.is-verified) .b1,
-      :host(.is-animating) .b1 { transform: rotate(0deg)   translateY(0); }
+      :host(.is-animating) .b1 {
+        transform: rotate(0deg) translateY(0);
+      }
       :host(.is-verified) .b2,
-      :host(.is-animating) .b2 { transform: rotate(60deg)  translateY(0); }
+      :host(.is-animating) .b2 {
+        transform: rotate(60deg) translateY(0);
+      }
       :host(.is-verified) .b3,
-      :host(.is-animating) .b3 { transform: rotate(120deg) translateY(0); }
+      :host(.is-animating) .b3 {
+        transform: rotate(120deg) translateY(0);
+      }
       :host(.is-verified) .b4,
-      :host(.is-animating) .b4 { transform: rotate(180deg) translateY(0); }
+      :host(.is-animating) .b4 {
+        transform: rotate(180deg) translateY(0);
+      }
       :host(.is-verified) .b5,
-      :host(.is-animating) .b5 { transform: rotate(240deg) translateY(0); }
+      :host(.is-animating) .b5 {
+        transform: rotate(240deg) translateY(0);
+      }
       :host(.is-verified) .b6,
-      :host(.is-animating) .b6 { transform: rotate(300deg) translateY(0); }
+      :host(.is-animating) .b6 {
+        transform: rotate(300deg) translateY(0);
+      }
 
       :host(.is-verified) .blade {
         background: linear-gradient(
@@ -265,19 +319,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         inset: -4px;
         border-radius: 50%;
         pointer-events: none;
-        background:
-          conic-gradient(
-            from 0deg,
-            transparent 0 8deg,
-            rgba(224, 32, 32, 0.35) 8deg 9deg,
-            transparent 9deg 90deg,
-            rgba(224, 32, 32, 0.35) 90deg 91deg,
-            transparent 91deg 180deg,
-            rgba(224, 32, 32, 0.35) 180deg 181deg,
-            transparent 181deg 270deg,
-            rgba(224, 32, 32, 0.35) 270deg 271deg,
-            transparent 271deg 360deg
-          );
+        background: conic-gradient(
+          from 0deg,
+          transparent 0 8deg,
+          rgba(224, 32, 32, 0.35) 8deg 9deg,
+          transparent 9deg 90deg,
+          rgba(224, 32, 32, 0.35) 90deg 91deg,
+          transparent 91deg 180deg,
+          rgba(224, 32, 32, 0.35) 180deg 181deg,
+          transparent 181deg 270deg,
+          rgba(224, 32, 32, 0.35) 270deg 271deg,
+          transparent 271deg 360deg
+        );
         -webkit-mask: radial-gradient(
           circle,
           transparent calc(50% - 4px),
@@ -285,7 +338,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
           #000 50%,
           transparent 50%
         );
-                mask: radial-gradient(
+        mask: radial-gradient(
           circle,
           transparent calc(50% - 4px),
           #000 calc(50% - 4px),
@@ -293,7 +346,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
           transparent 50%
         );
         opacity: 0.6;
-        transition: transform 1.2s ease, opacity 0.3s ease;
+        transition:
+          transform 1.2s ease,
+          opacity 0.3s ease;
       }
 
       :host(.is-verified) .iris-ticks {
@@ -361,8 +416,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
           padding: 12px 14px;
         }
 
-        .label .primary { font-size: 10px; }
-        .label .secondary { font-size: 8px; }
+        .label .primary {
+          font-size: 10px;
+        }
+        .label .secondary {
+          font-size: 8px;
+        }
       }
     `,
   ],

@@ -44,14 +44,17 @@ const CONTACT_SENT_KEY = 'mkrecord:contact-sent';
 export class ContactsMeComponent {
   private readonly platformService = inject(PlatformService);
 
-  @ViewChild('formDirective') private readonly formDirective!: FormGroupDirective;
+  @ViewChild('formDirective')
+  private readonly formDirective!: FormGroupDirective;
 
   readonly sent = signal(false);
   // true only when `sent` came from a sessionStorage check on mount, not a fresh submit —
   // drives which copy the post-submit panel shows (§4 of the plan)
   readonly restoredFromSession = signal(false);
 
-  private readonly submitPayload = signal<{ email: string; text: string } | undefined>(undefined);
+  private readonly submitPayload = signal<
+    { email: string; text: string } | undefined
+  >(undefined);
 
   // use httpResource because returning undefined from the request function means "no
   // request" — nothing fires until onSubmit() sets a payload, and its own status()/
@@ -89,7 +92,10 @@ export class ContactsMeComponent {
     // browser-only sessionStorage read, guarded per PlatformService.isBrowser and run via
     // afterNextRender (not ngOnInit) per the project's SSR-safe modern-API convention
     afterNextRender(() => {
-      if (this.platformService.isBrowser && sessionStorage.getItem(CONTACT_SENT_KEY)) {
+      if (
+        this.platformService.isBrowser &&
+        sessionStorage.getItem(CONTACT_SENT_KEY)
+      ) {
         this.sent.set(true);
         this.restoredFromSession.set(true);
       }

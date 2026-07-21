@@ -7,30 +7,67 @@ import { SeoService } from '@services/seo.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [HomeBrandComponent],
   styles: `
-    :host { --_red: #e02020; --_red_dark: #a81010 }
+    :host {
+      --_red: #e02020;
+      --_red_dark: #a81010;
+    }
 
     @keyframes blink-rec {
-      0%, 49% { opacity: 1; }
-      50%, 100% { opacity: 0.15; }
+      0%,
+      49% {
+        opacity: 1;
+      }
+      50%,
+      100% {
+        opacity: 0.15;
+      }
     }
 
     @keyframes slide-up {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes neon-pulse-divider {
-      0%, 100% { opacity: 0.75; box-shadow: 0 0 6px var(--_red), 0 0 18px rgba(224,32,32,0.5); }
-      50%      { opacity: 1;    box-shadow: 0 0 10px var(--_red), 0 0 32px rgba(224,32,32,0.7), 0 0 56px rgba(224,32,32,0.25); }
+      0%,
+      100% {
+        opacity: 0.75;
+        box-shadow:
+          0 0 6px var(--_red),
+          0 0 18px rgba(224, 32, 32, 0.5);
+      }
+      50% {
+        opacity: 1;
+        box-shadow:
+          0 0 10px var(--_red),
+          0 0 32px rgba(224, 32, 32, 0.7),
+          0 0 56px rgba(224, 32, 32, 0.25);
+      }
     }
 
     /* ── LIGHTS — white neon pulse ── */
     @keyframes white-neon {
-      0%, 100% { text-shadow: 0 0 10px #fff, 0 0 30px rgba(255,255,255,0.6), 0 0 70px rgba(255,255,255,0.3); }
-      50%      { text-shadow: 0 0 20px #fff, 0 0 60px rgba(255,255,255,0.85), 0 0 130px rgba(255,255,255,0.45), 0 0 260px rgba(255,255,255,0.2); }
+      0%,
+      100% {
+        text-shadow:
+          0 0 10px #fff,
+          0 0 30px rgba(255, 255, 255, 0.6),
+          0 0 70px rgba(255, 255, 255, 0.3);
+      }
+      50% {
+        text-shadow:
+          0 0 20px #fff,
+          0 0 60px rgba(255, 255, 255, 0.85),
+          0 0 130px rgba(255, 255, 255, 0.45),
+          0 0 260px rgba(255, 255, 255, 0.2);
+      }
     }
-
-   
 
     :host {
       width: 100%;
@@ -52,7 +89,7 @@ import { SeoService } from '@services/seo.service';
     .header {
       text-align: center;
       animation: slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-      font-family: var(--font-display);  
+      font-family: var(--font-display);
 
       .rec-badge {
         display: inline-flex;
@@ -83,11 +120,11 @@ import { SeoService } from '@services/seo.service';
         margin: 0;
         line-height: 1.2;
         user-select: none;
-        text-align: center; 
+        text-align: center;
       }
 
       span {
-        text-align: center; 
+        text-align: center;
       }
 
       .word-divider {
@@ -135,9 +172,14 @@ import { SeoService } from '@services/seo.service';
     }
 
     @media (max-width: 576px) {
-      :host { gap: 20px; padding: 0 16px; }
+      :host {
+        gap: 20px;
+        padding: 0 16px;
+      }
 
-      .neon-divider { width: 70%; }
+      .neon-divider {
+        width: 70%;
+      }
 
       .header {
         animation: none;
@@ -146,16 +188,23 @@ import { SeoService } from '@services/seo.service';
 
         wrap: balance;
 
-        .rec-badge { display: none; }
+        .rec-badge {
+          display: none;
+        }
 
         h1 {
           font-size: clamp(30px, 10vw, 46px);
           letter-spacing: 0.18em;
           line-height: 1.35;
 
-          & > span { display: block; text-align: center; }
+          & > span {
+            display: block;
+            text-align: center;
+          }
 
-          .word-divider { display: none; }
+          .word-divider {
+            display: none;
+          }
         }
       }
     }
@@ -173,9 +222,7 @@ import { SeoService } from '@services/seo.service';
         <span class="word-divider">×</span>
         <span class="word-camera"><b class="cam">CAM</b>ERA</span>
         <span class="word-divider">×</span>
-        <span class="word-action">
-          ACTI<b class="red">ON</b>
-        </span>
+        <span class="word-action"> ACTI<b class="red">ON</b> </span>
       </h1>
     </div>
   `,
@@ -184,8 +231,10 @@ export class HomePageComponent {
   constructor() {
     inject(SeoService).set({
       title: 'LIGHTS × CAMERA × ACTION',
-      description: 'Cinematic filmmaker Marek Kondratjev for hire. Mood videos, commercials, events, corporate content and social media reels.',
-      keywords: 'filmmaker for hire, videographer, cinematic video, commercial video, event videography, reels, MK Rec Studio',
+      description:
+        'Cinematic filmmaker Marek Kondratjev for hire. Mood videos, commercials, events, corporate content and social media reels.',
+      keywords:
+        'filmmaker for hire, videographer, cinematic video, commercial video, event videography, reels, MK Rec Studio',
       path: '/',
     });
   }

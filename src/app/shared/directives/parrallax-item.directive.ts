@@ -50,7 +50,6 @@ export class ParallaxItemDirective {
     return `perspective(800px) translate3d(${x * m}px, ${y * m}px, 0) scale(${s})`;
   });
 
-
   private readonly eleRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);

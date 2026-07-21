@@ -36,17 +36,16 @@ const fadeIn = trigger('fadeIn', [
   ],
   animations: [fadeIn],
   styles: [
-    
     `
-    :host {
-      font-family: var(--font-display);
-    }
+      :host {
+        font-family: var(--font-display);
+      }
 
-    :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
-      font-family: var(--font-display);
-      font-weight: 700;
-          text-transform: uppercase;
-    }
+      :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+        font-family: var(--font-display);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
 
       /* ── Tab overrides ── */
       /* use ::ng-deep because Material tab wrappers are outside component scope */
@@ -225,8 +224,8 @@ const fadeIn = trigger('fadeIn', [
           scroll-snap-type: y mandatory;
           // scrollbar-width: thin;
           // scrollbar-color: color-mix(in srgb, var(--c_red_true) 45%, transparent) transparent;
-           scrollbar-color: var(--c_red) rgba(0, 0, 0, 0.3);
-    scrollbar-width: thin;
+          scrollbar-color: var(--c_red) rgba(0, 0, 0, 0.3);
+          scrollbar-width: thin;
         }
       }
 
@@ -283,8 +282,10 @@ export class PortfolioPageComponent {
   constructor() {
     inject(SeoService).set({
       title: 'Portfolio',
-      description: 'Browse cinematic video work by Marek Kondratjev — brands, events, music videos, social media reels and short films.',
-      keywords: 'video portfolio, cinematic portfolio, commercial video portfolio, reels portfolio, event videos, brand video, short film',
+      description:
+        'Browse cinematic video work by Marek Kondratjev — brands, events, music videos, social media reels and short films.',
+      keywords:
+        'video portfolio, cinematic portfolio, commercial video portfolio, reels portfolio, event videos, brand video, short film',
       path: '/portfolio',
     });
   }

@@ -167,7 +167,9 @@ export interface DialogData {
           class="dialog-action-btn"
           aria-label="Fullscreen"
           (click)="onFullscreen()">
-          <mat-icon>{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+          <mat-icon>{{
+            isFullscreen() ? 'fullscreen_exit' : 'fullscreen'
+          }}</mat-icon>
           <span>{{ isFullscreen() ? 'EXIT' : 'FULLSCREEN' }}</span>
         </button>
         <button
@@ -229,11 +231,13 @@ export class VideoDialogComponent {
     if (this.isFullscreen()) {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const byWidth = { x: vw, y: Math.round(vw * 9 / 16) };
-      const byHeight = { x: Math.round(vh * 16 / 9), y: vh };
+      const byWidth = { x: vw, y: Math.round((vw * 9) / 16) };
+      const byHeight = { x: Math.round((vh * 16) / 9), y: vh };
       return byWidth.y <= vh ? byWidth : byHeight;
     }
-    return this.deviceSerivce.isMobile() ? { x: 320, y: 180 } : { x: 960, y: 540 };
+    return this.deviceSerivce.isMobile()
+      ? { x: 320, y: 180 }
+      : { x: 960, y: 540 };
   });
 
   protected onFullscreen(): void {

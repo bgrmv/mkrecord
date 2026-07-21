@@ -9,7 +9,10 @@
           (mouseenter)="onLaneEnter($index)"
           (mouseleave)="onLaneLeave($index)">
           @for (portfolio of lane; track $index) {
-            <div class="card-wrap" (pointerdown)="onPointerDown($event)" (click)="openDialog(portfolio, $event)">
+            <div
+              class="card-wrap"
+              (pointerdown)="onPointerDown($event)"
+              (click)="openDialog(portfolio, $event)">
               <span class="corner-mark corner-tl"></span>
               <span class="corner-mark corner-tr"></span>
               <span class="corner-mark corner-bl"></span>
@@ -23,7 +26,9 @@
                 [src]="portfolio.preview"
                 [poster]="portfolio.preview"
                 (canplay)="onVideoReady($event)"></video>
-              <span class="video-tap-hint"><span class="rec-dot"></span>Tap to open</span>
+              <span class="video-tap-hint"
+                ><span class="rec-dot"></span>Tap to open</span
+              >
               <p class="card-title">{{ portfolio.title }}</p>
             </div>
           }
@@ -39,9 +44,7 @@
   </div>
 } @else {
   <!-- Mobile fallback: simple scrollable list -->
-  <section
-    class="grid view-1"
-    [@staggerGrid]="portfolios().length">
+  <section class="grid view-1" [@staggerGrid]="portfolios().length">
     @for (portfolio of portfolios(); track portfolio) {
       <div
         class="preview card-wrap"
@@ -62,7 +65,9 @@
           [poster]="portfolio.preview"
           width="540"
           (canplay)="onVideoReady($event)"></video>
-        <span class="video-tap-hint"><span class="rec-dot"></span>Tap to open</span>
+        <span class="video-tap-hint"
+          ><span class="rec-dot"></span>Tap to open</span
+        >
         <p class="card-title">{{ portfolio.title }}</p>
       </div>
     }
