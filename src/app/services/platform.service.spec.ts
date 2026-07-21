@@ -5,6 +5,22 @@ describe('PlatformService', () => {
   let service: PlatformService;
 
   beforeEach(() => {
+    // jsdom doesn't implement matchMedia — PlatformService calls it synchronously
+    // in the browser to get an initial isMobile value before BreakpointObserver fires
+    /* eslint-disable @typescript-eslint/no-empty-function -- mock MediaQueryList stub, no-op by design */
+    window.matchMedia ??= () =>
+      ({
+        matches: false,
+        media: '',
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      }) as MediaQueryList;
+    /* eslint-enable @typescript-eslint/no-empty-function */
+
     TestBed.configureTestingModule({});
     service = TestBed.inject(PlatformService);
   });

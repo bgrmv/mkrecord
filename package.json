@@ -65,6 +65,7 @@
     "prettier": "3.8.1",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.65.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "zone.js": "~0.15.0"
   }
 }
