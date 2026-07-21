@@ -6,11 +6,6 @@
 [build.environment]
   NODE_VERSION = "22"
 
-# /api/contact runs on the Node.js Lambda runtime (nodemailer needs real net/tls
-# sockets), so it must be routed to its own function before it ever reaches the
-# Deno-based Edge Function that serves SSR
-[[redirects]]
-  from = "/api/contact"
-  to = "/.netlify/functions/contact"
-  status = 200
-  force = true
+# note: a [[redirects]] rule for /api/contact -> /.netlify/functions/contact was tried here
+# and never fired — the Angular SSR Edge Function's own routing wins over netlify.toml
+# redirects. Proxying is done in code instead, see netlifyCommonEngineHandler in server.ts.

@@ -141,11 +141,26 @@ function run(): void {
 }
 
 // Netlify Angular Runtime entry point — fetch-based handler, no Express here (edge/serverless runtime).
-// /api/contact never reaches this handler — netlify.toml redirects it to
-// netlify/functions/contact.ts (Node.js runtime) before it hits this Deno-based Edge Function.
 const commonEngine = new CommonEngine();
 
-export async function netlifyCommonEngineHandler(_request: Request): Promise<Response> {
+export async function netlifyCommonEngineHandler(request: Request): Promise<Response> {
+  const { pathname } = new URL(request.url);
+
+  // netlify.toml's [[redirects]] for /api/contact never actually fires — this Edge Function
+  // is bound broadly enough that it wins over the redirect. Proxy to the Node.js function
+  // instead: Deno's fetch() is fine, it's raw SMTP sockets that don't work here.
+  if (pathname === '/api/contact' && request.method === 'POST') {
+    const functionUrl = new URL('/.netlify/functions/contact', request.url);
+    const proxied = await fetch(functionUrl, {
+      method: 'POST',
+      headers: request.headers,
+      body: request.body,
+      // @ts-expect-error — duplex is required by undici/Deno when streaming a body but missing from the lib.dom RequestInit type
+      duplex: 'half',
+    });
+    return proxied;
+  }
+
   const response = await render(commonEngine);
   // Security headers on every response — mirrors the Express middleware above
   response.headers.set('X-Content-Type-Options', 'nosniff');
