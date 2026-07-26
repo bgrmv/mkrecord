@@ -47,17 +47,19 @@ app-root {
 }
 
 /* use explicit unlayered z-index to override @layer cdk-overlay (z-index:1000);
-   cursor component sits at 10000 — overlay stack must stay below that */
+   pushed above 9999 because several page/nav hosts (e.g. portfolio-page) use
+   z-index:9999 with no stacking context between them and <body>, which used
+   to let the portfolio grid render on top of the fullscreen video dialog */
 .cdk-overlay-container {
-  z-index: 9980;
+  z-index: 10050;
 }
 
 .backdrop-dialog {
   background-color: #000000d1;
   backdrop-filter: blur(2px);
-  z-index: 9989;
+  z-index: 10060;
 }
 
 .video-dialog {
-  z-index: 9990;
+  z-index: 10070;
 }

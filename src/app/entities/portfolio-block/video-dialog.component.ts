@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  ElementRef,
   inject,
   signal,
 } from '@angular/core';
@@ -204,6 +205,8 @@ export class VideoDialogComponent {
   protected readonly isFullscreen = signal(false);
 
   constructor() {
+    const el = inject(ElementRef<HTMLElement>);
+
     afterNextRender(() => {
       const onFullscreenChange = () => {
         const isFs = !!document.fullscreenElement;
@@ -212,6 +215,26 @@ export class VideoDialogComponent {
         if (isFs) {
           this.dialogRef.addPanelClass('video-dialog-fullscreen');
           this.dialogRef.updateSize('100vw', '100vh');
+
+          // requestFullscreen(documentElement) inserts <html> as a new,
+          // later top-layer entry than the dialog's own popover (Angular
+          // CDK 21+ renders MatDialog via popover="manual"/showPopover()).
+          // top-layer paint order is insertion order, so without re-showing
+          // the popover here, the in-flow document (portfolio grid) — now
+          // rendered inside the fullscreen <html> box — paints over the
+          // dialog. defer a frame so the fullscreen transition settles first.
+          requestAnimationFrame(() => {
+            const host = el.nativeElement.closest('[popover]') as
+              | (HTMLElement & {
+                  showPopover?: () => void;
+                  hidePopover?: () => void;
+                })
+              | null;
+            try {
+              host?.hidePopover?.();
+              host?.showPopover?.();
+            } catch {}
+          });
         } else {
           this.dialogRef.removePanelClass('video-dialog-fullscreen');
           this.dialogRef.updateSize();
