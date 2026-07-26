@@ -2,6 +2,24 @@
 
 node --max_old_space_size=2048 ./node_modules/@angular/cli/bin/ng serve
 
+## Graphify
+
+This project uses [graphify](https://www.npmjs.com/package/@sentropic/graphify) — a knowledge-graph CLI wired into Claude Code (`.claude/settings.json` hooks + `.claude/skills/graphify/`). It lets the AI assistant query code relationships directly instead of reading/grepping files one by one, which saves a lot of tokens on codebase questions.
+
+It's **not** a project dependency — it's a global dev tool, install it once per machine:
+
+```bash
+pnpm add -g @sentropic/graphify
+```
+
+`.graphify/` (the actual graph data) is gitignored — it's machine-generated and not portable across machines yet. Build it locally after cloning:
+
+```bash
+pnpm graphify   # runs `graphify update .`
+```
+
+Without graphify installed, nothing breaks — Claude Code just falls back to normal file reading (a bit slower/more expensive on architecture questions).
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.9.
 
 ## Todo

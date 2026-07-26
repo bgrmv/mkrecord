@@ -47,6 +47,10 @@ Thumbs.db
 # Claude Code local permissions (per-machine, not shared)
 .claude/settings.local.json
 
+# graphify: not committing graph.json/manifest.json yet — `graphify portable-check`
+# found absolute Windows paths baked into them, so they're not portable across machines
+.graphify/
+
 # big files
 /_source
 /media
