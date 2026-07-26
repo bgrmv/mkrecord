@@ -139,7 +139,7 @@ export interface DialogData {
   ],
   template: `
     @if (data.url) {
-      <!-- see docs/todo — P0 #5: hardcoded videoId="rFGxVhX-cIo" ignores data.videoId; see docs/todo/deprecated.md#corevideo-dialog-componentts — this entire @if branch is unreachable (data.url is never set) -->
+      <!-- see docs/todo — P0 #5: hardcoded videoId="rFGxVhX-cIo" ignores data.videoId; see docs/todo/deprecated.md#entitiesportfolio-blockvideo-dialog-componentts — this entire @if branch is unreachable (data.url is never set) -->
       <youtube-player
         videoId="rFGxVhX-cIo"
         [playerVars]="{ autoplay: 0, controls: 1, color: 'red' }"

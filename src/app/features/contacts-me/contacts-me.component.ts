@@ -21,7 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FooterComponent } from '@core/footer.component';
 import { PlatformService } from '@services/platform.service';
-import { ContactsCaptchaComponent } from '../contacts-captcha.component';
+import { ContactsCaptchaComponent } from './contacts-captcha.component';
 
 // use a namespaced key so a future unrelated sessionStorage entry can't collide
 const CONTACT_SENT_KEY = 'mkrecord:contact-sent';

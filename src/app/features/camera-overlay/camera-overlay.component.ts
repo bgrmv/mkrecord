@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CameraCornersLayerComponent } from '../camera-corners-layer.component';
+import { CameraCornersLayerComponent } from './camera-corners-layer.component';
 
 @Component({
   selector: 'app-camera-overlay',
