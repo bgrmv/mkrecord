@@ -85,7 +85,7 @@ Action: delete (including the `Subject` import from `rxjs` if it becomes unused)
 
 ---
 
-## `core/video-dialog.component.ts`
+## `entities/portfolio-block/video-dialog.component.ts`
 
 **Lines 93-98 — dead `@if (data.url)` branch**
 ```html
@@ -152,7 +152,7 @@ Action: delete.
 
 ---
 
-## `features/camera-timer/camera-timer.component.ts`
+## `features/camera-overlay/camera-timer/camera-timer.component.ts`
 
 **Line 31 — hardcoded past date as initial signal value**
 ```ts
@@ -238,7 +238,7 @@ All `console.log` calls below must be removed before production. Debug logging b
 | `features/portfolio/portfolio.component.ts` | 91 | `{ scrolled, finalWidth, lastIndex }` |
 | `features/portfolio/portfolio.component.ts` | 96 | `number1, number2, …` |
 | `features/portfolio-block/portfolio-block.component.ts` | 63 | `'The dialog was closed'` |
-| `features/camera-timer/camera-timer.component.ts` | 37 | `date` object |
+| `features/camera-overlay/camera-timer/camera-timer.component.ts` | 37 | `date` object |
 | `shared/utils/fullscreen-api.ts` | 28 | `'HEY'` |
 | `shared/utils/fullscreen-api.ts` | 29 | `event` |
 | `shared/utils/fullscreen-api.ts` | 34 | `fullScreenElement, fullScreenEnable` |

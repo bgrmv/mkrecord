@@ -39,12 +39,17 @@ src/app/
 │   └── video-dialog.component.ts
 │
 ├── features/                  # Переиспользуемые компоненты функций
-│   ├── camera-battery/
-│   ├── camera-corners-layer.component.ts
-│   ├── camera-quality-resolution.component.ts
-│   ├── camera-rec.component.ts
-│   ├── camera-timer/
-│   ├── contacts-me.component.ts
+│   ├── camera-overlay/
+│   │   ├── camera-battery/
+│   │   ├── camera-corners-layer.component.ts
+│   │   ├── camera-overlay.component.ts
+│   │   ├── camera-quality-resolution.component.ts
+│   │   ├── camera-rec.component.ts
+│   │   └── camera-timer/
+│   ├── contacts-me/
+│   │   ├── contacts-captcha.component.ts
+│   │   └── contacts-me.component.ts
+│   ├── cursor/
 │   ├── home-brand.component.ts
 │   ├── info.component.ts
 │   ├── intro/
@@ -415,27 +420,18 @@ AppComponent (root)
 
 ## 💡 Рекомендации по улучшению
 
-### 1. Группировка Camera компонентов
+### 1. Группировка Camera компонентов — ✅ выполнено
 
-Текущее состояние: Camera-компоненты как отдельные компоненты
-
-```
-camera-corners-layer
-camera-quality-resolution
-camera-rec
-camera-timer
-camera-battery
-```
-
-**Рекомендация:** Объединить в один `CameraOverlayComponent`
+Camera-компоненты сгруппированы под `features/camera-overlay/`, так как каждый из них использовался только внутри `CameraOverlayComponent` (единственный потребитель):
 
 ```
-CameraOverlayComponent
-├── Corners layer
-├── Quality/Resolution
-├── Timer
-├── Battery
-└── Recording indicator
+features/camera-overlay/
+├── camera-overlay.component.ts
+├── camera-corners-layer.component.ts
+├── camera-quality-resolution.component.ts
+├── camera-rec.component.ts
+├── camera-timer/
+└── camera-battery/
 ```
 
 ### 2. Типизация Portfolio данных

@@ -33,7 +33,7 @@ Use this as the canonical example.
 
 ### `toSignal()` to replace `async` pipe — see angular-modern-api.md #A1
 
-`features/camera-quality-resolution.component.ts:27` still uses `quality$ | async`. Convert to `toSignal()` to remove `CommonModule` dependency and integrate with zoneless change detection.
+`features/camera-overlay/camera-quality-resolution.component.ts:27` still uses `quality$ | async`. Convert to `toSignal()` to remove `CommonModule` dependency and integrate with zoneless change detection.
 
 ---
 
@@ -71,8 +71,8 @@ export class PlatformService {
 **Consolidation:**
 Replace all direct `isPlatformBrowser(inject(PLATFORM_ID))` call sites:
 - `app.component.ts:80`
-- `features/camera-battery/camera-battery.component.ts:56`
-- `features/camera-timer/camera-timer.component.ts:35`
+- `features/camera-overlay/camera-battery/camera-battery.component.ts:56`
+- `features/camera-overlay/camera-timer/camera-timer.component.ts:35`
 - `features/portfolio-timeline/portfolio-timeline.component.ts:43`
 - `pages/portfolio-page.component.ts:142` (replace `DeviceDetectorService` with `PlatformService.isMobile`)
 

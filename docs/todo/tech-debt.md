@@ -55,9 +55,9 @@ All P0 SSR violations have been guarded:
 - `shared/utils/fullscreen-api.ts` — all `document.*` calls guarded with `typeof document !== 'undefined'`
 - `shared/utils/video-utils.ts` — `document.addEventListener/removeEventListener` guarded
 - `services/background-service.ts` — `interval(5000)` replaced with `browserInterval()`; `SafeResourceUrl` removed (static asset URLs)
-- `features/camera-quality-resolution.component.ts` — `interval(3000)` replaced with `browserInterval()`
-- `features/camera-battery/camera-battery.component.ts` — `interval(1500)` replaced with `browserInterval()`
-- `features/camera-timer/camera-timer.component.ts` — `interval(1000)` replaced with `browserInterval()`
+- `features/camera-overlay/camera-quality-resolution.component.ts` — `interval(3000)` replaced with `browserInterval()`
+- `features/camera-overlay/camera-battery/camera-battery.component.ts` — `interval(1500)` replaced with `browserInterval()`
+- `features/camera-overlay/camera-timer/camera-timer.component.ts` — `interval(1000)` replaced with `browserInterval()`
 - `features/portfolio-timeline/portfolio-timeline.component.ts` — `interval(5000)` replaced with `browserInterval()`
 - `features/portfolio-block/portfolio-block.component.ts` — DOM access (`playbackRate`, `IntersectionObserver`) moved inside `isBrowser` guard
 
@@ -90,10 +90,10 @@ All components use `PlatformService` — no direct `isPlatformBrowser(inject(PLA
 - `core/nav.component.ts:6`
 - `core/nav-mobile.component.ts:6`
 - `features/home-brand.component.ts:5`
-- `features/camera-quality-resolution.component.ts` — decorator
-- `features/camera-rec.component.ts` — decorator
-- `features/camera-corners-layer.component.ts` — decorator
-- `features/contacts-me.component.ts` — decorator
+- `features/camera-overlay/camera-quality-resolution.component.ts` — decorator
+- `features/camera-overlay/camera-rec.component.ts` — decorator
+- `features/camera-overlay/camera-corners-layer.component.ts` — decorator
+- `features/contacts-me/contacts-me.component.ts` — decorator
 - `features/info.component.ts` — decorator
 - `features/intro/intro.component.ts:5`
 - `features/portfolio-block/portfolio-block.component.ts:17`
@@ -134,13 +134,13 @@ Fix: delete `#destroyRef` on line 52.
 
 **Rule:** Components are pure view — they read query signals and call command methods on services. They must not own or mutate writable signals that encode application state.
 
-**`features/camera-battery/camera-battery.component.ts:51-66`**
+**`features/camera-overlay/camera-battery/camera-battery.component.ts:51-66`**
 `batterySignal` and `batteryIcon` are writable signals mutated by a component-owned `interval`. Battery state is application state, not view state.
 Fix: move to a `CameraStateService`; expose read-only signals.
 
 ---
 
-**`features/camera-timer/camera-timer.component.ts:31,49-51`**
+**`features/camera-overlay/camera-timer/camera-timer.component.ts:31,49-51`**
 `timerSignal` mutated by an interval inside `ngOnInit`. Timer state should belong to a service.
 Fix: extract to `CameraStateService`.
 
@@ -171,24 +171,12 @@ Fix: extract to a `ScrollService` or replace with CSS `scroll-snap`.
 
 **Rule:** Upper layers may import only from lower layers. `pages > features > services > shared`. Siblings must not import each other.
 
-**`features/home-brand.component.ts:2-3,7`**
-```ts
-import { PortfolioTimelineComponent } from './portfolio-timeline/portfolio-timeline.component';
-import { ParallaxItemDirective } from '../shared/directives/parrallax-item.directive';
-// imports: [PortfolioTimelineComponent, ParallaxItemDirective],
-```
-`HomeBrandComponent` (feature) imports `PortfolioTimelineComponent` (sibling feature). Cross-feature imports violate FSD isolation. Note: both imports are also unused in the template — see `docs/todo/deprecated.md`.
+### ✅ Fixed Violations
 
----
-
-**`pages/portfolio-page.component.ts:142,148-149`**
-```ts
-private readonly deviceSerivce = inject(DeviceDetectorService);
-public readonly gridView = signal<string>(
-  this.deviceSerivce.isMobile() ? '1' : '3'
-);
-```
-Pages should not contain device-detection business logic. This belongs in a layout feature or `PlatformService`.
+- `features/home-brand.component.ts` no longer imports `PortfolioTimelineComponent` (was a sibling-feature cross-import).
+- `pages/portfolio-page.component.ts` now derives `isDesktop` from `PlatformService.isMobile()` instead of injecting `DeviceDetectorService` directly.
+- `features/camera-corners-layer.component.ts`, `features/camera-quality-resolution.component.ts`, `features/camera-rec.component.ts`, `features/camera-battery/`, and `features/camera-timer/` were single-consumer children reached only via `../` cross-slice imports from `features/camera-overlay/`. Consolidated under `features/camera-overlay/` (they have no other consumer) so the slice no longer escapes its own folder.
+- `features/contacts-captcha.component.ts` was reached only via a `../` cross-slice import from `features/contacts-me/`. Moved to `features/contacts-me/contacts-captcha.component.ts`.
 
 ---
 

@@ -34,7 +34,7 @@ Below are patterns to modernize. Each shows **what** to use, **why**, and a befo
 
 | # | File:line | Current | Recommended | Why |
 |---|-----------|---------|-------------|-----|
-| A1 | `features/camera-quality-resolution.component.ts:27,30-33` | `quality$ \| async` in template + raw observable field | `toSignal()` + `{{ quality() }}` | **Use `toSignal()` because** the `async` pipe creates a subscription and adds `CommonModule` dependency; `toSignal()` converts the observable to a signal once, works natively with zoneless change detection, and removes the need for `CommonModule` import. |
+| A1 | `features/camera-overlay/camera-quality-resolution.component.ts:27,30-33` | `quality$ \| async` in template + raw observable field | `toSignal()` + `{{ quality() }}` | **Use `toSignal()` because** the `async` pipe creates a subscription and adds `CommonModule` dependency; `toSignal()` converts the observable to a signal once, works natively with zoneless change detection, and removes the need for `CommonModule` import. |
 
 ### A1 — Before / After
 
@@ -133,8 +133,8 @@ export class ParallaxItemDirective {
 
 | # | File:line | Current | Recommended | Why |
 |---|-----------|---------|-------------|-----|
-| C1 | `features/camera-battery/camera-battery.component.ts:49,57-71` | `ngOnInit()` with `isBrowser` guard + `interval().subscribe()` | `afterNextRender()` or constructor with `takeUntilDestroyed()` | **Use constructor because** `takeUntilDestroyed()` without explicit `DestroyRef` only works in injection context (constructor). Moving the subscription to the constructor removes the need for manual `DestroyRef` injection and `OnInit`. Guard with `afterNextRender()` for the browser-only part. |
-| C2 | `features/camera-timer/camera-timer.component.ts:28,34-54` | Same pattern as C1 | Same recommendation | Same reasoning — interval subscription belongs in constructor or `afterNextRender()`. |
+| C1 | `features/camera-overlay/camera-battery/camera-battery.component.ts:49,57-71` | `ngOnInit()` with `isBrowser` guard + `interval().subscribe()` | `afterNextRender()` or constructor with `takeUntilDestroyed()` | **Use constructor because** `takeUntilDestroyed()` without explicit `DestroyRef` only works in injection context (constructor). Moving the subscription to the constructor removes the need for manual `DestroyRef` injection and `OnInit`. Guard with `afterNextRender()` for the browser-only part. |
+| C2 | `features/camera-overlay/camera-timer/camera-timer.component.ts:28,34-54` | Same pattern as C1 | Same recommendation | Same reasoning — interval subscription belongs in constructor or `afterNextRender()`. |
 | C3 | `features/portfolio-timeline/portfolio-timeline.component.ts:26,43-57` | Same pattern as C1 | Same recommendation | Same reasoning. Additionally, C4 violation — the interval should move to a service (see tech-debt.md). |
 
 ### C1 — Before / After
@@ -202,8 +202,8 @@ setScroll(event: KeyboardEvent) { … }
 
 | # | File:line | Current | Recommended | Why |
 |---|-----------|---------|-------------|-----|
-| E1 | `features/camera-battery/camera-battery.component.ts:65-69` | `subscribe()` sets signal | `toSignal()` + `computed()` | **Use `toSignal()` + `computed()` because** the subscription only maps an observable value into a signal — this is exactly what `toSignal()` does declaratively. `computed()` derives the icon from the timer value without imperative mutation. |
-| E2 | `features/camera-timer/camera-timer.component.ts:50-52` | `subscribe()` sets signal | `toSignal()` | **Use `toSignal()` because** the subscription only forwards values from observable to signal — `toSignal()` removes the imperative glue code entirely. |
+| E1 | `features/camera-overlay/camera-battery/camera-battery.component.ts:65-69` | `subscribe()` sets signal | `toSignal()` + `computed()` | **Use `toSignal()` + `computed()` because** the subscription only maps an observable value into a signal — this is exactly what `toSignal()` does declaratively. `computed()` derives the icon from the timer value without imperative mutation. |
+| E2 | `features/camera-overlay/camera-timer/camera-timer.component.ts:50-52` | `subscribe()` sets signal | `toSignal()` | **Use `toSignal()` because** the subscription only forwards values from observable to signal — `toSignal()` removes the imperative glue code entirely. |
 
 ### E1 — Before / After
 
@@ -247,7 +247,7 @@ No action needed. Reference this as the canonical example for `linkedSignal()` i
 | # | File:line | Status |
 |---|-----------|--------|
 | G1 | `features/portfolio-timeline/portfolio-timeline.component.ts:31-37` | `computed()` derives `timelineImage` from `activePreview` — correct. |
-| G2 | `core/video-dialog.component.ts:130` | `computed()` — correct. |
+| G2 | `entities/portfolio-block/video-dialog.component.ts:130` | `computed()` — correct. |
 
 ---
 
@@ -273,8 +273,8 @@ No action needed. Reference this as the canonical example for `linkedSignal()` i
 
 | # | File:line | Current | Recommended | Why |
 |---|-----------|---------|-------------|-----|
-| J1 | `features/camera-battery/camera-battery.component.ts:60` | `interval(1500)` in component | Move to `CameraStateService` | **Move to a service because** CQRS requires components to be pure view — they read query signals, they don't own timers. The service exposes `batteryTick` and `batteryIcon` as read-only signals; the component just binds `{{ service.batteryIcon() }}`. |
-| J2 | `features/camera-timer/camera-timer.component.ts:40` | `interval(1000)` in component | Move to `CameraStateService` | Same reasoning — timer state is application state, not UI state. |
+| J1 | `features/camera-overlay/camera-battery/camera-battery.component.ts:60` | `interval(1500)` in component | Move to `CameraStateService` | **Move to a service because** CQRS requires components to be pure view — they read query signals, they don't own timers. The service exposes `batteryTick` and `batteryIcon` as read-only signals; the component just binds `{{ service.batteryIcon() }}`. |
+| J2 | `features/camera-overlay/camera-timer/camera-timer.component.ts:40` | `interval(1000)` in component | Move to `CameraStateService` | Same reasoning — timer state is application state, not UI state. |
 | J3 | `features/portfolio-timeline/portfolio-timeline.component.ts:46` | `interval(5000)` in component | Move to `PortfolioTimelineService` | Same reasoning — portfolio rotation is business logic. |
 
 These overlap with CQRS violations C1, C2, C4 in [tech-debt.md](tech-debt.md). The modern API migration (this doc) and CQRS fix (tech-debt.md) should happen together.

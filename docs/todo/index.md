@@ -17,7 +17,7 @@ These will crash SSR or silently show wrong content in production.
 | 2 | `window.innerWidth/innerHeight` without SSR guard | `shared/directives/parrallax-item.directive.ts` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ✅ Fixed — `isBrowser` guard + `afterNextRender()` |
 | 3 | `document.*` in fullscreen utility | `shared/utils/fullscreen-api.ts` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ✅ Fixed — `typeof document` guards |
 | 4 | `PlatformService` implementation missing | `services/platform.service.ts` | [tech-debt.md#platform-service](tech-debt.md#platform-service) | ✅ Fixed — implemented with `isBrowser` + `isMobile` |
-| 5 | Hardcoded `videoId="rFGxVhX-cIo"` ignores `data.videoId` (dialog always shows wrong video) | `core/video-dialog.component.ts:95` | [deprecated.md#corevideo-dialog-componentts](deprecated.md#corevideo-dialog-componentts) | ❌ |
+| 5 | Hardcoded `videoId="rFGxVhX-cIo"` ignores `data.videoId` (dialog always shows wrong video) | `entities/portfolio-block/video-dialog.component.ts:95` | [deprecated.md#entitiesportfolio-blockvideo-dialog-componentts](deprecated.md#entitiesportfolio-blockvideo-dialog-componentts) | ❌ |
 | 6 | `while(true)` infinite loop in `getRandomVideoSrc` | `services/background-service.ts:14` | [tech-debt.md#ssr-safety](tech-debt.md#ssr-safety) | ❌ |
 
 ---
@@ -49,16 +49,16 @@ These will crash SSR or silently show wrong content in production.
 | 20 | Contacts form only calls `preventDefault`, never sends data | `features/contacts-me.component.ts:124` | [improvements/index.md#8-contacts-form--wire-to-backend](../improvements/index.md#8-contacts-form--wire-to-backend) |
 | 21 | ~~Missing path aliases in `tsconfig.json`~~ | `tsconfig.json` | [tools-to-use.md#6-typescript-path-aliases](tools-to-use.md#6-typescript-path-aliases) | ✅ Done |
 | 22 | Missing strict tsconfig flags (`noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`) | `tsconfig.json` | [tools-to-use.md#5-typescript-strict-flags](tools-to-use.md#5-typescript-strict-flags) |
-| 23 | Typo `deviceSerivce` (missing 'i') | `core/video-dialog.component.ts:120`, `pages/portfolio-page.component.ts:142` | — |
+| 23 | Typo `deviceSerivce` (missing 'i') | `entities/portfolio-block/video-dialog.component.ts:120`, `pages/portfolio-page.component.ts:142` | — |
 
 ---
 
 ## FSD Layer Violations
 
-| # | Violation | File:line | Detail |
-|---|-----------|-----------|--------|
-| F1 | Feature imports sibling feature (`PortfolioTimelineComponent`) | `features/home-brand.component.ts:2-3,7` | [tech-debt.md#fsd-layer-violations](tech-debt.md#fsd-layer-violations) |
-| F2 | Page contains device-detection business logic | `pages/portfolio-page.component.ts:142,148-149` | [tech-debt.md#fsd-layer-violations](tech-debt.md#fsd-layer-violations) |
+**All fixed** — see [tech-debt.md#fsd-layer-violations](tech-debt.md#fsd-layer-violations):
+- F1: `home-brand.component.ts` no longer imports sibling feature `PortfolioTimelineComponent`.
+- F2: `portfolio-page.component.ts` now derives desktop/mobile from `PlatformService` instead of injecting `DeviceDetectorService` directly.
+- F3: `camera-corners-layer`, `camera-quality-resolution`, `camera-rec`, `camera-battery/`, `camera-timer/` and `contacts-captcha.component.ts` were single-consumer children reached via `../` cross-slice imports; consolidated into `features/camera-overlay/` and `features/contacts-me/` respectively.
 
 ---
 
@@ -68,8 +68,8 @@ Components must not own or mutate writable signals encoding application state.
 
 | # | Violation | File:line | Detail |
 |---|-----------|-----------|--------|
-| C1 | `batterySignal`/`batteryIcon` mutated inside component | `features/camera-battery/camera-battery.component.ts:51-66` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
-| C2 | `timerSignal` mutated via interval in component | `features/camera-timer/camera-timer.component.ts:31,49-51` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
+| C1 | `batterySignal`/`batteryIcon` mutated inside component | `features/camera-overlay/camera-battery/camera-battery.component.ts:51-66` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
+| C2 | `timerSignal` mutated via interval in component | `features/camera-overlay/camera-timer/camera-timer.component.ts:31,49-51` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
 | C3 | Dialog open/close subscribed inline — no `takeUntilDestroyed` | `features/portfolio-block/portfolio-block.component.ts:62-64` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
 | C4 | Portfolio rotation interval owned by component | `features/portfolio-timeline/portfolio-timeline.component.ts:48-58` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
 | C5 | Scroll state mutations in component event handlers | `features/portfolio/portfolio.component.ts:58-92` | [tech-debt.md#cqrs--state-ownership-violations](tech-debt.md#cqrs--state-ownership-violations) |
