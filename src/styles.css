@@ -7,10 +7,11 @@
 @import './styles/keyframes.css';
 @import './styles/view-transition.css';
 
-/* use cursor:none globally so the custom cursor component is the only visible cursor */
-*,
-*::before,
-*::after {
+/* use body.custom-cursor-enabled scope so cursor:none only applies when the
+   customCursor feature flag is on — otherwise the native browser cursor shows */
+body.custom-cursor-enabled *,
+body.custom-cursor-enabled *::before,
+body.custom-cursor-enabled *::after {
   cursor: none !important;
 }
 

@@ -99,12 +99,16 @@ export interface DialogData {
 
       /* use pointer-events:auto overlay so mousemove fires over the iframe,
          letting the cursor component track position inside the video;
-         cursor:none suppresses the native browser cursor over the iframe */
+         cursor:none (scoped to body.custom-cursor-enabled) suppresses the
+         native browser cursor over the iframe only when the custom cursor is on */
       .video-overlay {
         position: absolute;
         inset: 0;
-        cursor: none;
         pointer-events: auto;
+      }
+
+      :host-context(body.custom-cursor-enabled) .video-overlay {
+        cursor: none;
       }
 
       ::ng-deep .youtube-player-placeholder-button {

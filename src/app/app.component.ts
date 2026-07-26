@@ -1,5 +1,7 @@
+import { DOCUMENT } from '@angular/common';
 import { PlatformModule } from '@angular/cdk/platform';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -23,6 +25,7 @@ import { BackgroundService } from '@services/background-service';
 import { IconService } from '@services/icon.service';
 import { PlatformService } from '@services/platform.service';
 import { SafePipe } from '@shared/pipes/safe.pipe';
+import { environment } from '../environments/environment';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { filter, skip } from 'rxjs';
 
@@ -65,6 +68,9 @@ export class AppComponent implements OnInit {
   private readonly _video = viewChild<ElementRef<HTMLVideoElement>>('video');
   protected readonly isMobile = this.platformService.isMobile;
 
+  // use environment.featureFlags because customCursor can be disabled per-environment without a code change
+  protected readonly customCursorEnabled = environment.featureFlags.customCursor;
+
   constructor() {
     // TODO
     // effect(() => {
@@ -77,6 +83,17 @@ export class AppComponent implements OnInit {
     //     );
     //   });
     // });
+
+    // use afterNextRender because toggling body classList is a browser-only DOM write —
+    // global cursor:none CSS is scoped to body.custom-cursor-enabled so the flag also
+    // restores the native browser cursor when off
+    afterNextRender(() => {
+      const document = inject(DOCUMENT);
+      document.body.classList.toggle(
+        'custom-cursor-enabled',
+        this.customCursorEnabled,
+      );
+    });
   }
 
   // see docs/todo/angular-modern-api.md — B3: use afterNextRender() because the entire body is guarded by isBrowser — afterNextRender() does this automatically

@@ -89,9 +89,10 @@
     font-family: var(--font-display);
   }
 
-  /* use media query to hide native cursor on pointer devices (desktop) — custom cursor handles this */
+  /* use media query to hide native cursor on pointer devices (desktop) — custom cursor handles this;
+     scoped to body.custom-cursor-enabled so the flag being off restores the native cursor */
   @media (hover: hover) and (pointer: fine) {
-    * {
+    body.custom-cursor-enabled * {
       cursor: none !important;
     }
   }
