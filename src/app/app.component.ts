@@ -5,10 +5,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   OnInit,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,6 +27,7 @@ import { BackgroundService } from '@services/background-service';
 import { IconService } from '@services/icon.service';
 import { PlatformService } from '@services/platform.service';
 import { SafePipe } from '@shared/pipes/safe.pipe';
+import { ensureBackgroundPlay } from '@shared/utils/video-utils';
 import { environment } from '../environments/environment';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { filter, skip } from 'rxjs';
@@ -76,17 +79,25 @@ export class AppComponent implements OnInit {
   protected readonly customCursorEnabled = environment.featureFlags.customCursor;
 
   constructor() {
-    // TODO
-    // effect(() => {
-    //   const src = this.backgroundVideoSrc();
-    //   untracked(() => {
-    //     const video = this._video()?.nativeElement;
-    //     if (!src || !video) return;
-    //     ensureBackgroundPlay(video).catch(e =>
-    //       console.warn('ensureBackgroundPlay failed', e)
-    //     );
-    //   });
-    // });
+    // use effect() + untracked() because the SSR-rendered background video src is
+    // picked with Math.random() independently on server and client (see
+    // background-service.ts#getRandomVideoSrc) — on first load hydration silently
+    // patches the mismatched <source src>, which per spec does NOT reload an
+    // already-started <video>, leaving it frozen on its first decoded frame.
+    // ensureBackgroundPlay() forces a reload + replay whenever src is (re)set, and
+    // falls back to retrying on the next user interaction if autoplay is blocked.
+    // see docs/todo — P0 #6 (getRandomVideoSrc); this patches the symptom, not the
+    // underlying SSR/CSR pick divergence.
+    effect(() => {
+      const src = this.backgroundVideoSrc();
+      untracked(() => {
+        const video = this._video()?.nativeElement;
+        if (!src || !video) return;
+        ensureBackgroundPlay(video).catch((e) =>
+          console.warn('ensureBackgroundPlay failed', e),
+        );
+      });
+    });
 
     // use afterNextRender because toggling body classList is a browser-only DOM write —
     // global cursor:none CSS is scoped to body.custom-cursor-enabled so the flag also
