@@ -29,6 +29,10 @@ import { environment } from '../environments/environment';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { filter, skip } from 'rxjs';
 
+// use a namespaced key so a future unrelated localStorage entry can't collide —
+// same convention as CONTACT_SENT_KEY in contacts-me.component.ts
+const SPLASH_SEEN_KEY = 'mkrecord:splash-seen';
+
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -94,6 +98,26 @@ export class AppComponent implements OnInit {
         this.customCursorEnabled,
       );
     });
+
+    // browser-only localStorage read, guarded per PlatformService.isBrowser and run via
+    // afterNextRender — same pattern as CONTACT_SENT_KEY in contacts-me.component.ts,
+    // but localStorage (not sessionStorage) because the splash should show once per
+    // device, not once per tab session
+    afterNextRender(() => {
+      if (
+        this.platformService.isBrowser &&
+        localStorage.getItem(SPLASH_SEEN_KEY)
+      ) {
+        this.appReady.set(true);
+      }
+    });
+  }
+
+  protected onSplashDone(): void {
+    if (this.platformService.isBrowser) {
+      localStorage.setItem(SPLASH_SEEN_KEY, '1');
+    }
+    this.appReady.set(true);
   }
 
   // see docs/todo/angular-modern-api.md — B3: use afterNextRender() because the entire body is guarded by isBrowser — afterNextRender() does this automatically

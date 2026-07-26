@@ -1,6 +1,6 @@
 <!-- splash screen — rendered first, hides everything until appReady() -->
 @if (!appReady()) {
-  <app-splash-screen (done)="appReady.set(true)" />
+  <app-splash-screen (done)="onSplashDone()" />
 }
 
 @if (appReady()) {
