@@ -1,0 +1,86 @@
+<header class="reel-head">
+  <span class="reel-code">{{ code() }}</span>
+  <h2>{{ heading() }}</h2>
+  <span class="count">{{ items().length }}</span>
+  <button type="button" class="add" (click)="add.emit()">
+    <mat-icon fontIcon="add" />
+    New
+  </button>
+</header>
+
+@if (items().length === 0) {
+  <p class="empty">Reel is empty.</p>
+}
+
+<ul class="reel">
+  @for (
+    item of items();
+    track item.id;
+    let i = $index, isFirst = $first, isLast = $last
+  ) {
+    <li
+      class="clip"
+      [class.is-selected]="item.id === selectedId()"
+      (mouseenter)="onHover(item.id)"
+      (mouseleave)="onHover(null)">
+      <button
+        type="button"
+        class="clip-open"
+        [attr.aria-current]="item.id === selectedId() ? 'true' : null"
+        (click)="selectClip.emit(item.id)">
+        <span class="slate-no">{{ slate(i) }}</span>
+
+        <span class="thumb">
+          @if (canPreview && hoveredId() === item.id) {
+            <video
+              [src]="item.preview"
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="none"
+              disablepictureinpicture></video>
+          } @else {
+            <mat-icon fontIcon="movie" />
+          }
+        </span>
+
+        <span class="meta">
+          <span class="title">{{ item.title }}</span>
+          <span class="vid">{{ item.videoId }}</span>
+        </span>
+      </button>
+
+      <span class="tools">
+        <button
+          type="button"
+          class="bg-toggle"
+          [class.is-on]="item.asBackground"
+          [attr.aria-pressed]="item.asBackground"
+          [attr.aria-label]="'Toggle background usage for ' + item.title"
+          (click)="toggleBackground.emit(item.id)">
+          <span class="bg-dot"></span>
+          BG
+        </button>
+
+        <button
+          type="button"
+          class="nudge"
+          aria-label="Move up"
+          [disabled]="isFirst"
+          (click)="move.emit({ id: item.id, delta: -1 })">
+          <mat-icon fontIcon="keyboard_arrow_up" />
+        </button>
+
+        <button
+          type="button"
+          class="nudge"
+          aria-label="Move down"
+          [disabled]="isLast"
+          (click)="move.emit({ id: item.id, delta: 1 })">
+          <mat-icon fontIcon="keyboard_arrow_down" />
+        </button>
+      </span>
+    </li>
+  }
+</ul>

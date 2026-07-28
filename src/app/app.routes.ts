@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { environment } from '../environments/environment';
 
 export const ROUTES: Routes = [
   {
@@ -24,6 +25,16 @@ export const ROUTES: Routes = [
     loadComponent: () =>
       import('./pages/contacts-page.component').then(
         (m) => m.ContactsPageComponent,
+      ),
+  },
+  {
+    path: 'dashboard',
+    // use canMatch (not canActivate) because it also blocks the lazy chunk from loading —
+    // the unauthenticated admin bundle must not ship to prod until a real guard exists
+    canMatch: [() => environment.featureFlags.dashboard],
+    loadComponent: () =>
+      import('./pages/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
       ),
   },
   {

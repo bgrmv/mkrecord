@@ -1,0 +1,354 @@
+@keyframes focus-glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px rgba(224, 32, 32, 0.5),
+      1px 1px 0 rgb(0, 0, 0);
+  }
+  50% {
+    text-shadow:
+      0 0 22px rgba(224, 32, 32, 0.8),
+      0 0 40px rgba(224, 32, 32, 0.3),
+      1px 1px 0 rgb(0, 0, 0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host {
+  position: relative;
+  display: block;
+  padding: clamp(18px, 2.4vw, 30px);
+  --_red: #e02020;
+  --_mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, monospace;
+
+  /* same MDC token block as contacts-me: cascades into every mat-form-field child
+     without ::ng-deep, keeping the red focus/error language consistent site-wide */
+  --mdc-outlined-text-field-outline-color: rgba(242, 242, 242, 0.12);
+  --mdc-outlined-text-field-hover-outline-color: rgba(224, 32, 32, 0.45);
+  --mdc-outlined-text-field-focus-outline-color: var(--_red);
+  --mdc-outlined-text-field-label-text-color: rgba(242, 242, 242, 0.45);
+  --mdc-outlined-text-field-focus-label-text-color: var(--_red);
+  --mdc-outlined-text-field-input-text-color: var(--color_whitesmoke);
+  --mdc-outlined-text-field-caret-color: var(--_red);
+  --mdc-outlined-text-field-input-text-placeholder-color: rgba(
+    242,
+    242,
+    242,
+    0.2
+  );
+  --mdc-outlined-text-field-error-outline-color: var(--_red);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--_red);
+  --mdc-outlined-text-field-error-label-text-color: var(--_red);
+  --mat-form-field-error-text-color: #ff6060;
+
+  --mdc-checkbox-selected-icon-color: var(--_red);
+  --mdc-checkbox-selected-focus-icon-color: var(--_red);
+  --mdc-checkbox-selected-hover-icon-color: var(--_red);
+  --mdc-checkbox-selected-pressed-icon-color: var(--_red);
+
+  animation: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* HUD corner brackets — same device as the contacts card */
+.corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--_red);
+  border-style: solid;
+  opacity: 0.6;
+
+  &.tl {
+    top: 0;
+    left: 0;
+    border-width: 2px 0 0 2px;
+  }
+  &.tr {
+    top: 0;
+    right: 0;
+    border-width: 2px 2px 0 0;
+  }
+  &.bl {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 2px 2px;
+  }
+  &.br {
+    bottom: 0;
+    right: 0;
+    border-width: 0 2px 2px 0;
+  }
+}
+
+/* ---------- Head ---------- */
+.slate-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+
+  /* clapperboard diagonals */
+  .stripe {
+    flex: 0 0 46px;
+    height: 14px;
+    background: repeating-linear-gradient(
+      115deg,
+      var(--_red) 0 7px,
+      rgba(10, 3, 3, 0.98) 7px 14px
+    );
+    opacity: 0.85;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(13px, 1.7vw, 16px);
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--_red);
+    animation: focus-glow 2.8s ease-in-out infinite;
+  }
+
+  .close {
+    display: grid;
+    place-items: center;
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    background: none;
+    border: 1px solid rgba(242, 242, 242, 0.1);
+    color: rgba(242, 242, 242, 0.45);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      color: var(--_red);
+      border-color: rgba(224, 32, 32, 0.45);
+    }
+  }
+}
+
+/* ---------- Monitors ---------- */
+.monitors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.monitor {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(242, 242, 242, 0.08);
+
+  video,
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  figcaption {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    z-index: 1;
+    font-family: var(--font-display);
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(242, 242, 242, 0.4);
+    text-shadow: 0 1px 3px #000;
+  }
+
+  .no-signal {
+    font-family: var(--_mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(242, 242, 242, 0.18);
+  }
+
+  /* scanline veil so both monitors read as CRT feeds rather than plain thumbnails */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0 2px,
+      rgba(0, 0, 0, 0.16) 2px 3px
+    );
+  }
+}
+
+/* ---------- Fields ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: block;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .tag {
+    display: block;
+    margin-bottom: 3px;
+    font-family: var(--font-display);
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(224, 32, 32, 0.55);
+  }
+}
+
+.field.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+
+  .tag {
+    margin-bottom: 0;
+    flex: 0 0 44px;
+  }
+}
+
+mat-button-toggle-group {
+  --mat-standard-button-toggle-height: 32px;
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+mat-checkbox {
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.note {
+  margin: 0 0 14px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: rgba(242, 242, 242, 0.32);
+}
+
+/* ---------- Actions ---------- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(224, 32, 32, 0.12);
+
+  .spacer {
+    flex: 1;
+  }
+}
+
+.ghost-btn,
+.apply-btn,
+.delete {
+  height: 34px;
+  padding: 0 16px;
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+.delete {
+  background: none;
+  border: 1px solid rgba(242, 242, 242, 0.12);
+  color: rgba(242, 242, 242, 0.4);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    color: var(--_red);
+    border-color: rgba(224, 32, 32, 0.4);
+  }
+
+  /* the second press is destructive — make the state change unmistakable */
+  &.is-confirming {
+    background: var(--_red);
+    border-color: var(--_red);
+    color: #f2f2f2;
+  }
+}
+
+.ghost-btn {
+  --mdc-outlined-button-label-text-color: rgba(242, 242, 242, 0.6);
+  --mdc-outlined-button-outline-color: rgba(242, 242, 242, 0.16);
+}
+
+.apply-btn {
+  --mdc-elevated-button-container-color: var(--_red);
+  --mdc-elevated-button-label-text-color: #f2f2f2;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 18px rgba(224, 32, 32, 0.5),
+      0 6px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@media (max-width: 900px) {
+  .monitors {
+    grid-template-columns: 1fr;
+  }
+
+  .corner {
+    display: none;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+
+    .delete {
+      order: 3;
+      width: 100%;
+    }
+  }
+}

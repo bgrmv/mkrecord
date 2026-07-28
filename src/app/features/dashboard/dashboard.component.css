@@ -1,0 +1,145 @@
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes crosshair-drift {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: rotate(0deg);
+  }
+  50% {
+    opacity: 0.5;
+    transform: rotate(90deg);
+  }
+}
+
+:host {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  --_red: #e02020;
+}
+
+.panes {
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+  min-height: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.035) 2px,
+      rgba(0, 0, 0, 0.035) 4px
+    ),
+    linear-gradient(150deg, rgba(10, 3, 3, 0.98) 0%, rgba(16, 6, 6, 0.96) 100%);
+}
+
+.reels {
+  min-height: 0;
+  overflow-y: auto;
+  border-right: 1px solid rgba(224, 32, 32, 0.14);
+}
+
+.slate {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ---------- Standby state ---------- */
+.standby {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+}
+
+/* viewfinder crosshair — fills the empty pane with instrument, not with a blank slab */
+.crosshair {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(224, 32, 32, 0.3);
+  animation: crosshair-drift 6s ease-in-out infinite;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    background: rgba(224, 32, 32, 0.35);
+  }
+
+  &::before {
+    top: 50%;
+    left: -14px;
+    right: -14px;
+    height: 1px;
+  }
+
+  &::after {
+    left: 50%;
+    top: -14px;
+    bottom: -14px;
+    width: 1px;
+  }
+}
+
+.standby-title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(224, 32, 32, 0.6);
+}
+
+.standby-copy {
+  max-width: 260px;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(242, 242, 242, 0.35);
+}
+
+/* ---------- Mobile: the slate becomes a sheet over the reels ---------- */
+@media (max-width: 900px) {
+  .panes {
+    grid-template-columns: 1fr;
+  }
+
+  .reels {
+    border-right: none;
+  }
+
+  .slate {
+    display: none;
+  }
+
+  .panes.is-editing .slate {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 20;
+    display: block;
+    max-height: 88svh;
+    background: rgba(10, 3, 3, 0.99);
+    border-top: 1px solid rgba(224, 32, 32, 0.35);
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.8);
+    animation: slide-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}

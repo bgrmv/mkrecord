@@ -42,6 +42,9 @@ export default tseslint.config(
         { type: 'pages', pattern: 'src/app/pages/*' },
         { type: 'features', pattern: 'src/app/features/*' },
         { type: 'services', pattern: 'src/app/services/*' },
+        // entities = domain layer: models, invariants and repository ports.
+        // Sits below services so a domain rule can never depend on application wiring.
+        { type: 'entities', pattern: 'src/app/entities/*' },
         { type: 'shared', pattern: 'src/app/shared/*' },
         { type: 'core', pattern: 'src/app/core/*' },
         { type: 'app', pattern: 'src/app/*', mode: 'file' },
@@ -81,35 +84,44 @@ export default tseslint.config(
         {
           default: 'disallow',
           rules: [
-            // pages → features, services, shared, core, app root
+            // pages → features, services, entities, shared, core, app root
             {
               from: { type: 'pages' },
               allow: [
                 { to: { type: 'features' } },
                 { to: { type: 'services' } },
+                { to: { type: 'entities' } },
                 { to: { type: 'shared' } },
                 { to: { type: 'core' } },
                 { to: { type: 'app' } },
               ],
             },
-            // features → services, shared, core, app root (NOT sibling features)
+            // features → services, entities, shared, core, app root (NOT sibling features)
             {
               from: { type: 'features' },
               allow: [
                 { to: { type: 'services' } },
+                { to: { type: 'entities' } },
                 { to: { type: 'shared' } },
                 { to: { type: 'core' } },
                 { to: { type: 'app' } },
               ],
             },
-            // services → shared, core, app root
+            // services → entities, shared, core, app root
             {
               from: { type: 'services' },
               allow: [
+                { to: { type: 'entities' } },
                 { to: { type: 'shared' } },
                 { to: { type: 'core' } },
                 { to: { type: 'app' } },
               ],
+            },
+            // entities → shared, app root only — the domain layer must stay free of
+            // application services, so its invariants remain independently testable
+            {
+              from: { type: 'entities' },
+              allow: [{ to: { type: 'shared' } }, { to: { type: 'app' } }],
             },
             // shared → app root only (constants, etc.)
             {
@@ -132,6 +144,7 @@ export default tseslint.config(
                 { to: { type: 'pages' } },
                 { to: { type: 'features' } },
                 { to: { type: 'services' } },
+                { to: { type: 'entities' } },
                 { to: { type: 'shared' } },
                 { to: { type: 'core' } },
               ],

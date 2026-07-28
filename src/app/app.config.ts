@@ -17,6 +17,8 @@ import {
 } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
+import { PortfolioRepository } from '@entities/portfolio-item/portfolio-item.repository';
+import { InMemoryPortfolioRepository } from '@services/portfolio-admin/in-memory-portfolio.repository';
 import { ROUTES } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -35,5 +37,8 @@ export const appConfig: ApplicationConfig = {
       enabled: true, // isDevMode(), // see docs/todo — P1 #12: should be !isDevMode(); service worker must not run in dev; see docs/todo/tech-debt.md#service-worker-in-dev-mode
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    // the single line iteration 2 swaps: the Netlify Blobs adapter replaces the mock,
+    // and neither the store nor any dashboard component changes
+    { provide: PortfolioRepository, useClass: InMemoryPortfolioRepository },
   ],
 };

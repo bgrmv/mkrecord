@@ -1,0 +1,152 @@
+<span class="corner tl"></span>
+<span class="corner tr"></span>
+<span class="corner bl"></span>
+<span class="corner br"></span>
+
+<header class="slate-head">
+  <span class="stripe"></span>
+  <h2>{{ isNew() ? 'New clip' : 'Edit clip' }}</h2>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close editor"
+    (click)="cancelEdit.emit()">
+    <mat-icon fontIcon="close" />
+  </button>
+</header>
+
+<div class="monitors">
+  <figure class="monitor">
+    <figcaption>Preview loop</figcaption>
+    @if (isBrowser && previewSrc(); as src) {
+      <video
+        [src]="src"
+        muted
+        loop
+        autoplay
+        playsinline
+        disablepictureinpicture></video>
+    } @else {
+      <span class="no-signal">No signal</span>
+    }
+  </figure>
+
+  <figure class="monitor">
+    <figcaption>YouTube still</figcaption>
+    @if (thumbnailSrc(); as src) {
+      <img [src]="src" alt="" loading="lazy" />
+    } @else {
+      <span class="no-signal">No signal</span>
+    }
+  </figure>
+</div>
+
+<form [formGroup]="form" (submit)="onSubmit($event)">
+  <label class="field">
+    <span class="tag">Scene</span>
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        formControlName="title"
+        placeholder="Don Lounge Place DLP" />
+      <mat-error>
+        @if (form.controls.title.hasError('required')) {
+          Title is required
+        } @else if (form.controls.title.hasError('minlength')) {
+          Title must be at least 3 characters
+        } @else if (form.controls.title.hasError('maxlength')) {
+          Title must be at most 120 characters
+        }
+      </mat-error>
+    </mat-form-field>
+  </label>
+
+  <label class="field">
+    <span class="tag">Take</span>
+    <mat-form-field appearance="outline">
+      <mat-label>YouTube id</mat-label>
+      <input
+        matInput
+        formControlName="videoId"
+        placeholder="rFGxVhX-cIo"
+        spellcheck="false" />
+      <mat-error>
+        @if (form.controls.videoId.hasError('required')) {
+          YouTube id is required
+        } @else if (form.controls.videoId.hasError('pattern')) {
+          Must be exactly 11 characters (A–Z, a–z, 0–9, _ or -)
+        }
+      </mat-error>
+    </mat-form-field>
+  </label>
+
+  <label class="field">
+    <span class="tag">Roll</span>
+    <mat-form-field appearance="outline">
+      <mat-label>Preview asset</mat-label>
+      <input matInput formControlName="preview" spellcheck="false" />
+      <mat-hint>{{ previewRoot() }}/…webm</mat-hint>
+      <mat-error>
+        @if (form.controls.preview.hasError('required')) {
+          Preview path is required
+        }
+      </mat-error>
+    </mat-form-field>
+  </label>
+
+  <div class="field row">
+    <span class="tag">Format</span>
+    <mat-button-toggle-group
+      formControlName="category"
+      aria-label="Category"
+      (change)="onCategoryChange($event.value)">
+      @for (category of categories; track category) {
+        <mat-button-toggle [value]="category">{{ category }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="field row">
+    <span class="tag">Bg</span>
+    <mat-checkbox
+      formControlName="asBackground"
+      [disabled]="!backgroundAllowed()">
+      Use in homepage background rotation
+    </mat-checkbox>
+  </div>
+
+  @if (!backgroundAllowed()) {
+    <p class="note">Background rotation only plays horizontal clips.</p>
+  }
+
+  <div class="actions">
+    @if (!isNew()) {
+      <button
+        type="button"
+        class="delete"
+        [class.is-confirming]="confirmingDelete()"
+        (click)="onDelete()">
+        {{ confirmingDelete() ? 'Confirm delete?' : 'Delete' }}
+      </button>
+    }
+
+    <span class="spacer"></span>
+
+    <button
+      mat-stroked-button
+      type="button"
+      class="ghost-btn"
+      (click)="cancelEdit.emit()">
+      Cancel
+    </button>
+
+    <button
+      mat-raised-button
+      type="submit"
+      class="apply-btn"
+      [disabled]="busy()">
+      {{ isNew() ? 'Add clip' : 'Apply' }}
+    </button>
+  </div>
+</form>

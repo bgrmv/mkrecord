@@ -10,7 +10,7 @@ const backgroundVideos = portfolios[CategoryEnum.Horizontal].filter(
   (video) => video.asBackground,
 );
 
-const PAGES_WITHOUT_BG = ['portfolio', 'contacts', 'info'];
+const PAGES_WITHOUT_BG = ['portfolio', 'contacts', 'info', 'dashboard'];
 
 // see docs/todo — P0 #6: while(true) loop hangs if all videos share the same preview src; see docs/todo/tech-debt.md#ssr-safety
 const getRandomVideoSrc = (currentSrc?: string): string => {

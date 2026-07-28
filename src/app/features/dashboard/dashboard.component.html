@@ -1,0 +1,54 @@
+<app-dashboard-status-bar
+  [total]="store.total()"
+  [backgrounds]="store.backgroundCount()"
+  [dirty]="store.isDirty()"
+  [busy]="store.isBusy()"
+  [status]="store.status()"
+  [error]="store.error()"
+  (commit)="onCommit()"
+  (discard)="store.discard()"
+  (dismiss)="store.clearError()" />
+
+<div class="panes" [class.is-editing]="store.isEditing()">
+  <section class="reels" aria-label="Portfolio reels">
+    <app-dashboard-clip-list
+      heading="Horizontal"
+      code="H"
+      [items]="store.horizontal()"
+      [selectedId]="store.selectedId()"
+      (selectClip)="store.select($event)"
+      (add)="store.startNew(CategoryEnum.Horizontal)"
+      (move)="onMove($event)"
+      (toggleBackground)="store.toggleBackground($event)" />
+
+    <app-dashboard-clip-list
+      heading="Vertical"
+      code="V"
+      [items]="store.vertical()"
+      [selectedId]="store.selectedId()"
+      (selectClip)="store.select($event)"
+      (add)="store.startNew(CategoryEnum.Vertical)"
+      (move)="onMove($event)"
+      (toggleBackground)="store.toggleBackground($event)" />
+  </section>
+
+  <section class="slate" aria-label="Clip editor">
+    @if (store.isEditing()) {
+      <app-dashboard-clip-form
+        [item]="store.selected()"
+        [draftCategory]="store.newDraftCategory()"
+        [busy]="store.isBusy()"
+        (save)="onSave($event)"
+        (cancelEdit)="store.closeEditor()"
+        (remove)="store.remove($event)" />
+    } @else {
+      <div class="standby">
+        <span class="crosshair"></span>
+        <p class="standby-title">Standby</p>
+        <p class="standby-copy">
+          Pick a clip from a reel to edit it, or start a new one.
+        </p>
+      </div>
+    }
+  </section>
+</div>

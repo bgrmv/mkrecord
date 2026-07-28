@@ -1,0 +1,228 @@
+/* use blink-rec / ready-pulse from contacts-me because the dashboard must read as the
+   same instrument panel as the rest of the site, not as a bolted-on admin screen */
+@keyframes blink-rec {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes ready-pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 16px rgba(224, 32, 32, 0.25);
+  }
+  50% {
+    box-shadow: 0 4px 26px rgba(224, 32, 32, 0.5);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host {
+  display: block;
+  --_red: #e02020;
+  --_mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, monospace;
+}
+
+.strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px clamp(12px, 2vw, 22px);
+  border-bottom: 1px solid rgba(224, 32, 32, 0.16);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.04) 2px,
+      rgba(0, 0, 0, 0.04) 4px
+    ),
+    linear-gradient(180deg, rgba(16, 6, 6, 0.98), rgba(10, 3, 3, 0.98));
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1.2vw, 10px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(242, 242, 242, 0.3);
+  transition: color 0.25s ease;
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(242, 242, 242, 0.2);
+  }
+
+  &.is-live {
+    color: var(--_red);
+
+    .dot {
+      background: var(--_red);
+      box-shadow: 0 0 8px var(--_red);
+      animation: blink-rec 1.2s ease-in-out infinite;
+    }
+  }
+}
+
+.sep {
+  width: 1px;
+  height: 14px;
+  background: rgba(224, 32, 32, 0.25);
+}
+
+.metric {
+  font-family: var(--_mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: rgba(242, 242, 242, 0.75);
+
+  em {
+    margin-left: 5px;
+    font-family: var(--font-display);
+    font-size: 8px;
+    font-style: normal;
+    letter-spacing: 0.2em;
+    color: rgba(242, 242, 242, 0.3);
+  }
+}
+
+.state {
+  padding: 3px 9px;
+  border: 1px solid rgba(242, 242, 242, 0.14);
+  color: rgba(242, 242, 242, 0.45);
+  font-size: 8px;
+
+  &[data-state='saving'],
+  &[data-state='loading'] {
+    border-color: rgba(224, 32, 32, 0.4);
+    color: var(--_red);
+  }
+
+  &[data-state='saved'] {
+    border-color: rgba(120, 220, 140, 0.45);
+    color: #7adc8c;
+  }
+
+  &[data-state='error'] {
+    border-color: var(--_red);
+    color: var(--_red);
+    animation: blink-rec 0.9s ease-in-out 3;
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.ghost-btn,
+.commit-btn {
+  height: 32px;
+  padding: 0 16px;
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+.ghost-btn {
+  --mdc-outlined-button-label-text-color: rgba(242, 242, 242, 0.6);
+  --mdc-outlined-button-outline-color: rgba(242, 242, 242, 0.16);
+}
+
+.commit-btn {
+  --mdc-elevated-button-container-color: var(--color3, #1d1d1d);
+  --mdc-elevated-button-label-text-color: rgba(242, 242, 242, 0.3);
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+/* mirrors .submit-btn.is-ready in contacts-me: the button reads as "armed", not merely enabled */
+.commit-btn.is-armed {
+  --mdc-elevated-button-container-color: var(--_red);
+  --mdc-elevated-button-label-text-color: #f2f2f2;
+  animation: ready-pulse 2.4s ease-in-out infinite;
+}
+
+.commit-btn.is-armed:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 18px rgba(224, 32, 32, 0.55),
+    0 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 9px clamp(12px, 2vw, 22px);
+  background: rgba(224, 32, 32, 0.09);
+  border-bottom: 1px solid rgba(224, 32, 32, 0.3);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #ff8080;
+  animation: slide-up 0.3s ease both;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--_red);
+  }
+
+  .dismiss {
+    margin-left: auto;
+    padding: 0 6px;
+    background: none;
+    border: none;
+    color: rgba(242, 242, 242, 0.4);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--_red);
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .strip {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .ghost-btn,
+  .commit-btn {
+    flex: 1;
+  }
+}

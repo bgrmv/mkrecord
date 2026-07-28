@@ -8,6 +8,8 @@ export interface SeoConfig {
   description: string;
   keywords?: string;
   path?: string;
+  /** Overrides the default indexable behaviour, e.g. 'noindex, nofollow' for admin pages. */
+  robots?: string;
 }
 
 const SITE_NAME = 'MK Rec Studio';
@@ -35,6 +37,13 @@ export class SeoService {
     if (config.keywords) {
       this.meta.updateTag({ name: 'keywords', content: config.keywords });
     }
+
+    // always write the tag, never just skip it — the router keeps meta tags across
+    // navigations, so leaving a stale 'noindex' behind would de-index the next page
+    this.meta.updateTag({
+      name: 'robots',
+      content: config.robots ?? 'index, follow',
+    });
 
     this.meta.updateTag({ property: 'og:title', content: fullTitle });
     this.meta.updateTag({
