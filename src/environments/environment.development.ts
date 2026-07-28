@@ -3,5 +3,7 @@ export const environment = {
   siteUrl: 'https://mkrecord.azurewebsites.net',
   featureFlags: {
     customCursor: false,
+    dashboard: true,
+    cookieConsent: true,
   },
 };

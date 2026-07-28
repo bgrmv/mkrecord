@@ -22,6 +22,7 @@ import { HeaderComponent } from '@core/header.component';
 import { NavMobileComponent } from '@core/nav-mobile.component';
 import { SplashScreenComponent } from '@core/splash-screen.component';
 import { CameraOverlayComponent } from '@features/camera-overlay/camera-overlay.component';
+import { CookieConsentBannerComponent } from '@features/cookie-consent/cookie-consent-banner.component';
 import { CursorComponent } from '@features/cursor/cursor.component';
 import { BackgroundService } from '@services/background-service';
 import { IconService } from '@services/icon.service';
@@ -47,6 +48,7 @@ const SPLASH_SEEN_KEY = 'mkrecord:splash-seen';
     NavMobileComponent,
     SplashScreenComponent,
     CameraOverlayComponent,
+    CookieConsentBannerComponent,
     CursorComponent,
     SafePipe,
     YouTubePlayer,
@@ -77,6 +79,7 @@ export class AppComponent implements OnInit {
 
   // use environment.featureFlags because customCursor can be disabled per-environment without a code change
   protected readonly customCursorEnabled = environment.featureFlags.customCursor;
+  protected readonly cookieConsentEnabled = environment.featureFlags.cookieConsent;
 
   constructor() {
     // use effect() + untracked() because the SSR-rendered background video src is

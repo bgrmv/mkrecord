@@ -75,7 +75,7 @@ Reference these items as `// see docs/todo/ui — #<ID>` in source code.
 
 | # | Status | Item | File(s) | Описание проблемы | Коммит | Проверено |
 |---|--------|------|---------|-------------------|--------|-----------|
-| L1 | ❌ | Terms & Conditions — add cookies notice | New component or modal | Нет уведомления о cookies — требование GDPR для EU-аудитории | — | ❌ |
+| L1 | ✅ | Terms & Conditions — add cookies notice | `services/cookie-consent.service.ts`, `features/cookie-consent/cookie-consent-banner.component.ts` | Non-blocking GDPR notice banner (Accept/Decline); `CookieConsentService.analyticsAllowed` gates future analytics loaders | — | ✅ |
 
 ---
 
