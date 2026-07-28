@@ -500,3 +500,31 @@ test('should submit contact form', async ({ page }) => {
 ```
 
 **Priority:** Low; implement after critical P0/P1 bugs are fixed.
+
+---
+
+## 16. Dashboard Backend: Netlify Blobs + Site Analytics
+
+The portfolio-admin dashboard (`features/dashboard/`, `services/portfolio-admin/`) currently ships with `InMemoryPortfolioRepository` as an iteration-1 stub — see the class doc comment at `services/portfolio-admin/in-memory-portfolio.repository.ts:28-32`. Two follow-ups are planned but not yet tracked anywhere else:
+
+> **Hosting note:** the site has migrated to **Netlify** — `.github/workflows/main_mkrecord.yml:6-11` has its `push` trigger commented out (`# push trigger paused during Netlify migration`), Azure deploy is now manual-only (`workflow_dispatch`). `netlify.toml` already configures `functions = "netlify/functions"`, and `netlify/functions/contact.ts` is a working example of a deployed Netlify Function (SMTP mail via `nodemailer`, using the site's Google Workspace account — `smtp.gmail.com` / `SMTP_USER` / `SMTP_PASS` env vars). Both items below build directly on this existing setup, no new hosting decision needed.
+
+### 16a. Netlify Blobs persistence
+
+Replace `InMemoryPortfolioRepository` with an HTTP adapter implementing the same `PortfolioRepository` abstract class (`entities/portfolio-item/portfolio-item.repository.ts`), backed by `GET/PUT /api/portfolio` over **Netlify Blobs**:
+
+- Store the full `PortfolioItem[]` aggregate as a single JSON blob (mirrors the in-memory adapter's whole-array `load`/`save` contract, so `PortfolioAdminStore` needs no changes)
+- New function `netlify/functions/portfolio.ts`, sibling to the existing `contact.ts`, reading/writing via `@netlify/blobs` (`getStore('portfolio')`)
+- Swap-in is a single DI provider change (`{ provide: PortfolioRepository, useClass: NetlifyBlobsPortfolioRepository }`) — no component or store changes needed, by design
+- The dashboard route has no auth guard yet — `portfolio.ts`'s `PUT` handler needs to check a shared secret / auth token before writing, same concern as rate-limiting in `contact.ts:26-36`
+
+### 16b. Site analytics — Google Analytics (GA4)
+
+No analytics/traffic tracking exists yet. Plan is Google Analytics 4, using the same Google Workspace account already used for the site's SMTP/POP3 email (`contact.ts:16-23`) — one technical account for both.
+
+- Add GA4 via `gtag.js`, loaded only in the browser and guarded by `PlatformService.isBrowser` (SSR safety — rule 1)
+- Track pageviews per route change (drive from `Router` events, not manual calls per component) and key events: portfolio video plays, contact form submits (ties into item 8 above)
+- New service: `services/analytics.service.ts` — exposes commands only (`trackPageview()`, `trackEvent()`), no read state; components/router dispatch, never read analytics state (CQRS — rule 3)
+- Respect the dashboard's `noindex, nofollow` intent: exclude `/dashboard` route from analytics tracking, it's an internal editing surface, not public traffic
+
+**Priority:** Medium — both are the natural next step once the in-memory dashboard adapter is validated end-to-end.

@@ -128,6 +128,7 @@ Key items:
 8. CSS `@layer` cascade organization + container queries
 9. Contacts form wired to backend
 10. SSR-safe RxJS utilities — **done** in `shared/utils/ssr-rxjs.ts` (`browserInterval`)
+16. Dashboard backend: Netlify Blobs persistence for `PortfolioRepository` + GA4 site analytics (same Google account as SMTP/POP3 email)
 
 ---
 
