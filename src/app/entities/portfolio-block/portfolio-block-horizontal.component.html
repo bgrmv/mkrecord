@@ -35,8 +35,13 @@
         </div>
 
         @if (scrollHints()[$index]) {
-          <div class="scroll-hint hint-right">
-            <span class="hint-arrow">›</span>
+          <div class="scroll-hint hint-right" aria-hidden="true">
+            <span class="hint-rail"></span>
+            <span class="hint-label">scroll</span>
+            <span class="hint-arrows">
+              <span class="hint-chevron"></span>
+              <span class="hint-chevron"></span>
+            </span>
           </div>
         }
       </div>

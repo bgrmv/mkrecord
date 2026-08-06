@@ -26,15 +26,40 @@
   }
 }
 
-@keyframes hint-pulse {
+/* use single-axis transforms on a dedicated wrapper (not on the rotated chevrons)
+   because an animated `transform` overwrites any static rotate() on the same element —
+   the old hint-pulse silently cancelled the vertical arrow's rotation */
+@keyframes hint-drift-x {
   0%,
   100% {
-    opacity: 0.4;
-    transform: translate(-50%, -50%);
+    transform: translateX(-3px);
+    opacity: 0.45;
   }
   50% {
+    transform: translateX(3px);
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+@keyframes hint-drift-y {
+  0%,
+  100% {
+    transform: translateY(-3px);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
+
+@keyframes hint-rail-breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 
@@ -250,23 +275,36 @@ video:hover {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-display);
   font-size: clamp(9px, 1.1vw, 12px);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color_whitesmoke_darken_3);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  /* use the same dark translucent plate + hairline border as app-home-brand
+     because the hint sits on bright video frames and was unreadable without it */
+  padding: 7px 14px;
+  border: 1px solid var(--color_whitesmoke_darken_5);
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.75;
   white-space: nowrap;
   transition:
     opacity 0.3s ease,
-    color 0.3s ease;
+    color 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .card-wrap:hover .video-tap-hint {
   opacity: 1;
   color: var(--c_red_d1);
+  background-color: rgba(0, 0, 0, 0.72);
+  border-color: rgba(224, 78, 66, 0.45);
 }
 
 .video-tap-hint .rec-dot {
@@ -290,77 +328,146 @@ video:hover {
 
 .lanes-container {
   width: 100%;
+  /* use flex: 1 + min-height: 0 instead of a hardcoded height because the whole
+     chain above (tab-group → body-wrapper → body → body-content → :host) is an
+     explicit flex column: the lanes now consume exactly the height main gives
+     them. The former height: min(846px, calc(80vh - 100px)) was a fixed box that
+     rarely equalled the available space, leaving main visibly "stretched" —
+     a dead black band under the last lane. */
   flex: 1;
   min-height: 0;
   overflow: hidden;
   padding: 8px;
   box-sizing: border-box;
-  /* use min() to cap at viewport height on small screens (laptops < 1163px tall) while
-     keeping 846px on large screens — bypasses unreliable flex-chain height propagation */
-  height: min(846px, calc(80vh - 100px));
-  max-height: min(846px, calc(80vh - 100px));
 }
 
+/* ── Scroll hints: viewfinder edge markers ──────────────────────────
+   A thin red rail hugging the lane edge, a stencilled SCROLL label and a
+   double chevron drifting along the scroll axis. Chevrons are drawn with
+   borders instead of glyphs/icons so they stay pixel-crisp and never depend
+   on a font loading. */
 .scroll-hint {
   position: absolute;
   z-index: 5;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
 }
 
+.scroll-hint .hint-rail {
+  position: absolute;
+  background: var(--c_red_d1);
+  animation: hint-rail-breathe 1.8s ease-in-out infinite;
+}
+
+.scroll-hint .hint-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--c_red_d1);
+  opacity: 0.75;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+}
+
+.scroll-hint .hint-arrows {
+  display: flex;
+  animation-duration: 1.8s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.scroll-hint .hint-chevron {
+  width: 7px;
+  height: 7px;
+  border-top: 1.5px solid var(--c_red_d1);
+  border-right: 1.5px solid var(--c_red_d1);
+  filter: drop-shadow(0 0 4px rgba(224, 78, 66, 0.55));
+}
+
+/* ── Horizontal lanes: right edge ── */
 .scroll-hint.hint-right {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 40px;
+  width: 44px;
+  flex-direction: column;
   background: linear-gradient(
     to right,
     transparent,
     rgba(0, 0, 0, 0.6) 60%,
-    rgba(0, 0, 0, 0.85)
+    rgba(0, 0, 0, 0.88)
   );
 }
 
-.scroll-hint.hint-right .hint-arrow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 30px;
-  font-weight: 900;
-  color: var(--c_red_d1);
-  animation: hint-pulse 1.8s ease-in-out infinite;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+.scroll-hint.hint-right .hint-rail {
+  top: 12%;
+  bottom: 12%;
+  right: 0;
+  width: 1px;
 }
 
+.scroll-hint.hint-right .hint-label {
+  writing-mode: vertical-rl;
+}
+
+.scroll-hint.hint-right .hint-arrows {
+  flex-direction: row;
+  animation-name: hint-drift-x;
+}
+
+.scroll-hint.hint-right .hint-chevron {
+  transform: rotate(45deg);
+}
+
+.scroll-hint.hint-right .hint-chevron + .hint-chevron {
+  margin-left: -3px;
+}
+
+/* ── Vertical lanes: bottom edge ── */
 .scroll-hint.hint-down {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 36px;
+  height: 40px;
+  flex-direction: row;
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(0, 0, 0, 0.6) 80%,
-    rgba(0, 0, 0, 0.85)
+    rgba(0, 0, 0, 0.6) 70%,
+    rgba(0, 0, 0, 0.88)
   );
 }
 
-.scroll-hint.hint-down .hint-arrow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(90deg);
-  font-size: 12px;
-  font-weight: 900;
-  color: var(--c_red_d1);
-  animation: hint-pulse 1.8s ease-in-out infinite;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.scroll-hint.hint-down .hint-rail {
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  height: 1px;
+}
 
-  mat-icon {
-    font-size: inherit;
+.scroll-hint.hint-down .hint-arrows {
+  flex-direction: column;
+  animation-name: hint-drift-y;
+}
+
+.scroll-hint.hint-down .hint-chevron {
+  transform: rotate(135deg);
+}
+
+.scroll-hint.hint-down .hint-chevron + .hint-chevron {
+  margin-top: -3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint .hint-arrows,
+  .scroll-hint .hint-rail {
+    animation: none;
+    opacity: 0.85;
   }
 }
 

@@ -20,6 +20,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PortfolioCategory } from '@app/types';
+import { ScrollHintService } from '@services/scroll-hint.service';
 import { VideoDialogComponent } from './video-dialog.component';
 
 const fadeInUp = trigger('fadeInUp', [
@@ -60,6 +61,7 @@ const staggerGrid = trigger('staggerGrid', [
 })
 export class PortfolioBlockHorizontalComponent implements OnDestroy {
   private readonly dialog = inject(MatDialog);
+  private readonly scrollHintService = inject(ScrollHintService);
 
   public readonly portfolios = input.required<PortfolioCategory[]>();
   public readonly gridView = input.required<string>();
@@ -77,7 +79,16 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
   private resumeTimeouts = new Map<number, ReturnType<typeof setTimeout>>();
   private scrollListeners: (() => void)[] = [];
 
-  protected readonly scrollHints = signal([true, true, true]);
+  // lanes that actually overflow — measured once the DOM is stable
+  private readonly overflowingLanes = signal([false, false, false]);
+
+  // use computed() because the hint is pure derived state: show it on every
+  // overflowing lane until the user scrolls one of them, then never again
+  protected readonly scrollHints = computed(() =>
+    this.scrollHintService.learnedX()
+      ? [false, false, false]
+      : this.overflowingLanes(),
+  );
 
   // use computed() because derived state — splits portfolios into 3 lanes, duplicated for seamless loop
   protected readonly lanes = computed(() => {
@@ -171,7 +182,9 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
           this.pausedLanes.delete(i);
         }, 3000);
 
-        this.updateHint(i, false);
+        // one manual scroll on any lane means the gesture is understood —
+        // hide the hint on every horizontal lane and remember it per device
+        this.scrollHintService.markLearned('x');
       };
 
       el.addEventListener('scroll', onScroll, { passive: true });
@@ -200,11 +213,9 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
 
       const hasOverflow = el.scrollWidth > el.clientWidth + 10;
 
-      if (!hasOverflow) {
-        this.updateHint(i, false);
-        return;
-      }
+      if (!hasOverflow) return;
 
+      this.markOverflowing(i);
       this.startLaneAutoScroll(el, i);
     });
   }
@@ -258,10 +269,10 @@ export class PortfolioBlockHorizontalComponent implements OnDestroy {
     this.intervalIds = [];
   }
 
-  private updateHint(index: number, visible: boolean): void {
-    const hints = [...this.scrollHints()];
-    hints[index] = visible;
-    this.scrollHints.set(hints);
+  private markOverflowing(index: number): void {
+    const lanes = [...this.overflowingLanes()];
+    lanes[index] = true;
+    this.overflowingLanes.set(lanes);
   }
 
   protected onLaneEnter(index: number): void {
