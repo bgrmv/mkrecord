@@ -48,95 +48,112 @@ const fadeIn = trigger('fadeIn', [
       }
 
       /* ── Tab overrides ── */
-      /* use ::ng-deep because Material tab wrappers are outside component scope */
-      ::ng-deep {
-        .mat-mdc-tab-group {
-          flex: 1;
-          min-height: 0;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .mdc-tab--active .mdc-tab__text-label {
-          color: var(--c_red_l1) !important;
-          text-shadow:
-            0 0 8px rgba(242, 93, 80, 0.9),
-            0 0 24px rgba(242, 93, 80, 0.5),
-            0 0 48px rgba(242, 93, 80, 0.2);
-        }
-
-        .mdc-tab--active .mat-icon {
-          color: var(--c_red_l1);
-          filter: drop-shadow(0 0 6px rgba(242, 93, 80, 0.8));
-        }
-
+      /* use flat ":host ::ng-deep <selector>" rules instead of one nested
+         "::ng-deep { ... }" block because inline styles here are plain CSS and
+         Angular's style shim scopes the nested selectors with [_ngcontent-*];
+         Material's tab wrappers are created outside this template, carry no
+         such attribute, and never match — which is why the red label colors
+         were silently dropped */
+      :host ::ng-deep .mat-mdc-tab-group {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
         /* use --mat-tab-header-label-text-font token because Material resolves font-family
            through its own CSS custom property, bypassing direct font-family overrides */
-        .mat-mdc-tab-group {
-          --mat-tab-header-label-text-font: var(--font-display);
-        }
+        --mat-tab-header-label-text-font: var(--font-display);
+        --mat-tab-header-active-label-text-color: var(--c_red_l1);
+        --mat-tab-header-active-focus-label-text-color: var(--c_red_l1);
+        --mat-tab-header-active-hover-label-text-color: var(--c_red_l1);
+        --mat-tab-header-active-ripple-color: var(--c_red_l1);
+        --mat-tab-header-inactive-ripple-color: var(--c_red_l1);
+      }
 
-        .mat-mdc-tab .mdc-tab__text-label {
-          font-family: var(--font-display);
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          font-weight: 900;
-          font-size: clamp(10px, 1.3vw, 13px);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+      :host ::ng-deep .mdc-tab--active .mdc-tab__text-label {
+        color: var(--c_red_l1) !important;
+        text-shadow:
+          0 0 8px rgba(242, 93, 80, 0.9),
+          0 0 24px rgba(242, 93, 80, 0.5),
+          0 0 48px rgba(242, 93, 80, 0.2);
+      }
 
-        .mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
-          color: rgba(245, 245, 245, 0.65);
-          transition: color 0.3s ease;
-        }
+      :host ::ng-deep .mdc-tab--active .mat-icon {
+        color: var(--c_red_l1);
+        filter: drop-shadow(0 0 6px rgba(242, 93, 80, 0.8));
+      }
 
-        .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
-          color: rgba(245, 245, 245, 0.9);
-        }
+      :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+        font-family: var(--font-display);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 900;
+        font-size: clamp(10px, 1.3vw, 13px);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-        .mdc-tab:not(.mdc-tab--active) .mat-icon {
-          color: rgba(245, 245, 245, 0.5);
-        }
+      :host ::ng-deep .mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+        color: rgba(245, 245, 245, 0.65);
+        transition:
+          color 0.3s ease,
+          text-shadow 0.3s ease;
+      }
 
-        .mat-mdc-tab-header {
-          border-bottom: 1px solid rgba(224, 78, 66, 0.3);
-          background: linear-gradient(
-            180deg,
-            rgba(13, 13, 13, 0.6) 0%,
-            rgba(20, 10, 10, 0.4) 100%
-          );
-        }
+      :host ::ng-deep .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
+        color: var(--c_red_d1);
+        text-shadow: 0 0 10px rgba(224, 78, 66, 0.45);
+      }
 
-        /* active indicator line glow */
-        .mdc-tab-indicator__content--underline {
-          box-shadow:
-            0 0 6px var(--c_red),
-            0 0 18px rgba(224, 78, 66, 0.5);
-        }
+      :host ::ng-deep .mdc-tab:not(.mdc-tab--active) .mat-icon {
+        color: rgba(245, 245, 245, 0.5);
+        transition:
+          color 0.3s ease,
+          filter 0.3s ease;
+      }
 
-        .mat-mdc-tab-body-wrapper {
-          flex: 1;
-          min-height: 0;
-          display: flex;
-          flex-direction: column;
-        }
+      :host ::ng-deep .mdc-tab:not(.mdc-tab--active):hover .mat-icon {
+        color: var(--c_red_d1);
+        filter: drop-shadow(0 0 5px rgba(224, 78, 66, 0.5));
+      }
 
-        .mat-mdc-tab-body {
-          flex: 1;
-          min-height: 0;
-          display: flex;
-          flex-direction: column;
-        }
+      :host ::ng-deep .mat-mdc-tab-header {
+        border-bottom: 1px solid rgba(224, 78, 66, 0.3);
+        background: linear-gradient(
+          180deg,
+          rgba(13, 13, 13, 0.6) 0%,
+          rgba(20, 10, 10, 0.4) 100%
+        );
+      }
 
-        .mat-mdc-tab-body-content {
-          flex: 1;
-          min-height: 0;
-          overflow: hidden !important;
-          display: flex !important;
-          flex-direction: column;
-        }
+      /* active indicator line glow */
+      :host ::ng-deep .mdc-tab-indicator__content--underline {
+        border-color: var(--c_red) !important;
+        box-shadow:
+          0 0 6px var(--c_red),
+          0 0 18px rgba(224, 78, 66, 0.5);
+      }
+
+      :host ::ng-deep .mat-mdc-tab-body-wrapper {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      :host ::ng-deep .mat-mdc-tab-body {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      :host ::ng-deep .mat-mdc-tab-body-content {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column;
       }
 
       :host {
@@ -184,7 +201,7 @@ const fadeIn = trigger('fadeIn', [
           flex: unset;
         }
 
-        ::ng-deep .mat-mdc-tab-group {
+        :host ::ng-deep .mat-mdc-tab-group {
           height: 100%;
           flex: 1;
           min-height: 0;
@@ -194,7 +211,7 @@ const fadeIn = trigger('fadeIn', [
         }
 
         /* tab-header sits at the bottom via headerPosition="below" */
-        ::ng-deep .mat-mdc-tab-header {
+        :host ::ng-deep .mat-mdc-tab-header {
           position: static;
           background: rgba(5, 5, 5, 0.95) !important;
           backdrop-filter: blur(14px);
@@ -203,27 +220,25 @@ const fadeIn = trigger('fadeIn', [
         }
 
         /* shrink tab labels on mobile — desktop uses 1.3vw which is too wide at 390px */
-        ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+        :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
           font-size: clamp(8px, 2.8vw, 11px);
           letter-spacing: 0.12em;
           gap: 5px;
         }
 
-        ::ng-deep .mat-mdc-tab-body-wrapper,
-        ::ng-deep .mat-mdc-tab-body {
+        :host ::ng-deep .mat-mdc-tab-body-wrapper,
+        :host ::ng-deep .mat-mdc-tab-body {
           flex: 1;
           min-height: 0;
           overflow: hidden;
         }
 
         /* use overflow-y: auto + scroll-snap-type so card-wrap snap-align works */
-        ::ng-deep .mat-mdc-tab-body-content {
+        :host ::ng-deep .mat-mdc-tab-body-content {
           overflow-y: auto !important;
           overflow-x: hidden !important;
           height: 100%;
           scroll-snap-type: y mandatory;
-          // scrollbar-width: thin;
-          // scrollbar-color: color-mix(in srgb, var(--c_red_true) 45%, transparent) transparent;
           scrollbar-color: var(--c_red) rgba(0, 0, 0, 0.3);
           scrollbar-width: thin;
         }
@@ -231,7 +246,7 @@ const fadeIn = trigger('fadeIn', [
 
       /* Very small phones: further compress tab labels */
       @media (max-width: 360px) {
-        ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+        :host ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
           font-size: clamp(7px, 2.4vw, 9px);
           letter-spacing: 0.08em;
           gap: 3px;
