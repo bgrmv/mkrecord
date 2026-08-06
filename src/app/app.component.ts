@@ -62,6 +62,9 @@ export class AppComponent implements OnInit {
   #destroyRef = inject(DestroyRef); // see docs/todo — P1 #7: duplicate DestroyRef; this one is unused, delete it; see docs/todo/tech-debt.md#destroyref-duplicate
   #router = inject(Router);
   #safePipe = inject(SafePipe);
+  // use a field initializer because afterNextRender callbacks do NOT run in an
+  // injection context — calling inject(DOCUMENT) inside one throws NG0203
+  private readonly document = inject(DOCUMENT);
   private readonly platformService = inject(PlatformService);
   private readonly backgroundService = inject(BackgroundService);
   private readonly iconService = inject(IconService);
@@ -106,8 +109,7 @@ export class AppComponent implements OnInit {
     // global cursor:none CSS is scoped to body.custom-cursor-enabled so the flag also
     // restores the native browser cursor when off
     afterNextRender(() => {
-      const document = inject(DOCUMENT);
-      document.body.classList.toggle(
+      this.document.body.classList.toggle(
         'custom-cursor-enabled',
         this.customCursorEnabled,
       );

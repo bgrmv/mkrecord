@@ -71,8 +71,9 @@ main {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  /* margin-top: 10vh;
-  margin-bottom: 10vh; */
+  /* no margin-block needed: app-root is a fixed, centered flex column
+     (see styles.css#app-root), so the 80vh band already lands exactly between
+     the 10vh fixed header and the 10vh fixed footer */
   margin-inline: auto;
 }
 
