@@ -75,7 +75,7 @@ Reference these items as `// see docs/todo/ui — #<ID>` in source code.
 
 | # | Status | Item | File(s) | Описание проблемы | Коммит | Проверено |
 |---|--------|------|---------|-------------------|--------|-----------|
-| L1 | ✅ | Terms & Conditions — add cookies notice | `services/cookie-consent.service.ts`, `features/cookie-consent/cookie-consent-banner.component.ts` | Non-blocking GDPR notice banner (Accept/Decline); `CookieConsentService.analyticsAllowed` gates future analytics loaders | — | ✅ |
+| L1 | 🟡 | Terms & Conditions — add cookies notice | `services/cookie-consent.service.ts`, `features/cookie-consent/cookie-consent-banner.component.ts` | Non-blocking GDPR notice banner (Accept/Decline) built, but gated behind `featureFlags.cookieConsent: false` — no analytics or third-party cookies are wired up yet, so there's nothing to gain consent for; flip on once GA4 (docs/improvements #16b) ships | — | ❌ |
 
 ---
 

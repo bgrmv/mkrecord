@@ -4,6 +4,6 @@ export const environment = {
   featureFlags: {
     customCursor: false,
     dashboard: true,
-    cookieConsent: true,
+    cookieConsent: false,
   },
 };

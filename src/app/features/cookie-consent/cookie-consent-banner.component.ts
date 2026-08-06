@@ -10,6 +10,14 @@ import { CookieConsentService } from '@services/cookie-consent.service';
         --_red: #e02020;
       }
 
+      .scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 8999;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(2px);
+      }
+
       .banner {
         position: fixed;
         left: 50%;
@@ -103,23 +111,24 @@ import { CookieConsentService } from '@services/cookie-consent.service';
   ],
   template: `
     @if (status() === 'pending') {
+      <div class="scrim" aria-hidden="true"></div>
       <div class="banner">
         <span class="corner tl" aria-hidden="true"></span>
         <span class="corner br" aria-hidden="true"></span>
 
         <span class="title">Cookies</span>
         <p class="copy">
-          Мы используем localStorage для сохранения ваших настроек. При
-          подключении статистики посещаемости она будет запускаться только
-          после вашего согласия.
+          This site uses cookies and local storage to remember your
+          preferences. Visit analytics is enabled and requires your consent
+          before it runs.
         </p>
 
         <div class="actions">
           <button class="action-btn" type="button" (click)="decline()">
-            Отклонить
+            Decline
           </button>
           <button class="action-btn accept" type="button" (click)="accept()">
-            Принять
+            Accept
           </button>
         </div>
       </div>
