@@ -69,6 +69,109 @@ import { SeoService } from '@services/seo.service';
       }
     }
 
+    /* ── LIGHTS — arc-lamp strike: cold filament → warm tungsten flash → white ── */
+    /* use discrete steps(1) timing because a smooth fade reads as a dimmer, not as a lamp igniting */
+    @keyframes lights-strike {
+      0%,
+      14% {
+        color: #6b6b6b;
+        text-shadow: none;
+      }
+      15%,
+      20% {
+        color: #ffe6bf;
+        text-shadow:
+          0 0 12px #ffd9a0,
+          0 0 34px rgba(255, 200, 130, 0.5);
+      }
+      21%,
+      32% {
+        color: #5d5d5d;
+        text-shadow: none;
+      }
+      33%,
+      40% {
+        color: #fff2dc;
+        text-shadow:
+          0 0 18px #ffd9a0,
+          0 0 46px rgba(255, 200, 130, 0.6);
+      }
+      41%,
+      46% {
+        color: #7a7168;
+        text-shadow: 0 0 6px rgba(255, 200, 130, 0.25);
+      }
+      47%,
+      100% {
+        color: #fff;
+        text-shadow:
+          0 0 10px #fff,
+          0 0 30px rgba(255, 255, 255, 0.6),
+          0 0 70px rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    /* ── ACTI[ON] — toggle snapping live, with contact bounce ── */
+    @keyframes switch-on {
+      0%,
+      17% {
+        background-color: var(--_red_dark);
+        color: rgba(255, 255, 255, 0.3);
+        box-shadow: inset 0 0 0 1px rgba(224, 32, 32, 0.35);
+      }
+      18%,
+      23% {
+        background-color: var(--_red);
+        color: #fff;
+        box-shadow:
+          0 0 14px rgba(224, 32, 32, 0.6),
+          0 0 38px rgba(224, 32, 32, 0.28);
+      }
+      24%,
+      37% {
+        background-color: var(--_red_dark);
+        color: rgba(255, 255, 255, 0.35);
+        box-shadow: inset 0 0 0 1px rgba(224, 32, 32, 0.35);
+      }
+      38%,
+      43% {
+        background-color: var(--_red);
+        color: #fff;
+        box-shadow:
+          0 0 18px rgba(224, 32, 32, 0.7),
+          0 0 44px rgba(224, 32, 32, 0.3);
+      }
+      44%,
+      49% {
+        background-color: #6d1414;
+        color: rgba(255, 255, 255, 0.55);
+        box-shadow: inset 0 0 0 1px rgba(224, 32, 32, 0.4);
+      }
+      55%,
+      100% {
+        background-color: var(--_red);
+        color: #fff;
+        box-shadow:
+          0 0 14px rgba(224, 32, 32, 0.55),
+          0 0 38px rgba(224, 32, 32, 0.25);
+      }
+    }
+
+    /* keep the lit state alive without competing with the already-blinking .rec-dot */
+    @keyframes on-breathe {
+      0%,
+      100% {
+        box-shadow:
+          0 0 14px rgba(224, 32, 32, 0.55),
+          0 0 38px rgba(224, 32, 32, 0.25);
+      }
+      50% {
+        box-shadow:
+          0 0 18px rgba(224, 32, 32, 0.7),
+          0 0 48px rgba(224, 32, 32, 0.35);
+      }
+    }
+
     :host {
       width: 100%;
       height: 100%;
@@ -91,26 +194,6 @@ import { SeoService } from '@services/seo.service';
       animation: slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
       font-family: var(--font-display);
 
-      .rec-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-size: clamp(14px, 1.5vw, 24px);
-        font-weight: 700;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: rgba(224, 32, 32, 0.65);
-        margin-bottom: 14px;
-
-        .rec-dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: var(--_red);
-          box-shadow: 0 0 7px var(--_red);
-          animation: blink-rec 1.2s ease-in-out infinite;
-        }
-      }
 
       h1 {
         font-size: clamp(22px, 5vw, 62px);
@@ -134,35 +217,37 @@ import { SeoService } from '@services/seo.service';
         margin: 0 0.1em;
       }
 
+      /* ── staged set call: 0.75s LIGHTS → 1.2s CAMERA → 2.1s ON, then steady loop ── */
+
       /* LIGHTS */
       .word-lights {
         color: #fff;
-        animation: white-neon 2.8s ease-in-out infinite;
+        /* strike starts at 0.75s = when .header's slide-up (0.6s + 0.15s delay) lands */
+        animation:
+          lights-strike 0.9s steps(1, end) 0.75s both,
+          white-neon 2.8s ease-in-out 1.65s infinite;
       }
 
       /* CAMERA */
       .word-camera {
-        .cam {
-          color: #fff;
-          background: var(--_red);
-          /* use extra padding-left = letter-spacing (0.14em) to compensate trailing glyph spacing that shifts text visually left */
-          padding: 4px 10px 4px calc(10px + 0.14em);
-          border-radius: 2px;
-        }
-
-        .era {
-          color: #fff;
-        }
+        color: #fff;
       }
 
       /* ACTION */
       .word-action {
         .red {
-          color: #fff;
-          background: var(--_red);
+          position: relative;
+          display: inline-block;
+          /* starts in the OFF position; switch-on drives it live at 2.1s */
+          color: rgba(255, 255, 255, 0.3);
+          background-color: var(--_red_dark);
+          box-shadow: inset 0 0 0 1px rgba(224, 32, 32, 0.35);
           /* use extra padding-left = letter-spacing (0.14em) to compensate trailing glyph spacing that shifts text visually left */
           padding: 4px 10px 4px calc(10px + 0.14em);
           border-radius: 2px;
+          animation:
+            switch-on 1.1s cubic-bezier(0.22, 1, 0.36, 1) 2.1s both,
+            on-breathe 3.4s ease-in-out 3.2s infinite;
         }
 
         color: #fff;
@@ -186,10 +271,16 @@ import { SeoService } from '@services/seo.service';
         text-align: left;
         font-family: var(--font-display);
 
-        wrap: balance;
+        text-wrap: balance;
 
-        .rec-badge {
-          display: none;
+
+        /* no .header entrance on mobile, so the set call starts immediately and runs tighter */
+        .word-lights {
+          animation-delay: 0s, 0.9s;
+        }
+
+        .red {
+          animation-delay: 1.1s, 2.2s;
         }
 
         h1 {
@@ -208,19 +299,46 @@ import { SeoService } from '@services/seo.service';
         }
       }
     }
+
+    /* this component is the first to honour reduced motion outside view-transition.css;
+       every animated element must land on its FINAL state, not its initial one */
+    @media (prefers-reduced-motion: reduce) {
+      .header,
+      .neon-divider,
+      .rec-dot,
+      .word-lights,
+      .red {
+        animation: none !important;
+      }
+
+      /* selectors are scoped under .header to outrank the nested rules above (0,2,0) */
+      .header .word-lights {
+        color: #fff;
+        text-shadow:
+          0 0 10px #fff,
+          0 0 30px rgba(255, 255, 255, 0.6),
+          0 0 70px rgba(255, 255, 255, 0.3);
+      }
+
+      /* .red must read as switched ON — animation:none drops switch-on's "both" fill */
+      .header .red {
+        color: #fff;
+        background-color: var(--_red);
+        box-shadow:
+          0 0 14px rgba(224, 32, 32, 0.55),
+          0 0 38px rgba(224, 32, 32, 0.25);
+      }
+    }
   `,
   template: `
     <app-home-brand />
     <div class="neon-divider"></div>
     <div class="header">
-      <div class="rec-badge">
-        <span class="rec-dot"></span>
-        On Set
-      </div>
+   
       <h1>
         <span class="word-lights">LIGHTS</span>
         <span class="word-divider">×</span>
-        <span class="word-camera"><b class="cam">CAM</b>ERA</span>
+        <span class="word-camera">CAMERA</span>
         <span class="word-divider">×</span>
         <span class="word-action"> ACTI<b class="red">ON</b> </span>
       </h1>
